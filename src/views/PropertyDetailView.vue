@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { mapBoundary, propertyDetail } from '../data/mockData'
 
 const router = useRouter()
@@ -18,6 +19,31 @@ const markerPosition = computed(() => {
 
 const goBack = () => {
   router.back()
+}
+
+const handleBookVisit = () => {
+  ElMessage.success('已提交预约看房申请，客服将尽快联系您')
+}
+
+const handleAddFavorite = () => {
+  ElMessage.success('房源已加入想看清单')
+}
+
+const handleShare = () => {
+  ElMessage.info('分享链接已复制，可发送给好友')
+}
+
+const handleContactLandlord = () => {
+  ElMessage.success('已通过平台向房东发送联系请求')
+}
+
+const handleQuickAction = (type) => {
+  const map = {
+    visit: '线下看房预约已受理',
+    consult: '智能顾问稍后将与您沟通',
+    contract: '租赁合同范本即将提供下载'
+  }
+  ElMessage.info(map[type])
 }
 </script>
 
@@ -61,9 +87,13 @@ const goBack = () => {
               <span>{{ detail.floor }}</span>
             </div>
             <div class="actions">
-              <el-button type="primary" size="large">预约看房</el-button>
-              <el-button size="large" plain>加入想看</el-button>
-              <el-button size="large" text>
+              <el-button type="primary" size="large" @click="handleBookVisit">
+                预约看房
+              </el-button>
+              <el-button size="large" plain @click="handleAddFavorite">
+                加入想看
+              </el-button>
+              <el-button size="large" text @click="handleShare">
                 <el-icon><Share /></el-icon>
                 分享
               </el-button>
@@ -135,7 +165,7 @@ const goBack = () => {
             <el-tag type="primary" effect="dark">电话</el-tag>
             <span>{{ detail.landlord.phone }}</span>
           </div>
-          <el-button type="primary" block>联系房东</el-button>
+          <el-button type="primary" block @click="handleContactLandlord">联系房东</el-button>
           <el-alert
             title="提示：为保障沟通安全，请通过平台消息或电话联系，谨防私下交易。"
             type="info"
@@ -149,15 +179,15 @@ const goBack = () => {
             <span class="section-card__title">常用操作</span>
           </div>
           <el-space direction="vertical" :size="12" fill>
-            <el-button type="primary" plain>
+            <el-button type="primary" plain @click="handleQuickAction('visit')">
               <el-icon><Calendar /></el-icon>
               安排线下看房
             </el-button>
-            <el-button plain>
+            <el-button plain @click="handleQuickAction('consult')">
               <el-icon><Message /></el-icon>
               咨询智能顾问
             </el-button>
-            <el-button plain>
+            <el-button plain @click="handleQuickAction('contract')">
               <el-icon><Document /></el-icon>
               查看租赁合同范本
             </el-button>

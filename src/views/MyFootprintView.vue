@@ -1,5 +1,6 @@
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import { myFootprints } from '../data/mockData'
 
 const filters = reactive({
@@ -7,8 +8,14 @@ const filters = reactive({
   type: ''
 })
 
+const tableData = ref(myFootprints.map((item) => ({ ...item })))
+
+watch([() => filters.keyword, () => filters.type], () => {
+  // no pagination, nothing to reset
+})
+
 const filteredData = computed(() => {
-  let result = [...myFootprints]
+  let result = [...tableData.value]
   if (filters.keyword) {
     result = result.filter((item) =>
       item.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -19,6 +26,24 @@ const filteredData = computed(() => {
   }
   return result
 })
+
+const handleClear = () => {
+  if (!tableData.value.length) {
+    ElMessage.info('暂无足迹记录')
+    return
+  }
+  tableData.value = []
+  ElMessage.success('已清空浏览足迹')
+}
+
+const handleRemove = (id) => {
+  tableData.value = tableData.value.filter((item) => item.id !== id)
+  ElMessage.success('已删除该条浏览记录')
+}
+
+const handleView = () => {
+  ElMessage.info('详情页开发中，敬请期待')
+}
 </script>
 
 <template>
@@ -32,7 +57,7 @@ const filteredData = computed(() => {
         </el-breadcrumb>
         <h2>浏览历史记录</h2>
       </div>
-      <el-button type="danger" plain>清空历史</el-button>
+      <el-button type="danger" plain @click="handleClear">清空历史</el-button>
     </div>
 
     <div class="section-card">
@@ -60,9 +85,13 @@ const filteredData = computed(() => {
         <el-table-column prop="type" label="类型" width="120" />
         <el-table-column prop="visitedAt" label="浏览时间" width="180" />
         <el-table-column label="操作" width="160">
-          <template #default>
-            <el-button type="primary" text size="small">查看详情</el-button>
-            <el-button text size="small">删除</el-button>
+          <template #default="scope">
+            <el-button type="primary" text size="small" @click="handleView">
+              查看详情
+            </el-button>
+            <el-button text size="small" @click="handleRemove(scope.row.id)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

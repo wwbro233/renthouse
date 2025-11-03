@@ -1,11 +1,13 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { activityDetail } from '../data/mockData'
 
 const detail = activityDetail
 const router = useRouter()
 
 const handleSignup = () => {
+  ElMessage.success('报名成功，活动提醒已发送至消息中心')
   router.push('/discover')
 }
 </script>

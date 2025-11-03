@@ -1,6 +1,7 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { myFavorites } from '../data/mockData'
 
 const router = useRouter()
@@ -17,9 +18,14 @@ const pageState = reactive({
 })
 
 const selectedIds = ref([])
+const tableData = ref(myFavorites.map((item) => ({ ...item })))
+
+watch([() => filters.keyword, () => filters.layout, () => filters.priceOrder], () => {
+  pageState.currentPage = 1
+})
 
 const filteredData = computed(() => {
-  let result = [...myFavorites]
+  let result = [...tableData.value]
   if (filters.keyword) {
     result = result.filter((item) =>
       item.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -45,12 +51,28 @@ const handleSelectionChange = (selection) => {
 }
 
 const handleBatchRemove = () => {
-  if (!selectedIds.value.length) return
+  if (!selectedIds.value.length) {
+    ElMessage.warning('请先选择需要取消收藏的房源')
+    return
+  }
+  tableData.value = tableData.value.filter((item) => !selectedIds.value.includes(item.id))
   selectedIds.value = []
+  if ((pageState.currentPage - 1) * pageState.pageSize >= filteredData.value.length) {
+    pageState.currentPage = Math.max(1, pageState.currentPage - 1)
+  }
+  ElMessage.success('已批量取消收藏')
 }
 
 const handleView = (id) => {
   router.push(`/property/${id}`)
+}
+
+const handleRemove = (id) => {
+  tableData.value = tableData.value.filter((item) => item.id !== id)
+  if ((pageState.currentPage - 1) * pageState.pageSize >= filteredData.value.length) {
+    pageState.currentPage = Math.max(1, pageState.currentPage - 1)
+  }
+  ElMessage.success('已取消收藏')
 }
 </script>
 
@@ -125,7 +147,9 @@ const handleView = (id) => {
               <el-button type="primary" text size="small" @click="handleView(scope.row.id)">
                 查看详情
               </el-button>
-              <el-button type="danger" text size="small">取消收藏</el-button>
+              <el-button type="danger" text size="small" @click="handleRemove(scope.row.id)">
+                取消收藏
+              </el-button>
             </el-space>
           </template>
         </el-table-column>

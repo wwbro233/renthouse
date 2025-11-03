@@ -1,5 +1,6 @@
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import { myShareList } from '../data/mockData'
 
 const filters = reactive({
@@ -8,8 +9,14 @@ const filters = reactive({
   type: ''
 })
 
+const tableData = ref(myShareList.map((item) => ({ ...item })))
+
+watch([() => filters.keyword, () => filters.status, () => filters.type], () => {
+  // no pagination
+})
+
 const filteredData = computed(() => {
-  let result = [...myShareList]
+  let result = [...tableData.value]
   if (filters.keyword) {
     result = result.filter((item) =>
       item.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -23,6 +30,27 @@ const filteredData = computed(() => {
   }
   return result
 })
+
+const handlePublish = () => {
+  ElMessage.info('发布拼租功能即将上线')
+}
+
+const handleView = (row) => {
+  ElMessage.info(`查看「${row.title}」详情入口开发中`)
+}
+
+const handleEdit = (row) => {
+  ElMessage.info(`编辑「${row.title}」功能即将上线`)
+}
+
+const handleCancel = (row) => {
+  if (row.status === '已取消') {
+    ElMessage.warning('该拼租信息已取消')
+    return
+  }
+  row.status = '已取消'
+  ElMessage.success(`已取消「${row.title}」拼租信息`)
+}
 </script>
 
 <template>
@@ -36,7 +64,7 @@ const filteredData = computed(() => {
         </el-breadcrumb>
         <h2>我的拼租信息</h2>
       </div>
-      <el-button type="primary">发布拼租</el-button>
+      <el-button type="primary" @click="handlePublish">发布拼租</el-button>
     </div>
 
     <div class="section-card">
@@ -71,10 +99,16 @@ const filteredData = computed(() => {
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
-          <template #default>
-            <el-button type="primary" text size="small">查看详情</el-button>
-            <el-button text size="small">编辑</el-button>
-            <el-button type="danger" text size="small">取消</el-button>
+          <template #default="scope">
+            <el-button type="primary" text size="small" @click="handleView(scope.row)">
+              查看详情
+            </el-button>
+            <el-button text size="small" @click="handleEdit(scope.row)">
+              编辑
+            </el-button>
+            <el-button type="danger" text size="small" @click="handleCancel(scope.row)">
+              取消
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

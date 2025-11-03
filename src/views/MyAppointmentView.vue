@@ -1,5 +1,6 @@
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import { myAppointments } from '../data/mockData'
 
 const filters = reactive({
@@ -7,8 +8,14 @@ const filters = reactive({
   status: ''
 })
 
+const tableData = ref(myAppointments.map((item) => ({ ...item })))
+
+watch([() => filters.keyword, () => filters.status], () => {
+  // no paging
+})
+
 const filteredData = computed(() => {
-  let result = [...myAppointments]
+  let result = [...tableData.value]
   if (filters.keyword) {
     result = result.filter((item) =>
       item.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -19,6 +26,23 @@ const filteredData = computed(() => {
   }
   return result
 })
+
+const handleExport = () => {
+  ElMessage.info('导出功能即将上线，敬请期待')
+}
+
+const handleView = (row) => {
+  ElMessage.info(`查看「${row.title}」详情入口开发中`)
+}
+
+const handleCancel = (row) => {
+  if (row.status === '已取消') {
+    ElMessage.warning('该记录已取消')
+    return
+  }
+  row.status = '已取消'
+  ElMessage.success(`已取消「${row.title}」预约`)
+}
 </script>
 
 <template>
@@ -32,7 +56,7 @@ const filteredData = computed(() => {
         </el-breadcrumb>
         <h2>约看与报名记录</h2>
       </div>
-      <el-button type="primary" plain>导出记录</el-button>
+      <el-button type="primary" plain @click="handleExport">导出记录</el-button>
     </div>
 
     <div class="section-card">
@@ -70,9 +94,13 @@ const filteredData = computed(() => {
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180">
-          <template #default>
-            <el-button type="primary" text size="small">查看详情</el-button>
-            <el-button text size="small">取消</el-button>
+          <template #default="scope">
+            <el-button type="primary" text size="small" @click="handleView(scope.row)">
+              查看详情
+            </el-button>
+            <el-button text size="small" @click="handleCancel(scope.row)">
+              取消
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
