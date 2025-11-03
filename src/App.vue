@@ -81,6 +81,18 @@ const effectiveCollapsed = computed(() => {
 })
 const asideWidth = computed(() => (effectiveCollapsed.value ? '64px' : '240px'))
 const activeMenu = computed(() => route.meta?.activeMenu ?? route.path)
+const mainContainerStyle = computed(() => {
+  if (isMobile.value) {
+    return {}
+  }
+  const base = parseFloat(asideWidth.value) || 0
+  const margin = `${base + 28}px`
+  return {
+    marginLeft: margin,
+    width: `calc(100% - ${margin})`,
+    paddingTop: '24px'
+  }
+})
 
 const handleResize = () => {
   viewportWidth.value = window.innerWidth
@@ -156,8 +168,11 @@ const openDrawer = () => {
             :class="{ 'app-aside--collapsed': effectiveCollapsed }"
           >
             <div class="logo-area">
-              <span class="logo-mark">Vue优设</span>
-              <span v-if="!effectiveCollapsed" class="logo-slogan">一站式品质租住生活</span>
+              <span class="logo-icon">LH</span>
+              <div v-if="!effectiveCollapsed" class="logo-copy">
+                <span class="logo-title">Link House</span>
+                <span class="logo-slogan">租住生活新体验</span>
+              </div>
             </div>
             <el-menu
               class="app-menu"
@@ -195,7 +210,7 @@ const openDrawer = () => {
           </el-aside>
         </template>
 
-        <el-container>
+        <el-container class="app-main-container" :style="mainContainerStyle">
           <el-header class="app-header">
             <div class="header-left">
               <el-button
@@ -308,8 +323,8 @@ const openDrawer = () => {
         custom-class="app-drawer"
       >
         <div class="drawer-logo">
-          <span class="logo-mark">Vue优设</span>
-          <p class="logo-slogan">品质租住生活</p>
+          <span class="logo-mark">Link House</span>
+          <p class="logo-slogan">租住生活新体验</p>
         </div>
         <el-menu
           class="app-menu"
@@ -342,6 +357,7 @@ const openDrawer = () => {
 <style scoped>
 .app-root {
   min-height: 100%;
+  position: relative;
 }
 
 .app-shell {
@@ -349,12 +365,19 @@ const openDrawer = () => {
 }
 
 .app-aside {
-  background: linear-gradient(180deg, #1e2a68 0%, #12193a 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
   color: #fff;
   display: flex;
   flex-direction: column;
   transition: var(--transition-base);
-  padding: 18px 0 12px;
+  padding: 24px 0 20px;
+  background: var(--glass-dark);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(148, 163, 210, 0.25);
+  box-shadow: 0 25px 65px rgba(5, 8, 15, 0.65);
 }
 
 .app-aside--collapsed {
@@ -364,26 +387,43 @@ const openDrawer = () => {
 .logo-area {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  margin-bottom: 24px;
+  gap: 14px;
+  padding: 0 24px;
+  margin-bottom: 28px;
 }
 
-.logo-mark {
+.logo-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(122, 162, 255, 0.95), rgba(122, 162, 255, 0.6));
+  color: #0c1424;
   font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
+  box-shadow:
+    0 8px 20px rgba(122, 162, 255, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.logo-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.logo-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .logo-slogan {
-  font-size: 13px;
-  opacity: 0.75;
+  font-size: 12px;
+  opacity: 0.7;
 }
 
 .app-menu {
@@ -402,8 +442,9 @@ const openDrawer = () => {
 
 .app-menu :deep(.el-menu-item.is-active),
 .app-menu :deep(.el-menu-item:hover) {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(122, 162, 255, 0.22);
   color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 .app-menu :deep(.el-menu-item .el-icon) {
@@ -426,7 +467,7 @@ const openDrawer = () => {
 
 .service-banner {
   margin-top: 16px;
-  background: rgba(47, 84, 235, 0.18);
+  background: rgba(122, 162, 255, 0.18);
   padding: 18px;
   border-radius: var(--border-radius-md);
   color: #fff;
@@ -445,15 +486,23 @@ const openDrawer = () => {
   opacity: 0.85;
 }
 
+.app-main-container {
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
 .app-header {
-  height: 72px;
-  background: #fff;
-  border-bottom: 1px solid #eef0f8;
+  height: 76px;
+  background: rgba(16, 24, 37, 0.55);
+  border-bottom: 1px solid rgba(148, 163, 210, 0.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 30px;
   gap: 12px;
+  backdrop-filter: blur(22px);
+  box-shadow: 0 6px 24px rgba(5, 8, 15, 0.45);
+  color: var(--gray-1);
 }
 
 .header-left {
@@ -507,14 +556,14 @@ const openDrawer = () => {
 
 .notice-title {
   font-size: 13px;
-  color: var(--gray-2);
+  color: var(--gray-1);
   margin-bottom: 6px;
   line-height: 1.5;
 }
 
 .notice-time {
   font-size: 12px;
-  color: var(--gray-4);
+  color: var(--gray-3);
 }
 
 .notice-footer {
@@ -547,34 +596,39 @@ const openDrawer = () => {
 }
 
 .app-main {
-  background: var(--gray-bg);
-  padding: 24px;
+  background: transparent;
+  padding: 28px 32px 40px;
+  color: var(--gray-1);
 }
 
 .ghost-btn {
   border: none;
-  background: rgba(47, 84, 235, 0.12);
-  color: var(--brand-primary);
-}
-
-.ghost-btn:hover {
-  background: rgba(47, 84, 235, 0.2);
-}
-
-.app-drawer {
-  background: linear-gradient(180deg, #1e2a68 0%, #12193a 100%);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
+.ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.app-drawer {
+  background: rgba(10, 15, 28, 0.92);
+  color: #fff;
+  backdrop-filter: blur(22px);
+}
+
 .drawer-logo {
-  padding: 20px 16px 8px;
+  padding: 24px 20px 12px;
 }
 
 .drawer-logo .logo-mark {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 96px;
+  justify-content: flex-start;
+  width: 100%;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .drawer-logo .logo-slogan {

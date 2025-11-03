@@ -1,13 +1,16 @@
 :root {
-  --brand-primary: #2f54eb;
-  --brand-primary-soft: #5c7cfa;
+  --brand-primary: #7aa2ff;
+  --brand-primary-soft: #97b6ff;
   --brand-warning: #faad14;
-  --gray-1: #0f172a;
-  --gray-2: #334155;
-  --gray-3: #64748b;
-  --gray-4: #94a3b8;
-  --gray-5: #cbd5f5;
-  --gray-bg: #f5f7fb;
+  --gray-1: rgba(244, 247, 255, 0.94);
+  --gray-2: rgba(220, 228, 255, 0.75);
+  --gray-3: rgba(195, 206, 240, 0.6);
+  --gray-4: rgba(171, 184, 215, 0.5);
+  --gray-5: rgba(137, 149, 191, 0.35);
+  --gray-bg: #0b1220;
+  --glass-white: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-dark: rgba(15, 23, 42, 0.6);
   --border-radius-lg: 16px;
   --border-radius-md: 12px;
   --border-radius-sm: 8px;
@@ -35,7 +38,10 @@ body {
     Roboto,
     'Helvetica Neue',
     sans-serif;
-  background-color: var(--gray-bg);
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(47, 84, 235, 0.55) 0%, transparent 45%),
+    radial-gradient(80% 80% at 100% 0%, rgba(250, 173, 20, 0.35) 0%, transparent 50%),
+    radial-gradient(140% 140% at 50% 100%, rgba(15, 23, 42, 0.95) 30%, #05080f 70%);
   color: var(--gray-1);
   line-height: 1.6;
   text-rendering: optimizeLegibility;

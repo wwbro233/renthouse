@@ -586,7 +586,7 @@ export const activityDetail = {
   cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
   time: '2025-03-15 19:00-22:00',
   location: '望京·优设社区花园',
-  host: 'Vue优设社区运营团队',
+  host: 'Link House 社区团队',
   status: '报名中',
   description:
     '来一场星空下的电影体验！现场提供高清巨幕、环绕音响，还有精心准备的爆米花、小食和饮品。电影结束后还有社交小游戏，帮助你认识更多兴趣相投的小伙伴。',

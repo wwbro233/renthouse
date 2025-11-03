@@ -151,9 +151,9 @@ const router = createRouter({
 
 router.afterEach((to) => {
   if (to.meta?.title) {
-    document.title = `${to.meta.title} - Vue优设`
+    document.title = `${to.meta.title} - Link House`
   } else {
-    document.title = 'Vue优设'
+    document.title = 'Link House'
   }
 })
 

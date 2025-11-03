@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const isLogin = ref(true)
@@ -34,6 +35,18 @@ const goTo = (link) => {
 const handleLogin = () => {
   router.push('/login')
 }
+
+const handleRegister = () => {
+  ElMessage.info('注册功能正在接入，请稍候')
+}
+
+watch(isLogin, (value) => {
+  if (value) {
+    ElMessage.success('已切换至登录视图')
+  } else {
+    ElMessage.warning('当前为未登录状态，部分功能不可用')
+  }
+})
 </script>
 
 <template>
@@ -115,7 +128,7 @@ const handleLogin = () => {
         <p>登录后即可查看收藏房源、预约记录、拼租信息等个性化内容。</p>
         <div class="login-card__actions">
           <el-button type="primary" size="large" @click="handleLogin">立即登录</el-button>
-          <el-button size="large" plain>注册账号</el-button>
+          <el-button size="large" plain @click="handleRegister">注册账号</el-button>
         </div>
       </div>
     </div>

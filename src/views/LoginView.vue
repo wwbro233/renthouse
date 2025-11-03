@@ -46,7 +46,7 @@ const handleRegister = () => {
   <div class="login-wrapper">
     <div class="login-card">
       <div class="brand">
-        <h1>Vue优设</h1>
+        <h1>Link House</h1>
         <p>一站式租住与生活服务平台</p>
       </div>
       <el-tabs v-model="activeTab" stretch class="login-tabs">

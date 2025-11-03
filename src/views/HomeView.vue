@@ -79,7 +79,7 @@ const shortcutsChunks = computed(() => {
         <el-breadcrumb separator="/">
           <el-breadcrumb-item>首页</el-breadcrumb-item>
         </el-breadcrumb>
-        <h2>Vue优设 · 精选好房与生活服务</h2>
+        <h2>Link House · 精选好房与生活服务</h2>
       </div>
       <el-tag size="large" type="success">今日已为 2,340 位用户精准匹配</el-tag>
     </div>

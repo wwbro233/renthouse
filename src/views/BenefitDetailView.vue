@@ -1,7 +1,16 @@
 <script setup>
+import { ElMessage } from 'element-plus'
 import { benefitDetail } from '../data/mockData'
 
 const detail = benefitDetail
+
+const handleReceive = () => {
+  ElMessage.success('福利领取成功，可在卡包中查看使用')
+}
+
+const handleSave = () => {
+  ElMessage.info('福利已加入卡包，使用时可快速选择')
+}
 </script>
 
 <template>
@@ -36,8 +45,8 @@ const detail = benefitDetail
       </div>
       <p class="detail-text">{{ detail.description }}</p>
       <div class="actions">
-        <el-button type="primary" size="large">立即领取</el-button>
-        <el-button size="large" plain>加入卡包</el-button>
+        <el-button type="primary" size="large" @click="handleReceive">立即领取</el-button>
+        <el-button size="large" plain @click="handleSave">加入卡包</el-button>
       </div>
     </div>
 
