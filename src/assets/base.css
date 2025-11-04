@@ -1,16 +1,16 @@
 :root {
-  --brand-primary: #7aa2ff;
-  --brand-primary-soft: #97b6ff;
-  --brand-warning: #faad14;
-  --gray-1: rgba(244, 247, 255, 0.94);
-  --gray-2: rgba(220, 228, 255, 0.75);
-  --gray-3: rgba(195, 206, 240, 0.6);
-  --gray-4: rgba(171, 184, 215, 0.5);
-  --gray-5: rgba(137, 149, 191, 0.35);
-  --gray-bg: #0b1220;
-  --glass-white: rgba(255, 255, 255, 0.18);
-  --glass-border: rgba(255, 255, 255, 0.28);
-  --glass-dark: rgba(15, 23, 42, 0.6);
+  --brand-primary: #1dc68c;
+  --brand-primary-soft: #e8f8f1;
+  --brand-secondary: #ff8a00;
+  --brand-warning: #ffb347;
+  --gray-1: #1f2a36;
+  --gray-2: #435266;
+  --gray-3: #6f7a8a;
+  --gray-4: #a0a9b7;
+  --gray-5: #d7dbe3;
+  --gray-bg: #f6f8fb;
+  --surface-0: #ffffff;
+  --surface-1: #f3f6fa;
   --border-radius-lg: 16px;
   --border-radius-md: 12px;
   --border-radius-sm: 8px;
@@ -38,10 +38,7 @@ body {
     Roboto,
     'Helvetica Neue',
     sans-serif;
-  background:
-    radial-gradient(120% 120% at 0% 0%, rgba(47, 84, 235, 0.55) 0%, transparent 45%),
-    radial-gradient(80% 80% at 100% 0%, rgba(250, 173, 20, 0.35) 0%, transparent 50%),
-    radial-gradient(140% 140% at 50% 100%, rgba(15, 23, 42, 0.95) 30%, #05080f 70%);
+  background-color: var(--gray-bg);
   color: var(--gray-1);
   line-height: 1.6;
   text-rendering: optimizeLegibility;

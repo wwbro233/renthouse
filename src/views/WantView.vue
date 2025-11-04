@@ -1,594 +1,616 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import {
-  commuteRecommendations,
-  mapBoundary,
-  mapMarkers
-} from '../data/mockData'
+import { computed, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useBookingStore } from '../stores/bookingStore'
+import { nearbyProperties, commuteRecommendations } from '../data/mockData'
 
 const router = useRouter()
+const route = useRoute()
+const bookingStore = useBookingStore()
 
-const commuteForm = reactive({
-  address: '北京市朝阳区国贸大厦',
-  time: 30,
-  transport: 'subway'
+const filterState = reactive({
+  position: '北京 朝阳区',
+  layout: '不限',
+  rent: '1500-2000元',
+  sort: '综合排序'
 })
 
-const addressOptions = [
-  '北京市朝阳区国贸大厦',
-  '北京市东城区王府井',
-  '北京市朝阳区望京SOHO',
-  '北京市海淀区中关村软件园',
-  '北京市朝阳区国贸地铁站'
-]
-
-const querySearch = (queryString, cb) => {
-  const results = queryString
-    ? addressOptions
-        .filter((option) => option.toLowerCase().includes(queryString.toLowerCase()))
-        .map((item) => ({ value: item }))
-    : addressOptions.map((item) => ({ value: item }))
-  cb(results)
+const filterOptions = {
+  position: ['北京 朝阳区', '北京 海淀区', '北京 丰台区', '北京 通州区'],
+  layout: ['不限', '1室1厅', '2室1厅', '3室2厅', '4室2厅'],
+  rent: ['1500元以下', '1500-2000元', '2000-3000元', '3000元以上'],
+  sort: ['综合排序', '价格从低到高', '价格从高到低', '面积从大到小', '面积从小到大']
 }
 
-const timeOptions = [
-  { label: '30 分钟内', value: 30 },
-  { label: '45 分钟内', value: 45 },
-  { label: '60 分钟内', value: 60 }
-]
+const searchKeyword = ref(route.query.keyword?.toString() ?? '')
+const sheetVisible = ref(false)
+const activeFilterKey = ref('')
 
-const transportOptions = [
-  { label: '地铁', value: 'subway', icon: 'Position' },
-  { label: '公交', value: 'bus', icon: 'Bus' },
-  { label: '驾车', value: 'drive', icon: 'Van' },
-  { label: '骑行/步行', value: 'bike', icon: 'Bicycle' }
-]
-
-const searchTriggered = ref(true)
-const activeCardId = ref(null)
-
-const matchTransport = (item) => {
-  if (commuteForm.transport === 'subway') return item.transport.includes('地铁')
-  if (commuteForm.transport === 'bus') return item.transport.includes('公交')
-  if (commuteForm.transport === 'drive') return item.transport.includes('驾车')
-  if (commuteForm.transport === 'bike') return item.transport.includes('步行')
-  return true
+const openFilterSheet = (key) => {
+  activeFilterKey.value = key
+  sheetVisible.value = true
 }
 
-const parseMinutes = (text) => {
-  const match = text.match(/(\d+)/)
-  return match ? Number(match[1]) : 999
-}
-
-const filteredRecommendations = computed(() => {
-  if (!searchTriggered.value) {
-    return []
+const chooseFilter = (value) => {
+  if (activeFilterKey.value) {
+    filterState[activeFilterKey.value] = value
   }
-  return commuteRecommendations.filter(
-    (item) => matchTransport(item) && parseMinutes(item.commuteTime) <= commuteForm.time
-  )
+  sheetVisible.value = false
+}
+
+const filteredList = computed(() => {
+  const keyword = searchKeyword.value.trim().toLowerCase()
+  let result = [...nearbyProperties]
+  if (keyword) {
+    result = result.filter(
+      (item) =>
+        item.title.toLowerCase().includes(keyword) ||
+        item.address.toLowerCase().includes(keyword)
+    )
+  }
+  return result.map((item, index) => ({
+    ...item,
+    tag: index % 2 === 0 ? '大开间' : '近地铁'
+  }))
 })
 
-const mapPoints = computed(() =>
-  mapMarkers.map((marker) => {
-    const left =
-      ((marker.lng - mapBoundary.west) / (mapBoundary.east - mapBoundary.west)) * 100
-    const top =
-      ((mapBoundary.north - marker.lat) / (mapBoundary.north - mapBoundary.south)) * 100
-    return {
-      ...marker,
-      left,
-      top
-    }
-  })
-)
-
-const handleSearch = () => {
-  searchTriggered.value = true
-  if (filteredRecommendations.value.length) {
-    activeCardId.value = filteredRecommendations.value[0].id
-  }
-}
-
-const handleCardEnter = (id) => {
-  activeCardId.value = id
-}
-
-const handleMarkerClick = (id) => {
-  activeCardId.value = id
-  const target = filteredRecommendations.value.find((item) => item.id === id)
-  if (target) {
-    const cardEl = document.getElementById(`commute-card-${id}`)
-    if (cardEl) {
-      cardEl.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      })
-    }
-  }
-}
-
-const goToDetail = (id) => {
+const goToProperty = (id) => {
   router.push(`/property/${id}`)
 }
 
-const handleAddFavorite = (item) => {
-  ElMessage.success(`已收藏「${item.title}」`)
+const handleBook = (item) => {
+  bookingStore.openBookingDialog({
+    propertyId: item.id,
+    title: item.title,
+    address: item.address
+  })
 }
 
-const handleBookVisit = (item) => {
-  ElMessage.success(`已提交「${item.title}」看房预约`)
-}
+const hotIdeas = commuteRecommendations.slice(0, 3)
 
-handleSearch()
+watch(
+  () => route.query.keyword,
+  (value) => {
+    searchKeyword.value = value?.toString() ?? ''
+  }
+)
+
+watch(searchKeyword, () => {
+  pageState.currentPage = 1
+})
+
+const handleSearch = () => {
+  const keyword = searchKeyword.value.trim()
+  router
+    .push({
+      path: '/want',
+      query: keyword ? { keyword } : undefined
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
-  <div class="page-wrapper">
-    <div class="page-title">
-      <div>
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>想看</el-breadcrumb-item>
-        </el-breadcrumb>
-        <h2>通勤智能找房 · 让上下班更轻松</h2>
+  <div class="want-page">
+    <section class="hero">
+      <header class="hero__header">
+        <div class="hero__left">
+          <el-icon><Briefcase /></el-icon>
+          <span>填写通勤地址</span>
+        </div>
+        <div class="hero__actions">
+          <el-icon size="20"><ChatDotRound /></el-icon>
+          <el-icon size="20"><Share /></el-icon>
+        </div>
+      </header>
+      <div class="hero__content">
+        <div>
+          <p class="hero__subtitle">发现你想看的房子</p>
+          <h2>找房</h2>
+        </div>
+        <img
+          class="hero__illustration"
+          src="https://images.unsplash.com/photo-1600585154340-0ef3c08cc65c?auto=format&fit=crop&w=640&q=80"
+          alt="找房插图"
+        />
       </div>
-      <el-tag size="large" effect="dark" type="primary">已接入 128 条通勤线路</el-tag>
-    </div>
+      <p class="hero__hint">暂无想看房源，试试如下找房方式</p>
+      <div class="hero__actions-row">
+        <button type="button" @click="router.push('/want')">
+          <el-icon><Van /></el-icon>
+          通勤找房
+        </button>
+        <button type="button" @click="router.push('/want#map')">
+          <el-icon><MapLocation /></el-icon>
+          地图找房
+        </button>
+      </div>
+    </section>
 
-    <div class="section-card">
-      <div class="section-card__header">
-        <span class="section-card__title">填写通勤信息</span>
-        <el-text type="info">输入工作地点，选择通勤时长与方式，我们为你推荐符合条件的房源</el-text>
+    <section class="search-toolbar">
+      <el-input
+        v-model="searchKeyword"
+        placeholder="搜索房源标题或地址"
+        clearable
+        @keyup.enter="handleSearch"
+        @clear="handleSearch"
+      >
+        <template #prefix>
+          <el-icon><Search /></el-icon>
+        </template>
+      </el-input>
+      <el-button type="primary" @click="handleSearch">搜索</el-button>
+    </section>
+
+    <section class="filter-card">
+      <div
+        v-for="item in Object.keys(filterState)"
+        :key="item"
+        class="filter-chip"
+        @click="openFilterSheet(item)"
+      >
+        <span>{{ filterState[item] }}</span>
+        <el-icon><ArrowDown /></el-icon>
       </div>
-      <el-form label-position="top" class="commute-form">
-        <el-form-item label="工作 / 通勤地点">
-          <el-autocomplete
-            v-model="commuteForm.address"
-            :fetch-suggestions="querySearch"
-            placeholder="请输入工作地点，如“北京市朝阳区国贸大厦”"
-            clearable
-            size="large"
-          >
-            <template #prefix>
-              <el-icon><Location /></el-icon>
-            </template>
-          </el-autocomplete>
-        </el-form-item>
-        <el-form-item label="希望通勤时长">
-          <el-radio-group v-model="commuteForm.time" size="large">
-            <el-radio-button
-              v-for="item in timeOptions"
-              :key="item.value"
-              :label="item.value"
+    </section>
+
+    <section class="property-list">
+      <article
+        v-for="item in filteredList"
+        :key="item.id"
+        class="property-card"
+        @click="goToProperty(item.id)"
+      >
+        <div class="property-card__media">
+          <img :src="item.cover" :alt="item.title" />
+          <div class="property-card__badge">{{ item.tag }}</div>
+        </div>
+        <div class="property-card__body">
+          <div class="property-card__header">
+            <h3>{{ item.title }}</h3>
+            <span>¥{{ item.price }}/月</span>
+          </div>
+          <p class="property-card__sub">{{ item.layout }} · {{ item.size }}㎡</p>
+          <p class="property-card__sub">{{ item.address }}</p>
+          <div class="property-card__footer" @click.stop>
+            <button type="button" @click="handleBook(item)">预约看房</button>
+            <el-icon><ArrowRight /></el-icon>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="ideas-card">
+      <h4>房源推荐</h4>
+      <div class="ideas-timeline">
+        <article v-for="item in hotIdeas" :key="item.id">
+          <img :src="item.cover" :alt="item.title" />
+          <div>
+            <h5>{{ item.title }}</h5>
+            <p>{{ item.transport }} · {{ item.commuteTime }}</p>
+            <span>¥{{ item.price }}/月</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <transition name="fade">
+      <div v-if="sheetVisible" class="filter-sheet">
+        <div class="filter-sheet__mask" @click="sheetVisible = false"></div>
+        <div class="filter-sheet__panel">
+          <header>
+            <h5>{{ activeFilterKey === 'position' ? '位置' : activeFilterKey === 'layout' ? '户型' : activeFilterKey === 'rent' ? '租金' : '排序' }}</h5>
+            <button type="button" @click="sheetVisible = false">
+              <el-icon><CloseBold /></el-icon>
+            </button>
+          </header>
+          <div class="filter-sheet__options">
+            <button
+              v-for="option in filterOptions[activeFilterKey]"
+              :key="option"
+              type="button"
+              :class="{ active: filterState[activeFilterKey] === option }"
+              @click="chooseFilter(option)"
             >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="主要通勤方式">
-          <div class="transport-options">
-            <div
-              v-for="item in transportOptions"
-              :key="item.value"
-              :class="['transport-card', commuteForm.transport === item.value ? 'is-active' : '']"
-              @click="commuteForm.transport = item.value"
-            >
-              <el-icon><component :is="item.icon" /></el-icon>
-              <span>{{ item.label }}</span>
-            </div>
+              {{ option }}
+            </button>
           </div>
-        </el-form-item>
-        <div class="form-actions">
-          <el-button type="primary" size="large" @click="handleSearch">
-            <el-icon><Search /></el-icon>
-            开始找房
-          </el-button>
-          <el-button size="large" plain @click="router.push('/want')">
-            重置条件
-          </el-button>
-        </div>
-      </el-form>
-    </div>
-
-    <div class="content-layout">
-      <div class="section-card results-card">
-        <div class="section-card__header">
-          <span class="section-card__title">通勤找房结果</span>
-          <el-tag type="info" effect="plain">
-            共匹配 {{ filteredRecommendations.length }} 套房源
-          </el-tag>
-        </div>
-
-        <div class="results-list">
-          <el-empty
-            v-if="!filteredRecommendations.length"
-            description="当前条件下暂无匹配房源，试试调整通勤时长或交通方式"
-          />
-          <el-card
-            v-for="item in filteredRecommendations"
-            :key="item.id"
-            :id="`commute-card-${item.id}`"
-            shadow="hover"
-            class="commute-card"
-            :class="{ 'is-active': activeCardId === item.id }"
-            @mouseenter="handleCardEnter(item.id)"
-            @click="handleMarkerClick(item.id)"
-          >
-            <img :src="item.cover" alt="" class="commute-card__cover" />
-            <div class="commute-card__body">
-              <div class="commute-card__head">
-                <h4>{{ item.title }}</h4>
-                <el-tag type="success" effect="dark">{{ item.commuteTime }}</el-tag>
-              </div>
-              <p class="commute-card__price">{{ item.price }} 元/月</p>
-              <p class="commute-card__meta">
-                {{ item.layout }} · {{ item.size }}㎡ · {{ item.transport }}
-              </p>
-              <p class="commute-card__address">
-                <el-icon><LocationFilled /></el-icon>
-                {{ item.address }}
-              </p>
-              <div class="commute-card__tags">
-                <el-tag
-                  v-for="tag in item.tags"
-                  :key="tag"
-                  size="small"
-                  type="info"
-                >
-                  {{ tag }}
-                </el-tag>
-              </div>
-              <div class="commute-card__actions">
-                <el-button type="primary" plain size="small" @click.stop="goToDetail(item.id)">
-                  查看详情
-                </el-button>
-                <el-button size="small" text @click.stop="handleAddFavorite(item)">
-                  加入想看
-                </el-button>
-                <el-button size="small" text type="success" @click.stop="handleBookVisit(item)">
-                  预约看房
-                </el-button>
-              </div>
-            </div>
-          </el-card>
+          <button class="filter-sheet__reset" type="button" @click="chooseFilter(filterOptions[activeFilterKey][0])">
+            查看房源
+          </button>
         </div>
       </div>
-
-      <div class="section-card map-card">
-        <div class="section-card__header">
-          <span class="section-card__title">地图找房</span>
-          <el-text type="info">点击标记查看房源位置，蓝色为推荐</el-text>
-        </div>
-        <div class="map-container">
-          <div class="map-grid">
-            <div class="grid-line horizontal" v-for="n in 3" :key="`h-${n}`"></div>
-            <div class="grid-line vertical" v-for="n in 3" :key="`v-${n}`"></div>
-          </div>
-          <div
-            v-for="marker in mapPoints"
-            :key="marker.id"
-            class="map-marker"
-            :class="{ 'is-active': activeCardId === marker.id }"
-            :style="{ left: `${marker.left}%`, top: `${marker.top}%` }"
-            @click="handleMarkerClick(marker.id)"
-          >
-            <span class="map-marker__price">{{ marker.price }} 元</span>
-            <span class="map-marker__title">{{ marker.title }}</span>
-          </div>
-        </div>
-        <div class="map-legend">
-          <div class="legend-item">
-            <span class="legend-dot legend-dot--active"></span>
-            推荐房源
-          </div>
-          <div class="legend-item">
-            <span class="legend-dot legend-dot--default"></span>
-            其他房源
-          </div>
-        </div>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <style scoped>
-.page-wrapper {
+.want-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  padding: 4px 0 32px;
 }
 
-.commute-form {
-  display: grid;
-  gap: 18px;
+.search-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--surface-0);
+  padding: 16px 20px;
+  border-radius: 18px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
 }
 
-.transport-options {
+.search-toolbar :deep(.el-input__wrapper) {
+  padding-left: 8px;
+  background: rgba(243, 246, 250, 0.8);
+  border: none;
+  box-shadow: none;
+}
+
+.search-toolbar :deep(.el-input__inner) {
+  font-size: 15px;
+}
+
+.hero {
+  background: linear-gradient(180deg, #baf4d5 0%, #e9fced 70%, #ffffff 100%);
+  border-radius: 22px;
+  padding: 18px 18px 24px;
+  box-shadow: 0 18px 32px rgba(40, 121, 102, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hero__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #2a5148;
+}
+
+.hero__left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 12px;
+  color: rgba(42, 81, 72, 0.65);
+}
+
+.hero__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.hero__subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(42, 81, 72, 0.58);
+}
+
+.hero__content h2 {
+  margin: 6px 0 0;
+  font-size: 30px;
+  color: #244d43;
+}
+
+.hero__illustration {
+  width: 132px;
+  border-radius: 16px;
+  box-shadow: 0 14px 26px rgba(40, 121, 102, 0.22);
+}
+
+.hero__hint {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(42, 81, 72, 0.65);
+}
+
+.hero__actions-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-.transport-card {
-  display: flex;
-  flex-direction: column;
+.hero__actions-row button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 16px;
+  background: rgba(12, 159, 113, 0.18);
+  color: #138965;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 16px;
-  border-radius: var(--border-radius-md);
-  background: #f4f6ff;
-  color: var(--brand-primary);
+  font-size: 14px;
+  font-weight: 600;
+  justify-content: center;
   cursor: pointer;
-  transition: var(--transition-base);
 }
 
-.transport-card.is-active {
-  background: rgba(47, 84, 235, 0.18);
-  box-shadow: 0 10px 30px rgba(47, 84, 235, 0.2);
-}
-
-.transport-card:hover {
-  transform: translateY(-4px);
-}
-
-.form-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 8px;
-}
-
-.content-layout {
+.filter-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 14px 12px;
   display: grid;
-  grid-template-columns: minmax(420px, 3fr) minmax(320px, 2fr);
-  gap: 24px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  box-shadow: 0 12px 24px rgba(40, 121, 102, 0.12);
 }
 
-.results-card {
-  padding-bottom: 12px;
-}
-
-.results-list {
+.filter-chip {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-height: 720px;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-.results-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.results-list::-webkit-scrollbar-thumb {
-  background-color: rgba(47, 84, 235, 0.25);
-  border-radius: 4px;
-}
-
-.commute-card {
-  display: flex;
-  gap: 18px;
-  border-radius: var(--border-radius-lg);
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(12, 159, 113, 0.08);
+  color: #256554;
+  font-size: 14px;
   cursor: pointer;
-  transition: var(--transition-base);
 }
 
-.commute-card.is-active {
-  border: 1px solid rgba(47, 84, 235, 0.35);
-  box-shadow: 0 14px 32px rgba(47, 84, 235, 0.18);
-}
-
-.commute-card__cover {
-  width: 220px;
-  height: 160px;
-  object-fit: cover;
-  border-radius: var(--border-radius-md);
-}
-
-.commute-card__body {
-  flex: 1;
+.property-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
 }
 
-.commute-card__head {
+.property-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 14px 26px rgba(20, 78, 64, 0.14);
+  display: flex;
+  gap: 12px;
+}
+
+.property-card__media {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.property-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.property-card__badge {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.9);
+  color: #fff;
+  font-size: 12px;
+}
+
+.property-card__body {
+  flex: 1;
+  padding: 14px 16px 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #26483f;
+}
+
+.property-card__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-}
-
-.commute-card__head h4 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--gray-1);
-}
-
-.commute-card__price {
-  font-size: 18px;
-  color: var(--brand-primary);
-  font-weight: 600;
-}
-
-.commute-card__meta {
-  font-size: 13px;
-  color: var(--gray-3);
-}
-
-.commute-card__address {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--gray-2);
-}
-
-.commute-card__tags {
-  display: flex;
-  flex-wrap: wrap;
   gap: 8px;
 }
 
-.commute-card__actions {
+.property-card__header h3 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.property-card__header span {
+  color: #e7502a;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.property-card__sub {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(38, 72, 63, 0.65);
+}
+
+.property-card__footer {
+  margin-top: auto;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
 }
 
-.map-card {
-  min-height: 640px;
-  position: sticky;
-  top: 88px;
-}
-
-.map-container {
-  position: relative;
-  background: linear-gradient(180deg, #f7f9ff 0%, #eef2ff 100%);
+.property-card__footer button {
+  border: none;
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
   border-radius: 20px;
-  height: 520px;
-  overflow: hidden;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
-.map-grid {
-  position: absolute;
-  inset: 0;
-}
-
-.grid-line {
-  position: absolute;
-  background: rgba(79, 117, 255, 0.08);
-}
-
-.grid-line.horizontal {
-  height: 1px;
-  width: 100%;
-}
-
-.grid-line.vertical {
-  width: 1px;
-  height: 100%;
-}
-
-.grid-line.horizontal:nth-child(1) {
-  top: 25%;
-}
-.grid-line.horizontal:nth-child(2) {
-  top: 50%;
-}
-.grid-line.horizontal:nth-child(3) {
-  top: 75%;
-}
-.grid-line.vertical:nth-child(4) {
-  left: 25%;
-}
-.grid-line.vertical:nth-child(5) {
-  left: 50%;
-}
-.grid-line.vertical:nth-child(6) {
-  left: 75%;
-}
-
-.map-marker {
-  position: absolute;
-  transform: translate(-50%, -50%);
+.ideas-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 16px 28px rgba(16, 70, 58, 0.12);
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.ideas-card h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #254c42;
+}
+
+.ideas-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ideas-timeline article {
+  display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: var(--transition-base);
 }
 
-.map-marker__price {
-  background: #fff;
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: var(--brand-primary);
-  font-weight: 600;
-  box-shadow: 0 10px 24px rgba(47, 84, 235, 0.25);
+.ideas-timeline img {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  object-fit: cover;
 }
 
-.map-marker__title {
+.ideas-timeline h5 {
+  margin: 0;
+  font-size: 14px;
+  color: #26483f;
+}
+
+.ideas-timeline p {
+  margin: 4px 0;
   font-size: 12px;
-  background: rgba(47, 84, 235, 0.12);
-  color: var(--gray-2);
-  padding: 4px 10px;
+  color: rgba(38, 72, 63, 0.65);
+}
+
+.ideas-timeline span {
+  font-size: 12px;
+  color: #e7502a;
+  font-weight: 600;
+}
+
+.filter-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+}
+
+.filter-sheet__mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 34, 30, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.filter-sheet__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  padding: 20px 18px 32px;
+  box-shadow: 0 -12px 32px rgba(20, 78, 64, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-sheet__panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-sheet__panel h5 {
+  margin: 0;
+  font-size: 16px;
+  color: #294d43;
+}
+
+.filter-sheet__panel header button {
+  border: none;
+  background: rgba(12, 159, 113, 0.12);
+  color: #1d6f58;
   border-radius: 999px;
+  padding: 6px 8px;
 }
 
-.map-marker.is-active .map-marker__price {
-  background: var(--brand-primary);
-  color: #fff;
+.filter-sheet__options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
-.map-legend {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-top: 16px;
+.filter-sheet__options button {
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(12, 159, 113, 0.08);
+  color: #256554;
+  font-size: 14px;
+  cursor: pointer;
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--gray-3);
+.filter-sheet__options button.active {
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 20px rgba(12, 159, 113, 0.28);
 }
 
-.legend-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+.filter-sheet__reset {
+  border: none;
+  border-radius: 20px;
+  padding: 12px;
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.legend-dot--active {
-  background: var(--brand-primary);
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
 }
 
-.legend-dot--default {
-  background: rgba(47, 84, 235, 0.3);
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
-@media (max-width: 1399px) {
-  .content-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .map-card {
-    position: relative;
-    top: auto;
-  }
-}
-
-@media (max-width: 991px) {
-  .commute-card {
+@media (max-width: 390px) {
+  .property-card {
     flex-direction: column;
   }
 
-  .commute-card__cover {
+  .property-card__media {
     width: 100%;
-    height: 200px;
-  }
-}
-
-@media (max-width: 767px) {
-  .form-actions {
-    flex-direction: column;
-    align-items: stretch;
+    height: 180px;
   }
 
-  .transport-options {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  .property-card__body {
+    padding: 14px 16px 18px;
   }
 
-  .map-container {
-    height: 360px;
+  .filter-sheet__options {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>

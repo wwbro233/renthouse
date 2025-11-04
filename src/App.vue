@@ -1,644 +1,542 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import BookingDialog from './components/BookingDialog.vue'
+import { useBookingStore } from './stores/bookingStore'
+import { useAuthStore } from './stores/authStore'
+import { initCozeChat } from './plugins/cozeClient'
+
+useBookingStore()
+useAuthStore()
 
 const router = useRouter()
 const route = useRoute()
 
-const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1920)
-const manualCollapsed = ref(false)
-const drawerVisible = ref(false)
-const city = ref('北京')
+const navItems = [
+  { key: 'home', label: '首页', route: '/' },
+  { key: 'want', label: '找房', route: '/want' },
+  { key: 'service', label: '家居服务', route: '/service' },
+  { key: 'discover', label: '新鲜资讯', route: '/discover' },
+  { key: 'support', label: '客服中心', route: '/support' }
+]
+
+const quickLinks = [
+  { key: 'my', label: '个人中心', route: '/my' },
+  { key: 'appointment', label: '我的约看', route: '/my/appointment' },
+  { key: 'favorite', label: '我的想看', route: '/my/want' }
+]
+
+const hotKeywords = ['地铁周边', '押一付一', 'CBD 写字楼', '精装三居']
+const currentYear = new Date().getFullYear()
+
+const showLayout = computed(() => route.meta?.layout !== 'blank')
+
+const activeNavKey = computed(() => {
+  const active = route.meta?.activeMenu ?? route.path
+  const exact = navItems.find((item) => item.route === active)
+  if (exact) return exact.key
+  const match = navItems.find((item) => item.route !== '/' && active.startsWith(item.route))
+  return match ? match.key : 'home'
+})
+
 const searchKeyword = ref('')
 
-const cityOptions = [
-  '北京',
-  '上海',
-  '广州',
-  '深圳',
-  '杭州',
-  '成都',
-  '重庆',
-  '苏州'
-]
-
-const menuItems = [
-  {
-    path: '/',
-    label: '首页',
-    icon: 'House'
-  },
-  {
-    path: '/want',
-    label: '想看',
-    icon: 'Guide'
-  },
-  {
-    path: '/service',
-    label: '服务',
-    icon: 'Suitcase'
-  },
-  {
-    path: '/discover',
-    label: '发现',
-    icon: 'Compass'
-  },
-  {
-    path: '/my',
-    label: '我的',
-    icon: 'User'
-  }
-]
-
-const notifications = ref([
-  {
-    id: 1,
-    title: '【活动】周末社区音乐会报名开启，席位有限！',
-    time: '10分钟前'
-  },
-  {
-    id: 2,
-    title: '【房源推荐】为你匹配3套通勤30分钟内的精装房。',
-    time: '1小时前'
-  },
-  {
-    id: 3,
-    title: '【服务提醒】“深度保洁”预约将在明日09:00开始。',
-    time: '昨天'
-  }
-])
-
-const unreadCount = computed(() => notifications.value.length)
-const showLayout = computed(() => route.meta?.layout !== 'blank')
-const isMobile = computed(() => viewportWidth.value < 1024)
-const isTablet = computed(() => viewportWidth.value >= 1024 && viewportWidth.value < 1200)
-const isDesktop = computed(() => viewportWidth.value >= 1200)
-const effectiveCollapsed = computed(() => {
-  if (isMobile.value) return true
-  if (isTablet.value) return true
-  return manualCollapsed.value
-})
-const asideWidth = computed(() => (effectiveCollapsed.value ? '64px' : '240px'))
-const activeMenu = computed(() => route.meta?.activeMenu ?? route.path)
-const mainContainerStyle = computed(() => {
-  if (isMobile.value) {
-    return {}
-  }
-  const base = parseFloat(asideWidth.value) || 0
-  const margin = `${base + 28}px`
-  return {
-    marginLeft: margin,
-    width: `calc(100% - ${margin})`,
-    paddingTop: '24px'
-  }
-})
-
-const handleResize = () => {
-  viewportWidth.value = window.innerWidth
-  if (isTablet.value) {
-    manualCollapsed.value = true
-  }
-  if (isMobile.value) {
-    drawerVisible.value = false
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  handleResize()
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-})
-
-watch(
-  () => route.path,
-  () => {
-    if (isMobile.value) {
-      drawerVisible.value = false
-    }
-  }
-)
-
-const toggleCollapse = () => {
-  manualCollapsed.value = !manualCollapsed.value
-}
-
-const handleMenuSelect = (path) => {
-  if (path === route.path) return
-  router.push(path)
-}
-
-const handleDrawerSelect = (path) => {
-  handleMenuSelect(path)
+const handleNavigate = (item) => {
+  if (item.route === route.path) return
+  router.push(item.route)
 }
 
 const handleSearch = () => {
   const keyword = searchKeyword.value.trim()
-  if (!keyword) {
-    ElMessage.warning('请输入搜索关键词')
-    return
-  }
-  ElMessage.success(`已为您查找 “${keyword}” 相关内容`)
+  router.push({
+    path: '/want',
+    query: keyword ? { keyword } : undefined
+  })
 }
 
-const goToProfile = () => {
-  router.push('/my/profile')
+const handleHotClick = (keyword) => {
+  searchKeyword.value = keyword
+  handleSearch()
 }
 
-const goToLogin = () => {
+const goHome = () => {
+  if (route.path !== '/') router.push('/')
+}
+
+const goLogin = () => {
   router.push('/login')
 }
 
-const openDrawer = () => {
-  drawerVisible.value = true
+const openChat = async () => {
+  try {
+    const client = await initCozeChat()
+    if (client?.open) {
+      client.open()
+    }
+  } catch (error) {
+    console.error('[Coze] 打开客服失败', error)
+  }
 }
 </script>
 
 <template>
-  <div class="app-root">
-    <template v-if="showLayout">
-      <el-container class="app-shell">
-        <template v-if="!isMobile">
-          <el-aside
-            class="app-aside"
-            :width="asideWidth"
-            :class="{ 'app-aside--collapsed': effectiveCollapsed }"
-          >
-            <div class="logo-area">
-              <span class="logo-icon">LH</span>
-              <div v-if="!effectiveCollapsed" class="logo-copy">
-                <span class="logo-title">Link House</span>
-                <span class="logo-slogan">租住生活新体验</span>
-              </div>
-            </div>
-            <el-menu
-              class="app-menu"
-              :collapse="effectiveCollapsed"
-              :default-active="activeMenu"
-              background-color="transparent"
-              @select="handleMenuSelect"
-            >
-              <el-menu-item
-                v-for="item in menuItems"
-                :key="item.path"
-                :index="item.path"
-              >
-                <el-icon>
-                  <component :is="item.icon" />
-                </el-icon>
-                <template #title>
-                  <span>{{ item.label }}</span>
-                </template>
-              </el-menu-item>
-            </el-menu>
-            <div class="aside-footer">
-              <el-button v-if="isDesktop" text class="collapse-btn" @click="toggleCollapse">
-                <el-icon>
-                  <component :is="effectiveCollapsed ? 'Expand' : 'Fold'" />
-                </el-icon>
-                <span v-if="!effectiveCollapsed">收起菜单</span>
-              </el-button>
-              <div class="service-banner" v-if="!effectiveCollapsed">
-                <p class="banner-title">智能助手</p>
-                <p class="banner-desc">快速预约保洁、搬家、活动咨询。</p>
-                <el-button type="primary" size="small" plain>打开coze智能体</el-button>
-              </div>
-            </div>
-          </el-aside>
-        </template>
-
-        <el-container class="app-main-container" :style="mainContainerStyle">
-          <el-header class="app-header">
-            <div class="header-left">
-              <el-button
-                v-if="isMobile"
-                class="ghost-btn"
-                type="primary"
-                circle
-                @click="openDrawer"
-              >
-                <el-icon><Menu /></el-icon>
-              </el-button>
-              <div v-else class="city-switch">
-                <span class="city-label">当前城市</span>
-                <el-select
-                  v-model="city"
-                  size="large"
-                  class="city-select"
-                  :teleported="false"
-                  placeholder="选择城市"
-                >
-                  <el-option
-                    v-for="item in cityOptions"
-                    :key="item"
-                    :label="item"
-                    :value="item"
-                  />
-                </el-select>
-              </div>
-              <div class="header-search">
-                <el-input
-                  v-model="searchKeyword"
-                  size="large"
-                  placeholder="搜索房源、服务、活动"
-                  @keyup.enter="handleSearch"
-                >
-                  <template #prefix>
-                    <el-icon><Search /></el-icon>
-                  </template>
-                  <template #append>
-                    <el-button type="primary" @click="handleSearch">搜索</el-button>
-                  </template>
-                </el-input>
-              </div>
-            </div>
-
-            <div class="header-right">
-              <el-popover placement="bottom" width="280" trigger="click" popper-class="notice-popper">
-                <template #reference>
-                  <el-badge :value="unreadCount" class="message-badge" :hidden="!unreadCount">
-                    <el-button text circle>
-                      <el-icon><Bell /></el-icon>
-                    </el-button>
-                  </el-badge>
-                </template>
-                <div class="notification-list">
-                  <div v-for="notice in notifications" :key="notice.id" class="notice-item">
-                    <p class="notice-title">{{ notice.title }}</p>
-                    <p class="notice-time">{{ notice.time }}</p>
-                  </div>
-                  <div class="notice-footer">
-                    <el-button link type="primary" @click="router.push('/discover')">
-                      查看全部消息
-                    </el-button>
-                  </div>
-                </div>
-              </el-popover>
-              <el-divider direction="vertical" />
-              <el-dropdown>
-                <span class="user-entry">
-                  <el-avatar
-                    size="medium"
-                    src="https://picsum.photos/80?grayscale&random=12"
-                  />
-                  <span class="user-meta">
-                    <span class="user-name">张租客</span>
-                    <span class="user-level">UID 278930</span>
-                  </span>
-                  <el-icon><ArrowDown /></el-icon>
-                </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item @click="goToProfile">个人资料</el-dropdown-item>
-                    <el-dropdown-item @click="router.push('/my/want')">
-                      我的想看
-                    </el-dropdown-item>
-                    <el-dropdown-item divided @click="goToLogin">退出登录</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </div>
-          </el-header>
-
-          <el-main class="app-main">
-            <el-scrollbar>
-              <router-view v-slot="{ Component }">
-                <transition name="fade-slide" mode="out-in">
-                  <component :is="Component" />
-                </transition>
-              </router-view>
-            </el-scrollbar>
-          </el-main>
-        </el-container>
-      </el-container>
-
-      <el-drawer
-        v-if="isMobile"
-        v-model="drawerVisible"
-        :with-header="false"
-        size="240px"
-        custom-class="app-drawer"
-      >
-        <div class="drawer-logo">
-          <span class="logo-mark">Link House</span>
-          <p class="logo-slogan">租住生活新体验</p>
+  <div class="web-app">
+    <header v-if="showLayout" class="site-header">
+      <div class="top-bar">
+        <div class="top-bar__left">
+          <button type="button" class="city-button">
+            <el-icon size="16"><Location /></el-icon>
+            <span>北京</span>
+            <el-icon size="12"><ArrowDown /></el-icon>
+          </button>
+          <span class="top-bar__welcome">欢迎来到链房，智能匹配安心好房</span>
         </div>
-        <el-menu
-          class="app-menu"
-          :default-active="activeMenu"
-          background-color="transparent"
-          @select="handleDrawerSelect"
-        >
-          <el-menu-item
-            v-for="item in menuItems"
-            :key="item.path"
-            :index="item.path"
+        <div class="top-bar__right">
+          <button
+            v-for="link in quickLinks"
+            :key="link.key"
+            type="button"
+            class="top-link"
+            @click="handleNavigate(link)"
           >
-            <el-icon>
-              <component :is="item.icon" />
-            </el-icon>
-            <template #title>
-              <span>{{ item.label }}</span>
-            </template>
-          </el-menu-item>
-        </el-menu>
-      </el-drawer>
-    </template>
+            {{ link.label }}
+          </button>
+          <span class="divider"></span>
+          <button type="button" class="top-link" @click="goLogin">登录 / 注册</button>
+          <button type="button" class="top-link top-link--chat" @click="openChat">
+            在线客服
+          </button>
+        </div>
+      </div>
 
-    <template v-else>
-      <router-view />
-    </template>
+      <div class="main-header">
+        <div class="main-header__logo" @click="goHome">
+          <span class="logo__brand">链房</span>
+          <span class="logo__tagline">安心租住每一天</span>
+        </div>
+        <div class="main-header__search">
+          <div class="search-box">
+            <el-icon size="20"><Search /></el-icon>
+            <input
+              v-model="searchKeyword"
+              type="text"
+              placeholder="输入小区、地铁、商圈"
+              @keyup.enter="handleSearch"
+            />
+            <button type="button" @click="handleSearch">搜索</button>
+          </div>
+          <div class="search-hot">
+            <span>热门：</span>
+            <button
+              v-for="keyword in hotKeywords"
+              :key="keyword"
+              type="button"
+              @click="handleHotClick(keyword)"
+            >
+              {{ keyword }}
+            </button>
+          </div>
+        </div>
+        <div class="main-header__contact">
+          <span>客服热线</span>
+          <strong>400-860-8888</strong>
+          <small>每日 8:00-22:00</small>
+        </div>
+      </div>
+
+      <nav class="site-nav">
+        <button
+          v-for="item in navItems"
+          :key="item.key"
+          type="button"
+          class="site-nav__item"
+          :class="{ 'site-nav__item--active': activeNavKey === item.key }"
+          @click="handleNavigate(item)"
+        >
+          {{ item.label }}
+        </button>
+      </nav>
+    </header>
+
+    <main class="site-main">
+      <router-view v-slot="{ Component }">
+        <transition name="fade-slide" mode="out-in">
+          <div v-if="Component" :class="showLayout ? 'content-container' : 'content-blank'">
+            <component :is="Component" />
+          </div>
+        </transition>
+      </router-view>
+    </main>
+
+    <footer v-if="showLayout" class="site-footer">
+      <div class="content-container footer-content">
+        <div class="footer-brand">
+          <h3>链房</h3>
+          <p>灵感源自安居客，为你打造可信赖的找房体验。</p>
+          <button type="button" @click="openChat">在线客服咨询</button>
+        </div>
+        <div class="footer-links">
+          <div>
+            <h4>快速入口</h4>
+            <router-link to="/want">找房首页</router-link>
+            <router-link to="/service">家居服务</router-link>
+            <router-link to="/discover">生活资讯</router-link>
+          </div>
+          <div>
+            <h4>帮助中心</h4>
+            <router-link to="/support">在线客服</router-link>
+            <router-link to="/my/want">我的想看</router-link>
+            <router-link to="/my/footprint">看房足迹</router-link>
+          </div>
+          <div>
+            <h4>联系我们</h4>
+            <span>客服电话：400-860-8888</span>
+            <span>服务时间：每日 8:00-22:00</span>
+            <span>邮箱：support@gulizhaofang.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-meta">
+        © {{ currentYear }} 链房 版权所有 · 京ICP备12345678号
+      </div>
+    </footer>
+    <BookingDialog />
   </div>
 </template>
 
 <style scoped>
-.app-root {
-  min-height: 100%;
-  position: relative;
-}
-
-.app-shell {
+.web-app {
   min-height: 100vh;
-}
-
-.app-aside {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  color: #fff;
   display: flex;
   flex-direction: column;
-  transition: var(--transition-base);
-  padding: 24px 0 20px;
-  background: var(--glass-dark);
-  backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(148, 163, 210, 0.25);
-  box-shadow: 0 25px 65px rgba(5, 8, 15, 0.65);
+  background: var(--gray-bg);
+  color: var(--gray-1);
 }
 
-.app-aside--collapsed {
-  align-items: center;
+.site-header {
+  background: var(--surface-0);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06);
 }
 
-.logo-area {
+.top-bar {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0 24px;
-  margin-bottom: 28px;
-}
-
-.logo-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(122, 162, 255, 0.95), rgba(122, 162, 255, 0.6));
-  color: #0c1424;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  box-shadow:
-    0 8px 20px rgba(122, 162, 255, 0.4),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-}
-
-.logo-copy {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.logo-title {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.logo-slogan {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.app-menu {
-  border-right: none;
-  flex: 1;
-}
-
-.app-menu :deep(.el-menu-item) {
-  height: 48px;
-  margin: 6px 12px;
-  border-radius: 12px;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 15px;
-  transition: var(--transition-base);
-}
-
-.app-menu :deep(.el-menu-item.is-active),
-.app-menu :deep(.el-menu-item:hover) {
-  background: rgba(122, 162, 255, 0.22);
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
-.app-menu :deep(.el-menu-item .el-icon) {
-  font-size: 18px;
-}
-
-.aside-footer {
-  padding: 0 16px 12px;
-}
-
-.collapse-btn {
-  width: 100%;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.collapse-btn:hover {
-  color: #fff;
-}
-
-.service-banner {
-  margin-top: 16px;
-  background: rgba(122, 162, 255, 0.18);
-  padding: 18px;
-  border-radius: var(--border-radius-md);
-  color: #fff;
-}
-
-.banner-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.banner-desc {
-  font-size: 12px;
-  line-height: 1.5;
-  margin-bottom: 12px;
-  opacity: 0.85;
-}
-
-.app-main-container {
-  min-height: 100vh;
-  transition: margin-left 0.3s ease;
-}
-
-.app-header {
-  height: 76px;
-  background: rgba(16, 24, 37, 0.55);
-  border-bottom: 1px solid rgba(148, 163, 210, 0.15);
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 30px;
-  gap: 12px;
-  backdrop-filter: blur(22px);
-  box-shadow: 0 6px 24px rgba(5, 8, 15, 0.45);
-  color: var(--gray-1);
-}
-
-.header-left {
-  display: flex;
   align-items: center;
-  gap: 18px;
-  flex: 1;
-}
-
-.header-search {
-  flex: 1;
-  min-width: 360px;
-}
-
-.city-switch {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.city-label {
-  font-size: 14px;
-  color: var(--gray-3);
-}
-
-.city-select {
-  width: 140px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.message-badge :deep(.is-dot) {
-  right: 12px;
-}
-
-.notification-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-height: 280px;
-  overflow-y: auto;
-}
-
-.notice-item {
-  padding: 0 4px;
-}
-
-.notice-title {
+  padding: 10px 24px;
+  background: #f7f8fa;
+  border-bottom: 1px solid #eceff5;
   font-size: 13px;
-  color: var(--gray-1);
-  margin-bottom: 6px;
-  line-height: 1.5;
+  color: var(--gray-3);
+  flex-wrap: wrap;
+  row-gap: 8px;
 }
 
-.notice-time {
-  font-size: 12px;
+.top-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.city-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-0);
+  border: 1px solid #e0e3ec;
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: var(--gray-2);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.city-button:hover {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  box-shadow: 0 8px 16px rgba(29, 198, 140, 0.08);
+}
+
+.top-bar__welcome {
   color: var(--gray-3);
 }
 
-.notice-footer {
-  text-align: right;
-}
-
-.user-entry {
-  display: inline-flex;
+.top-bar__right {
+  display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.user-meta {
+.top-link {
+  background: none;
+  border: none;
+  color: var(--gray-3);
+  cursor: pointer;
+  padding: 0;
+  font-size: 13px;
+  transition: color 0.2s ease;
+}
+
+.top-link:hover {
+  color: var(--brand-primary);
+}
+
+.top-link--chat {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background: #dfe4ee;
+}
+
+.main-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.main-header__logo {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.3;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--brand-primary);
 }
 
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-1);
-}
-
-.user-level {
-  font-size: 12px;
-  color: var(--gray-4);
-}
-
-.app-main {
-  background: transparent;
-  padding: 28px 32px 40px;
-  color: var(--gray-1);
-}
-
-.ghost-btn {
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.ghost-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
-
-.app-drawer {
-  background: rgba(10, 15, 28, 0.92);
-  color: #fff;
-  backdrop-filter: blur(22px);
-}
-
-.drawer-logo {
-  padding: 24px 20px 12px;
-}
-
-.drawer-logo .logo-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
+.logo__brand {
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
-.drawer-logo .logo-slogan {
-  margin-top: 6px;
+.logo__tagline {
+  font-size: 13px;
+  color: var(--gray-3);
+}
+
+.main-header__search {
+  flex: 1;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: var(--surface-0);
+  border: 2px solid var(--brand-primary);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--gray-1);
+}
+
+.search-box button {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.search-box button:hover {
+  background: #13b17c;
+}
+
+.search-hot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--gray-3);
+  flex-wrap: wrap;
+}
+
+.search-hot button {
+  background: #f3f6fa;
+  border: none;
+  border-radius: 999px;
+  padding: 4px 14px;
+  color: var(--gray-2);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.search-hot button:hover {
+  background: rgba(29, 198, 140, 0.12);
+  color: var(--brand-primary);
+}
+
+.main-header__contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  color: var(--gray-2);
+  min-width: 180px;
+}
+
+.main-header__contact strong {
+  font-size: 20px;
+  color: var(--brand-secondary);
+}
+
+.main-header__contact small {
+  color: var(--gray-3);
+}
+
+.site-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px;
+  background: linear-gradient(90deg, #fff7eb 0%, #ffffff 100%);
+  border-top: 1px solid #fbead1;
+  border-bottom: 1px solid #f2f4fa;
+}
+
+.site-nav__item {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-2);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.site-nav__item:hover {
+  color: var(--brand-secondary);
+}
+
+.site-nav__item--active {
+  color: var(--brand-secondary);
+  font-weight: 700;
+}
+
+.site-nav__item--active::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 6px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--brand-secondary);
+}
+
+.site-main {
+  flex: 1;
+  width: 100%;
+}
+
+.content-container {
+  max-width: 1200px;
+  margin: 32px auto;
+  width: calc(100% - 48px);
+}
+
+.content-blank {
+  padding: 60px 0;
+}
+
+.site-footer {
+  background: #1c242f;
+  color: #c5ccd9;
+  margin-top: 48px;
+}
+
+.footer-content {
+  display: flex;
+  gap: 48px;
+  padding-bottom: 32px;
+}
+
+.footer-brand {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-brand h3 {
+  font-size: 24px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.footer-brand button {
+  align-self: flex-start;
+  background: var(--brand-primary);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.footer-brand button:hover {
+  background: #13b17c;
+}
+
+.footer-links {
+  flex: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+}
+
+.footer-links h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.footer-links :deep(a),
+.footer-links span {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #c5ccd9;
+}
+
+.footer-links :deep(a:hover) {
+  color: var(--brand-primary);
+}
+
+.footer-meta {
+  text-align: center;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.notice-popper {
-  padding: 16px;
+  color: #9099a8;
 }
 
 .fade-slide-enter-active,
@@ -652,43 +550,40 @@ const openDrawer = () => {
   transform: translateY(12px);
 }
 
-@media (max-width: 1399px) {
-  .header-search {
-    min-width: 280px;
+@media (max-width: 1024px) {
+  .main-header {
+    gap: 24px;
+  }
+
+  .main-header__contact {
+    align-items: flex-start;
+  }
+
+  .site-nav {
+    flex-wrap: wrap;
   }
 }
 
-@media (max-width: 1199px) {
-  .app-main {
-    padding: 20px;
+@media (max-width: 768px) {
+  .top-bar {
+    justify-content: center;
   }
 
-  .header-search {
-    min-width: 220px;
-  }
-}
-
-@media (max-width: 1023px) {
-  .app-main {
-    padding: 16px;
+  .main-header {
+    justify-content: center;
   }
 
-  .header-left {
-    gap: 12px;
-  }
-}
-
-@media (max-width: 767px) {
-  .header-search {
-    min-width: auto;
+  .main-header__search {
+    order: 3;
+    width: 100%;
   }
 
-  .header-right {
-    gap: 10px;
+  .main-header__contact {
+    order: 2;
   }
 
-  .user-meta {
-    display: none;
+  .content-container {
+    margin: 24px auto;
   }
 }
 </style>

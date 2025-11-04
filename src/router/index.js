@@ -44,6 +44,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/support',
+      name: 'support',
+      component: () => import('../views/SupportView.vue'),
+      meta: {
+        title: '客服中心',
+        activeMenu: '/support'
+      }
+    },
+    {
       path: '/my',
       name: 'my',
       component: () => import('../views/MyView.vue'),

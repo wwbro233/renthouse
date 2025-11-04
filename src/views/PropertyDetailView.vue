@@ -3,461 +3,529 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { mapBoundary, propertyDetail } from '../data/mockData'
+import { useBookingStore } from '../stores/bookingStore'
 
 const router = useRouter()
+const bookingStore = useBookingStore()
 const detail = propertyDetail
 
 const markerPosition = computed(() => {
   const { lat, lng } = detail.map
   const left = ((lng - mapBoundary.west) / (mapBoundary.east - mapBoundary.west)) * 100
   const top = ((mapBoundary.north - lat) / (mapBoundary.north - mapBoundary.south)) * 100
-  return {
-    left: `${left}%`,
-    top: `${top}%`
-  }
+  return { left: `${left}%`, top: `${top}%` }
 })
 
-const goBack = () => {
-  router.back()
-}
+const goBack = () => router.back()
 
 const handleBookVisit = () => {
-  ElMessage.success('已提交预约看房申请，客服将尽快联系您')
+  bookingStore.openBookingDialog({
+    propertyId: detail.id,
+    title: detail.title,
+    address: detail.address
+  })
 }
 
-const handleAddFavorite = () => {
-  ElMessage.success('房源已加入想看清单')
+const handleFavorite = () => {
+  ElMessage.success('已加入想看清单')
 }
 
 const handleShare = () => {
-  ElMessage.info('分享链接已复制，可发送给好友')
-}
-
-const handleContactLandlord = () => {
-  ElMessage.success('已通过平台向房东发送联系请求')
-}
-
-const handleQuickAction = (type) => {
-  const map = {
-    visit: '线下看房预约已受理',
-    consult: '智能顾问稍后将与您沟通',
-    contract: '租赁合同范本即将提供下载'
-  }
-  ElMessage.info(map[type])
+  ElMessage.success('链接复制成功')
 }
 </script>
 
 <template>
-  <div class="page-wrapper">
-    <div class="page-title detail-title">
-      <div>
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-          <el-breadcrumb-item to="/want">想看</el-breadcrumb-item>
-          <el-breadcrumb-item>房源详情</el-breadcrumb-item>
-        </el-breadcrumb>
-        <h2>{{ detail.title }}</h2>
-      </div>
-      <el-button text type="primary" @click="goBack">
+  <div class="detail-page">
+    <section class="media-hero">
+      <button class="hero-back" type="button" @click="goBack">
         <el-icon><ArrowLeft /></el-icon>
-        返回上一页
-      </el-button>
-    </div>
-
-    <div class="detail-layout">
-      <div class="detail-main">
-        <div class="section-card media-section">
-          <el-carousel height="400px" trigger="click" indicator-position="outside">
-            <el-carousel-item v-for="img in detail.gallery" :key="img">
-              <el-image :src="img" fit="cover" class="gallery-img" />
-            </el-carousel-item>
-          </el-carousel>
-          <div class="info-bar">
-            <div class="price">
-              <span class="amount">{{ detail.price.toLocaleString() }}</span>
-              <span class="unit">元/月</span>
-            </div>
-            <div class="summary">
-              <span>{{ detail.layout }}</span>
-              <el-divider direction="vertical" />
-              <span>{{ detail.area }}㎡</span>
-              <el-divider direction="vertical" />
-              <span>{{ detail.orientation }}</span>
-              <el-divider direction="vertical" />
-              <span>{{ detail.floor }}</span>
-            </div>
-            <div class="actions">
-              <el-button type="primary" size="large" @click="handleBookVisit">
-                预约看房
-              </el-button>
-              <el-button size="large" plain @click="handleAddFavorite">
-                加入想看
-              </el-button>
-              <el-button size="large" text @click="handleShare">
-                <el-icon><Share /></el-icon>
-                分享
-              </el-button>
-            </div>
-          </div>
+      </button>
+      <div class="hero-icons">
+        <button type="button" @click="handleFavorite">
+          <el-icon><Star /></el-icon>
+        </button>
+        <button type="button" @click="handleShare">
+          <el-icon><Share /></el-icon>
+        </button>
+      </div>
+      <el-carousel indicator-position="none" height="260px">
+        <el-carousel-item v-for="img in detail.gallery" :key="img">
+          <img :src="img" alt="房源图片" />
+        </el-carousel-item>
+      </el-carousel>
+      <div class="price-card">
+        <div class="price-main">
+          <strong>¥{{ detail.price }}</strong>
+          <span>/月(年付价)</span>
         </div>
-
-        <div class="section-card">
-          <div class="section-card__header">
-            <span class="section-card__title">房源亮点</span>
-            <el-text type="info">真实房源 · 平台认证 · 最新发布 {{ detail.release }}</el-text>
-          </div>
-          <div class="highlight-tags">
-            <el-tag
-              v-for="tag in detail.highlights"
-              :key="tag"
-              size="large"
-              effect="plain"
-              type="success"
-            >
-              <el-icon><CircleCheck /></el-icon>
-              {{ tag }}
-            </el-tag>
-          </div>
-          <p class="detail-description">{{ detail.description }}</p>
-        </div>
-
-        <div class="section-card">
-          <div class="section-card__header">
-            <span class="section-card__title">配套设施</span>
-          </div>
-          <div class="facility-grid">
-            <div v-for="item in detail.facilities" :key="item" class="facility-item">
-              <el-icon><Select /></el-icon>
-              <span>{{ item }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-card__header">
-            <span class="section-card__title">交通与周边</span>
-          </div>
-          <p class="detail-description">{{ detail.traffic }}</p>
-          <div class="map-container">
-            <div class="map-grid">
-              <div class="grid-line horizontal" v-for="n in 3" :key="`h-${n}`"></div>
-              <div class="grid-line vertical" v-for="n in 3" :key="`v-${n}`"></div>
-            </div>
-            <div class="map-marker" :style="markerPosition">
-              <span class="map-marker__price">{{ detail.price }} 元/月</span>
-              <span class="map-marker__title">{{ detail.title }}</span>
-            </div>
-          </div>
+        <div class="price-tags">
+          <span>硅谷暖冬季</span>
+          <span>谷粒优惠</span>
         </div>
       </div>
+    </section>
 
-      <div class="detail-side">
-        <div class="section-card landlord-card">
-          <div class="landlord-header">
-            <el-avatar :src="detail.landlord.avatar" size="large" />
-            <div>
-              <h4>{{ detail.landlord.name }}</h4>
-              <p>评分 {{ detail.landlord.rating.toFixed(1) }}</p>
-            </div>
-          </div>
-          <el-divider />
-          <div class="landlord-contact">
-            <el-tag type="primary" effect="dark">电话</el-tag>
-            <span>{{ detail.landlord.phone }}</span>
-          </div>
-          <el-button type="primary" block @click="handleContactLandlord">联系房东</el-button>
-          <el-alert
-            title="提示：为保障沟通安全，请通过平台消息或电话联系，谨防私下交易。"
-            type="info"
-            :closable="false"
-            show-icon
-          />
+    <section class="property-info">
+      <h1>{{ detail.title }}</h1>
+      <p class="subtitle">{{ detail.address }}</p>
+      <div class="info-grid">
+        <div>
+          <span class="label">使用面积</span>
+          <strong>{{ detail.area }}㎡</strong>
         </div>
-
-        <div class="section-card recommend-card">
-          <div class="section-card__header">
-            <span class="section-card__title">常用操作</span>
-          </div>
-          <el-space direction="vertical" :size="12" fill>
-            <el-button type="primary" plain @click="handleQuickAction('visit')">
-              <el-icon><Calendar /></el-icon>
-              安排线下看房
-            </el-button>
-            <el-button plain @click="handleQuickAction('consult')">
-              <el-icon><Message /></el-icon>
-              咨询智能顾问
-            </el-button>
-            <el-button plain @click="handleQuickAction('contract')">
-              <el-icon><Document /></el-icon>
-              查看租赁合同范本
-            </el-button>
-          </el-space>
+        <div>
+          <span class="label">户型</span>
+          <strong>{{ detail.layout }}</strong>
+        </div>
+        <div>
+          <span class="label">朝向</span>
+          <strong>{{ detail.orientation }}</strong>
+        </div>
+        <div>
+          <span class="label">楼层</span>
+          <strong>{{ detail.floor }}</strong>
         </div>
       </div>
-    </div>
+      <div class="chip-list">
+        <span v-for="tag in detail.highlights" :key="tag">{{ tag }}</span>
+      </div>
+      <p class="description">
+        {{ detail.description }}
+      </p>
+    </section>
+
+    <section class="facility-section">
+      <header>
+        <h2>物品配置</h2>
+        <span>全屋配置 {{ detail.facilities.length }} 项</span>
+      </header>
+      <div class="facility-grid">
+        <span v-for="item in detail.facilities" :key="item">{{ item }}</span>
+      </div>
+    </section>
+
+    <section class="traffic-card">
+      <header>
+        <h2>交通与周边</h2>
+        <span>8号线 后沙峪地铁站 · 步行约 1.5 公里</span>
+      </header>
+      <p>{{ detail.traffic }}</p>
+      <div class="map-preview">
+        <div class="grid">
+          <span v-for="n in 3" :key="`h-${n}`" class="line horizontal"></span>
+          <span v-for="n in 3" :key="`v-${n}`" class="line vertical"></span>
+        </div>
+        <div class="marker" :style="markerPosition">
+          <span class="marker-price">¥{{ detail.price }}</span>
+          <span class="marker-title">国贸 CBD</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="landlord-card">
+      <header>
+        <div class="profile">
+          <el-avatar :src="detail.landlord.avatar" size="large" />
+          <div>
+            <h3>{{ detail.landlord.name }}</h3>
+            <p>评分 {{ detail.landlord.rating.toFixed(1) }}</p>
+          </div>
+        </div>
+        <button type="button">
+          <el-icon><Phone /></el-icon>
+          去咨询
+        </button>
+      </header>
+      <div class="contact">
+        <span>{{ detail.landlord.phone }}</span>
+        <p>提示：通过平台沟通更安全，谨防私下交易。</p>
+      </div>
+    </section>
+
+    <footer class="action-bar">
+      <div class="action-info">
+        <span>可随时入住</span>
+        <strong>支持月付 · 可长租 2 年</strong>
+      </div>
+      <button type="button" class="ghost" @click="handleFavorite">加入想看</button>
+      <button type="button" class="primary" @click="handleBookVisit">预约看房</button>
+    </footer>
   </div>
 </template>
 
 <style scoped>
-.page-wrapper {
+.detail-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  padding-bottom: 120px;
+  color: #214b42;
 }
 
-.detail-title {
-  align-items: center;
-}
-
-.detail-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(280px, 2fr);
-  gap: 24px;
-}
-
-.detail-main {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.detail-side {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.media-section {
-  padding: 0;
+.media-hero {
+  position: relative;
+  border-radius: 28px;
   overflow: hidden;
+  background: #000;
+  box-shadow: 0 18px 32px rgba(18, 78, 64, 0.2);
 }
 
-.gallery-img {
+.media-hero img {
   width: 100%;
-  height: 100%;
+  height: 260px;
   object-fit: cover;
 }
 
-.info-bar {
-  padding: 20px 24px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  align-items: center;
-  border-top: 1px solid #eef0f8;
-}
-
-.price {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.amount {
-  font-size: 32px;
-  color: var(--brand-primary);
-  font-weight: 700;
-}
-
-.unit {
-  font-size: 14px;
-  color: var(--gray-3);
-}
-
-.summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  color: var(--gray-2);
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: flex-end;
-}
-
-.highlight-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.highlight-tags :deep(.el-tag) {
+.hero-back,
+.hero-icons button {
+  position: absolute;
+  top: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  justify-content: center;
+  backdrop-filter: blur(6px);
 }
 
-.detail-description {
-  font-size: 14px;
-  color: var(--gray-2);
-  line-height: 1.8;
-  margin: 0;
+.hero-back {
+  left: 16px;
+  z-index: 2;
 }
 
-.facility-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+.hero-icons {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
   gap: 12px;
+  z-index: 2;
 }
 
-.facility-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: var(--border-radius-md);
-  background: rgba(47, 84, 235, 0.08);
-  color: var(--brand-primary);
-}
-
-.map-container {
-  position: relative;
-  height: 320px;
+.price-card {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -40px;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.88) 100%);
+  box-shadow: 0 16px 28px rgba(18, 78, 64, 0.18);
   border-radius: 18px;
-  background: linear-gradient(180deg, #f4f7ff 0%, #dfe7ff 100%);
-  margin-top: 16px;
-}
-
-.map-grid {
-  position: absolute;
-  inset: 0;
-}
-
-.grid-line {
-  position: absolute;
-  background: rgba(47, 84, 235, 0.12);
-}
-
-.grid-line.horizontal {
-  height: 1px;
-  width: 100%;
-}
-
-.grid-line.vertical {
-  width: 1px;
-  height: 100%;
-}
-
-.grid-line.horizontal:nth-child(1) {
-  top: 25%;
-}
-.grid-line.horizontal:nth-child(2) {
-  top: 50%;
-}
-.grid-line.horizontal:nth-child(3) {
-  top: 75%;
-}
-.grid-line.vertical:nth-child(4) {
-  left: 25%;
-}
-.grid-line.vertical:nth-child(5) {
-  left: 50%;
-}
-.grid-line.vertical:nth-child(6) {
-  left: 75%;
-}
-
-.map-marker {
-  position: absolute;
-  transform: translate(-50%, -50%);
+  padding: 16px 18px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
   align-items: center;
+  justify-content: space-between;
+  gap: 18px;
 }
 
-.map-marker__price {
-  background: var(--brand-primary);
-  color: #fff;
+.price-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #214b42;
+}
+
+.price-main strong {
+  font-size: 26px;
+}
+
+.price-main span {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.price-tags {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.price-tags span {
   padding: 6px 12px;
   border-radius: 999px;
-  font-weight: 600;
-  font-size: 13px;
-  box-shadow: 0 12px 24px rgba(47, 84, 235, 0.28);
-}
-
-.map-marker__title {
-  background: rgba(47, 84, 235, 0.16);
-  padding: 4px 10px;
-  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
   font-size: 12px;
-  color: var(--brand-primary);
+  font-weight: 600;
 }
 
-.landlord-card {
+.property-info {
+  margin-top: 40px;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 16px 30px rgba(18, 78, 64, 0.12);
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.landlord-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.landlord-header h4 {
+.property-info h1 {
   margin: 0;
-  font-size: 16px;
-  color: var(--gray-1);
+  font-size: 20px;
+  color: #214b42;
 }
 
-.landlord-header p {
-  margin: 4px 0 0;
+.subtitle {
+  margin: 0;
   font-size: 13px;
-  color: var(--gray-3);
+  color: rgba(33, 75, 66, 0.7);
 }
 
-.landlord-contact {
-  display: flex;
-  align-items: center;
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  font-size: 14px;
-  color: var(--gray-1);
 }
 
-.recommend-card {
+.info-grid .label {
+  display: block;
+  font-size: 12px;
+  color: rgba(33, 75, 66, 0.6);
+}
+
+.info-grid strong {
+  font-size: 15px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-list span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.description {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(33, 75, 66, 0.75);
+  line-height: 1.7;
+}
+
+.facility-section,
+.traffic-card,
+.landlord-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 16px 30px rgba(18, 78, 64, 0.12);
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.facility-section header,
+.traffic-card header,
+.landlord-card header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #214b42;
+}
+
+.facility-section header span,
+.traffic-card header span {
+  font-size: 12px;
+  color: rgba(33, 75, 66, 0.7);
+}
+
+.facility-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.facility-grid span {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(12, 159, 113, 0.08);
+  font-size: 13px;
+  color: #214b42;
+}
+
+.traffic-card p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(33, 75, 66, 0.7);
+  line-height: 1.6;
+}
+
+.map-preview {
+  position: relative;
+  height: 220px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f4fff8 0%, #cdeee1 100%);
+  overflow: hidden;
+}
+
+.grid .line {
+  position: absolute;
+  background: rgba(12, 159, 113, 0.15);
+}
+
+.horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.vertical {
+  width: 1px;
+  height: 100%;
+}
+
+.horizontal:nth-child(1) {
+  top: 33%;
+}
+.horizontal:nth-child(2) {
+  top: 66%;
+}
+.vertical:nth-child(3) {
+  left: 33%;
+}
+.vertical:nth-child(4) {
+  left: 66%;
+}
+
+.marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.marker-price {
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.marker-title {
+  background: rgba(12, 159, 113, 0.16);
+  color: #0c9f71;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.landlord-card header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landlord-card button {
+  border: none;
+  border-radius: 16px;
+  padding: 10px 14px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
 
-@media (max-width: 1199px) {
-  .detail-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .info-bar {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .summary {
-    justify-content: center;
-  }
-
-  .actions {
-    justify-content: center;
-  }
+.profile h3 {
+  margin: 0;
+  font-size: 16px;
 }
 
-@media (max-width: 767px) {
-  .info-bar {
-    padding: 16px;
-  }
+.profile p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: rgba(33, 75, 66, 0.65);
+}
 
-  .actions {
+.contact span {
+  font-weight: 600;
+}
+
+.contact p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: rgba(33, 75, 66, 0.6);
+}
+
+.action-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 12px 16px;
+  border-radius: 22px;
+  box-shadow: 0 18px 32px rgba(18, 78, 64, 0.18);
+  width: min(360px, calc(100% - 32px));
+}
+
+.action-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #214b42;
+  font-size: 12px;
+}
+
+.action-info strong {
+  font-size: 13px;
+}
+
+.action-bar button {
+  border: none;
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action-bar .ghost {
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+}
+
+.action-bar .primary {
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #fff;
+}
+
+@media (max-width: 400px) {
+  .price-card {
     flex-direction: column;
+    align-items: flex-start;
   }
 
-  .facility-grid {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  .info-grid {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>

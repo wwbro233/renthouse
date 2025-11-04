@@ -6,6 +6,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import './assets/main.css'
 import 'element-plus/dist/index.css'
+import { initCozeChat } from './plugins/cozeClient'
 
 const app = createApp(App)
 
@@ -17,3 +18,7 @@ app.use(router)
 app.use(ElementPlus, { locale: zhCn })
 
 app.mount('#app')
+
+initCozeChat().catch((error) => {
+  console.error('[Coze] 初始化失败', error)
+})

@@ -1,499 +1,682 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import {
-  calendarAvailabilities,
-  homeServices,
-  serviceCampaigns,
-  vipServices
-} from '../data/mockData'
+import { homeServices, serviceCampaigns, vipServices } from '../data/mockData'
 
 const router = useRouter()
 
-const today = new Date()
-const currentDate = ref(new Date(today.getFullYear(), today.getMonth(), today.getDate()))
-const activeDate = ref(formatDate(currentDate.value))
+const heroSummary = [
+  { label: '余额', value: '0元' },
+  { label: '优惠券', value: '4张' },
+  { label: '会员特权', value: '7项' },
+  { label: '会员福利', value: '21个' }
+]
 
-const availabilityMap = computed(() => {
-  const map = new Map()
-  calendarAvailabilities.forEach((item) => {
-    map.set(item.date, item.slots)
-  })
-  return map
-})
+const calendarTabs = ['10月', '11月', '12月', '01月', '02月', '03月']
+const activeTab = ref('12月')
 
-const selectedSlots = computed(() => availabilityMap.value.get(activeDate.value) ?? [])
+const cleaningDeals = [
+  {
+    id: 'clean-2',
+    title: '日常保洁2小时',
+    desc: '推荐60㎡以内的房屋',
+    price: 80,
+    origin: 119,
+    cover:
+      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'clean-3',
+    title: '日常保洁3小时',
+    desc: '推荐80㎡以内的房屋',
+    price: 135,
+    origin: 179,
+    cover:
+      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80'
+  }
+]
 
-const handleCalendarChange = (val) => {
-  activeDate.value = formatDate(new Date(val))
-}
+const newbieBenefits = computed(() => serviceCampaigns.slice(0, 1)[0])
 
-const handleVisitService = (link) => {
-  router.push(link)
-}
-
-const handleVipDetail = (id) => {
+const goServiceDetail = (id) => {
   router.push(`/service-detail/${id}`)
 }
 
-const handleSlotBooking = (slot) => {
-  if (slot.status !== 'available') {
-    ElMessage.warning('该时段已被预约，请选择其他时间段')
-    return
-  }
-  ElMessage.success(`已预约 ${activeDate.value} ${slot.time} 时段`)
+const goVipDetail = (id) => {
+  router.push(`/service-detail/${id}`)
 }
 
-const handleCampaignAction = (campaign, type) => {
-  if (type === 'detail') {
-    ElMessage.info(`即将查看「${campaign.title}」详情，敬请期待`)
-  } else {
-    router.push('/service')
-    ElMessage.success(`已为你锁定「${campaign.title}」优惠名额`)
-  }
-}
-
-function formatDate(date) {
-  const y = date.getFullYear()
-  const m = `${date.getMonth() + 1}`.padStart(2, '0')
-  const d = `${date.getDate()}`.padStart(2, '0')
-  return `${y}-${m}-${d}`
+const goCampaign = () => {
+  router.push('/service')
 }
 </script>
 
 <template>
-  <div class="page-wrapper">
-    <div class="page-title">
-      <div>
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>服务</el-breadcrumb-item>
-        </el-breadcrumb>
-        <h2>生活服务中心 · 搬家保洁一站预约</h2>
+  <div class="service-page">
+    <section class="vip-hero">
+      <header>
+        <div>
+          <p>请选择地址</p>
+          <el-icon><ArrowDown /></el-icon>
+        </div>
+        <div class="vip-hero__icons">
+          <el-icon size="20"><ChatDotRound /></el-icon>
+          <el-icon size="20"><Headset /></el-icon>
+        </div>
+      </header>
+      <div class="vip-card">
+        <div class="vip-card__left">
+          <h3>开通谷粒卡享特权</h3>
+          <p>VIP</p>
+        </div>
+        <ul class="vip-card__stats">
+          <li v-for="item in heroSummary" :key="item.label">
+            <strong>{{ item.value }}</strong>
+            <span>{{ item.label }}</span>
+          </li>
+        </ul>
       </div>
-      <el-tag type="success" size="large">今日已有 326 笔服务预约</el-tag>
-    </div>
+    </section>
 
-    <div class="section-card">
-      <div class="section-card__header">
-        <span class="section-card__title">VIP 服务展示</span>
-        <el-text type="info">尊享礼包 · 专属顾问 · 全流程托管</el-text>
-      </div>
-      <div class="grid grid--3 vip-grid">
-        <el-card
-          v-for="service in vipServices"
-          :key="service.id"
-          class="vip-card"
-          shadow="hover"
-        >
-          <img :src="service.cover" alt="" class="vip-card__cover" />
-          <div class="vip-card__body">
-            <h4>{{ service.title }}</h4>
-            <p>{{ service.desc }}</p>
-            <ul>
-              <li v-for="perk in service.perks" :key="perk">
-                <el-icon><SuccessFilled /></el-icon>
-                <span>{{ perk }}</span>
-              </li>
-            </ul>
-            <el-button type="primary" plain @click="handleVipDetail(service.id)">
-              查看详情
-            </el-button>
-          </div>
-        </el-card>
-      </div>
-    </div>
-
-    <div class="section-card">
-      <div class="section-card__header">
-        <span class="section-card__title">家庭服务入口</span>
-        <el-text type="info">搬家、保洁、维修、清洗、收纳等服务一键直达</el-text>
-      </div>
-      <div class="grid grid--3 home-service-grid">
-        <div
+    <section class="service-grid">
+      <header>
+        <h3>家庭服务</h3>
+        <button type="button" @click="router.push('/service')">全部服务</button>
+      </header>
+      <div class="service-grid__list">
+        <button
           v-for="item in homeServices"
           :key="item.id"
-          class="home-service-item"
-          @click="handleVisitService(item.link)"
+          type="button"
+          @click="goServiceDetail(item.id)"
         >
-          <div class="home-service-item__icon">
+          <span class="icon-wrap">
             <el-icon><component :is="item.icon" /></el-icon>
-          </div>
-          <div class="home-service-item__info">
-            <h5>{{ item.title }}</h5>
+          </span>
+          <span class="service-title">{{ item.title }}</span>
+          <span class="service-desc">{{ item.desc }}</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="calendar-card">
+      <header>
+        <h3>服务日历</h3>
+        <button type="button">全部服务</button>
+      </header>
+      <div class="calendar-tabs">
+        <button
+          v-for="tab in calendarTabs"
+          :key="tab"
+          type="button"
+          :class="{ active: activeTab === tab }"
+          @click="activeTab = tab"
+        >
+          {{ tab }}
+        </button>
+      </div>
+      <div class="calendar-event">
+        <div class="calendar-event__date">
+          <span>12.9-12.19</span>
+          <p>限享6大礼包</p>
+        </div>
+        <div class="calendar-event__info">
+          <p>包年服务好礼享不停</p>
+          <strong>最高领¥300优惠券</strong>
+        </div>
+        <button type="button" @click="goCampaign()">立即参与</button>
+      </div>
+    </section>
+
+    <section class="vip-section">
+      <header>
+        <h3>会员精选</h3>
+        <span>专业服务</span>
+      </header>
+      <div class="vip-section__chips">
+        <span class="chip active">居家保洁</span>
+        <span class="chip">深层清洗</span>
+        <span class="chip">新居乔迁</span>
+        <span class="chip">上门喂猫</span>
+      </div>
+      <div class="vip-cards">
+        <article
+          v-for="item in vipServices"
+          :key="item.id"
+          @click="goVipDetail(item.id)"
+        >
+          <img :src="item.cover" :alt="item.title" />
+          <div>
+            <h4>{{ item.title }}</h4>
             <p>{{ item.desc }}</p>
           </div>
-          <el-icon><ArrowRight /></el-icon>
-        </div>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <div class="calendar-section">
-      <div class="section-card calendar-card">
-        <div class="section-card__header">
-          <span class="section-card__title">服务日历</span>
-          <el-text type="info">选择日期查看可预约时间段，灰色代表已约满</el-text>
-        </div>
-        <el-calendar
-          v-model="currentDate"
-          :range="[
-            new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
-            new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14)
-          ]"
-          @input="handleCalendarChange"
-        >
-          <template #dateCell="{ data }">
-            <div
-              :class="[
-                'calendar-cell',
-                availabilityMap.get(data.day) ? 'has-availability' : ''
-              ]"
-            >
-              <span class="day">{{ data.day.split('-').pop() }}</span>
-              <span v-if="availabilityMap.get(data.day)" class="status">
-                可约 {{ availabilityMap.get(data.day).filter((slot) => slot.status === 'available').length }}
-              </span>
-            </div>
-          </template>
-        </el-calendar>
+    <section class="newbie-card" v-if="newbieBenefits">
+      <header>新人专区</header>
+      <div class="newbie-card__content">
+        <h4>新人见面礼</h4>
+        <p>领30元专属优惠券</p>
+        <button type="button" @click="goCampaign()">立即领取</button>
       </div>
+      <img
+        src="https://images.unsplash.com/photo-1600585154340-0ef3c08cc65c?auto=format&fit=crop&w=900&q=80"
+        alt="newbie"
+      />
+    </section>
 
-      <div class="section-card slot-card">
-        <div class="section-card__header">
-          <span class="section-card__title">
-            {{ activeDate }} 可预约时段
-          </span>
-          <el-tag v-if="!selectedSlots.length" type="warning" effect="plain">
-            当前日期暂无可预约时段
-          </el-tag>
-        </div>
-        <div class="slot-list">
-          <el-empty
-            v-if="!selectedSlots.length"
-            description="请选择有空档的日期，或联系客服协助安排"
-          />
-          <el-card
-            v-for="slot in selectedSlots"
-            :key="slot.time"
-            shadow="never"
-            :class="['slot-item', slot.status]"
-          >
-            <div class="slot-time">
-              <el-icon><Clock /></el-icon>
-              <span>{{ slot.time }}</span>
-            </div>
-            <el-tag v-if="slot.status === 'available'" type="success" effect="plain">
-              可预约
-            </el-tag>
-            <el-tag v-else type="info" effect="plain">已约满</el-tag>
-            <el-button
-              :type="slot.status === 'available' ? 'primary' : 'default'"
-              :disabled="slot.status !== 'available'"
-              size="small"
-              plain
-              @click="handleSlotBooking(slot)"
-            >
-              预约此时段
-            </el-button>
-          </el-card>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-card">
-      <div class="section-card__header">
-        <span class="section-card__title">本月优惠活动</span>
-        <el-text type="info">精选搬家、保洁、维修等服务优惠，限时领取</el-text>
-      </div>
-      <div class="grid grid--2 campaign-grid">
-        <el-card
-          v-for="campaign in serviceCampaigns"
-          :key="campaign.id"
-          class="campaign-card"
-          shadow="hover"
-        >
-          <img :src="campaign.cover" alt="" class="campaign-card__cover" />
-          <div class="campaign-card__body">
-            <h4>{{ campaign.title }}</h4>
-            <p class="campaign-card__date">
-              <el-icon><Calendar /></el-icon>
-              {{ campaign.date }}
-            </p>
-            <p>{{ campaign.desc }}</p>
-            <div class="campaign-card__actions">
-            <el-button type="primary" plain @click="handleCampaignAction(campaign, 'detail')">
-              查看详情
-            </el-button>
-            <el-button link type="primary" @click="handleCampaignAction(campaign, 'book')">
-              立即预约
-            </el-button>
-            </div>
+    <section class="cleaning-grid">
+      <header>洁净家</header>
+      <div class="cleaning-grid__list">
+        <article v-for="deal in cleaningDeals" :key="deal.id">
+          <img :src="deal.cover" :alt="deal.title" />
+          <h5>{{ deal.title }}</h5>
+          <p>{{ deal.desc }}</p>
+          <div class="cleaning-grid__price">
+            <strong>¥{{ deal.price }}</strong>
+            <span>¥{{ deal.origin }}</span>
           </div>
-        </el-card>
+          <button type="button" @click="goServiceDetail(deal.id)">立即预约</button>
+        </article>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.page-wrapper {
+.service-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  padding-bottom: 32px;
 }
 
-.vip-grid img,
-.campaign-card__cover {
-  width: 100%;
-  border-radius: var(--border-radius-md);
-  object-fit: cover;
-}
-
-.vip-card {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.vip-card__cover {
-  height: 180px;
-}
-
-.vip-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.vip-card__body h4 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--gray-1);
-}
-
-.vip-card__body p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--gray-3);
-  line-height: 1.6;
-}
-
-.vip-card__body ul {
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.vip-card__body li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gray-2);
-  font-size: 13px;
-}
-
-.home-service-grid {
-  gap: 16px;
-}
-
-.home-service-item {
-  display: flex;
-  align-items: center;
-  padding: 18px;
-  gap: 16px;
-  border-radius: var(--border-radius-md);
-  background: rgba(47, 84, 235, 0.08);
-  cursor: pointer;
-  transition: var(--transition-base);
-}
-
-.home-service-item:hover {
-  transform: translateY(-4px);
-  background: rgba(47, 84, 235, 0.12);
-}
-
-.home-service-item__icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  background: rgba(47, 84, 235, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--brand-primary);
-  font-size: 24px;
-}
-
-.home-service-item__info h5 {
-  margin: 0;
-  font-size: 16px;
-  color: var(--gray-1);
-}
-
-.home-service-item__info p {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--gray-3);
-}
-
-.calendar-section {
-  display: grid;
-  grid-template-columns: minmax(360px, 3fr) minmax(320px, 2fr);
-  gap: 24px;
-}
-
-.calendar-card :deep(.el-calendar__header) {
-  padding: 12px 16px;
-}
-
-.calendar-card :deep(.el-calendar-table td) {
-  height: 96px;
-}
-
-.calendar-cell {
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  border-radius: var(--border-radius-md);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
-
-.calendar-cell .day {
-  font-weight: 600;
-  color: var(--gray-1);
-}
-
-.calendar-cell.has-availability {
-  background: rgba(47, 84, 235, 0.08);
-  color: var(--brand-primary);
-}
-
-.calendar-cell .status {
-  font-size: 12px;
-  color: rgba(47, 84, 235, 0.85);
-  font-weight: 500;
-}
-
-.slot-card {
+.vip-hero {
+  background: linear-gradient(180deg, #9ee2c2 0%, #c5f5dd 60%, #ffffff 100%);
+  border-radius: 24px;
+  padding: 18px 18px 26px;
+  box-shadow: 0 18px 34px rgba(32, 102, 84, 0.18);
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.slot-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.slot-item {
+.vip-hero header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  border-radius: var(--border-radius-md);
-  background: rgba(15, 23, 42, 0.03);
+  color: #245049;
 }
 
-.slot-item.available {
-  border: 1px solid rgba(47, 84, 235, 0.25);
-}
-
-.slot-item.booked {
-  opacity: 0.75;
-}
-
-.slot-time {
-  display: flex;
+.vip-hero header div:first-child {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 10px 14px;
+  border-radius: 16px;
   font-weight: 600;
-  color: var(--gray-1);
-}
-
-.campaign-grid {
-  gap: 20px;
-}
-
-.campaign-card {
-  display: flex;
-  gap: 18px;
-}
-
-.campaign-card__cover {
-  width: 220px;
-  height: 160px;
-  object-fit: cover;
-  border-radius: var(--border-radius-md);
-}
-
-.campaign-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.campaign-card__body h4 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--gray-1);
-}
-
-.campaign-card__body p {
-  margin: 0;
-  color: var(--gray-3);
-  line-height: 1.6;
-}
-
-.campaign-card__date {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-size: 13px;
-  color: var(--brand-primary);
 }
 
-.campaign-card__actions {
+.vip-hero__icons {
   display: flex;
   gap: 12px;
-  align-items: center;
+  color: rgba(36, 80, 73, 0.6);
 }
 
-@media (max-width: 1399px) {
-  .calendar-section {
-    grid-template-columns: 1fr;
+.vip-card {
+  background: linear-gradient(135deg, #2f5140 0%, #152d2a 100%);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #d0ffe9;
+}
+
+.vip-card__left h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.vip-card__left p {
+  margin: 4px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.vip-card__stats {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vip-card__stats li {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px 12px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.vip-card__stats strong {
+  font-size: 16px;
+}
+
+.vip-card__stats span {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.service-grid {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 16px 28px rgba(20, 78, 64, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.service-grid header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.service-grid h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #244b42;
+}
+
+.service-grid header button {
+  border: none;
+  background: transparent;
+  color: #0c9f71;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.service-grid__list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.service-grid__list button {
+  border: none;
+  border-radius: 18px;
+  background: rgba(12, 159, 113, 0.08);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  color: #245049;
+  cursor: pointer;
+  min-height: 120px;
+}
+
+.service-grid__list .icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: rgba(12, 159, 113, 0.16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.service-desc {
+  font-size: 12px;
+  color: rgba(36, 80, 73, 0.65);
+}
+
+.calendar-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 16px 30px rgba(20, 78, 64, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calendar-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendar-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #244b42;
+}
+
+.calendar-card header button {
+  border: none;
+  background: transparent;
+  color: #0c9f71;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.calendar-tabs {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.calendar-tabs button {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 0;
+  background: rgba(12, 159, 113, 0.08);
+  color: #245049;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.calendar-tabs button.active {
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 22px rgba(12, 159, 113, 0.28);
+}
+
+.calendar-event {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #f4fff4 0%, #d7f6e4 100%);
+  border-radius: 18px;
+  padding: 16px;
+  color: #255248;
+}
+
+.calendar-event__date span {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calendar-event__date p {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.calendar-event__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.calendar-event__info strong {
+  color: #e7502a;
+  font-size: 16px;
+}
+
+.calendar-event button {
+  border: none;
+  border-radius: 18px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vip-section {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 18px 30px rgba(20, 78, 64, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vip-section header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #244b42;
+}
+
+.vip-section header span {
+  font-size: 12px;
+  color: rgba(36, 75, 66, 0.6);
+}
+
+.vip-section__chips {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(12, 159, 113, 0.1);
+  color: #245049;
+  font-size: 12px;
+}
+
+.chip.active {
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+}
+
+.vip-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vip-cards article {
+  display: flex;
+  gap: 14px;
+  border-radius: 18px;
+  background: rgba(12, 159, 113, 0.08);
+  padding: 12px;
+  cursor: pointer;
+}
+
+.vip-cards img {
+  width: 92px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.vip-cards h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #244b42;
+}
+
+.vip-cards p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: rgba(36, 75, 66, 0.7);
+}
+
+.newbie-card {
+  position: relative;
+  background: linear-gradient(135deg, #e7fff1 0%, #bbf6d9 100%);
+  border-radius: 22px;
+  padding: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 18px 30px rgba(20, 78, 64, 0.12);
+}
+
+.newbie-card header {
+  font-size: 15px;
+  color: #245049;
+}
+
+.newbie-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #245049;
+}
+
+.newbie-card__content h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.newbie-card__content button {
+  align-self: flex-start;
+  border: none;
+  border-radius: 18px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.newbie-card img {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  width: 150px;
+  opacity: 0.35;
+}
+
+.cleaning-grid {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 18px 30px rgba(20, 78, 64, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cleaning-grid header {
+  font-size: 18px;
+  color: #244b42;
+}
+
+.cleaning-grid__list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.cleaning-grid__list article {
+  border-radius: 18px;
+  background: rgba(12, 159, 113, 0.08);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cleaning-grid__list img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.cleaning-grid__list h5 {
+  margin: 0;
+  font-size: 15px;
+  color: #244b42;
+}
+
+.cleaning-grid__list p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(36, 75, 66, 0.68);
+}
+
+.cleaning-grid__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #e7502a;
+}
+
+.cleaning-grid__price strong {
+  font-size: 18px;
+}
+
+.cleaning-grid__price span {
+  font-size: 12px;
+  color: rgba(36, 75, 66, 0.6);
+  text-decoration: line-through;
+}
+
+.cleaning-grid__list button {
+  border: none;
+  border-radius: 16px;
+  padding: 10px;
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .vip-card {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .campaign-card {
+  .vip-card__stats {
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .service-grid__list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendar-tabs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .calendar-event {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .vip-cards article {
     flex-direction: column;
   }
 
-  .campaign-card__cover {
-    width: 100%;
-    height: 200px;
-  }
-}
-
-@media (max-width: 991px) {
-  .home-service-grid {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
-  }
-}
-
-@media (max-width: 767px) {
-  .home-service-grid {
-    grid-template-columns: repeat(1, minmax(200px, 1fr));
-  }
-
-  .vip-card__cover {
-    height: 160px;
+  .cleaning-grid__list {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>

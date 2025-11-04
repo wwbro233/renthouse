@@ -1,217 +1,506 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { discoverActivities, discoverBenefits } from '../data/mockData'
 
 const router = useRouter()
 
-const goToActivity = (id) => {
+const momentTopics = [
+  { id: 'eat', label: '干饭了' },
+  { id: 'birthday', label: '过生日' },
+  { id: 'movie', label: '电影夜' },
+  { id: 'share', label: '分享此刻' }
+]
+
+const momentFeed = discoverActivities.slice(0, 2).map((item) => ({
+  id: item.id,
+  title: item.title,
+  desc: item.desc.slice(0, 42),
+  tag: '谷粒瞬间'
+}))
+
+const heroHighlight = {
+  title: '“出闲置”',
+  desc: '整租一套房子，两室一厅，一厨一卫。95平，南北通透，落地窗。家具家电齐全。捡包入住，希望是女...',
+  tag: '打摩的'
+}
+
+const goActivity = (id) => {
   router.push(`/activity/${id}`)
 }
 
-const goToBenefit = (id) => {
+const goBenefit = (id) => {
   router.push(`/benefit/${id}`)
-}
-
-const handleActivitySignup = (activity) => {
-  ElMessage.success(`已报名「${activity.title}」，请关注活动通知`)
-}
-
-const handleBenefitClaim = (benefit) => {
-  ElMessage.success(`已领取「${benefit.title}」，可在卡包查看`)
 }
 </script>
 
 <template>
-  <div class="page-wrapper">
-    <div class="page-title">
-      <div>
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>发现</el-breadcrumb-item>
-        </el-breadcrumb>
-        <h2>社区活动与福利 · 发现更多生活惊喜</h2>
+  <div class="discover-page">
+    <section class="hero">
+      <header>
+        <h2>家庭服务</h2>
+        <p>与100万用户发现生活</p>
+        <div class="hero-meta">
+          <span>4998 位小谷粒</span>
+          <span>正在分享此刻</span>
+        </div>
+      </header>
+      <div class="hero-bubbles">
+        <button v-for="item in momentTopics" :key="item.id" type="button">
+          {{ item.label }}
+        </button>
       </div>
-      <el-tag type="primary" effect="dark" size="large">每周更新 · 社区精选</el-tag>
-    </div>
+    </section>
 
-    <div class="section-card">
-      <div class="section-card__header">
-        <span class="section-card__title">活动展示区</span>
-        <el-text type="info">线下社交 · 兴趣小组 · 线上讲座，随时报名</el-text>
+    <section class="moment-highlight">
+      <div class="moment-tags">
+        <span class="tag">谷粒福利</span>
+        <span class="tag">#福利介绍文字</span>
       </div>
-      <div class="grid grid--3 activity-grid">
-        <el-card
-          v-for="activity in discoverActivities"
-          :key="activity.id"
-          shadow="hover"
-          class="activity-card"
-        >
-          <img :src="activity.cover" alt="" class="activity-card__cover" />
-          <div class="activity-card__body">
-            <div class="activity-card__head">
-              <h4>{{ activity.title }}</h4>
-              <el-tag type="success" effect="dark">{{ activity.tag }}</el-tag>
-            </div>
-            <p class="activity-card__meta">
-              <el-icon><Clock /></el-icon>
-              {{ activity.time }}
-            </p>
-            <p class="activity-card__meta">
-              <el-icon><Location /></el-icon>
-              {{ activity.location }}
-            </p>
-            <p class="activity-card__desc">{{ activity.desc }}</p>
-            <div class="activity-card__actions">
-              <el-button type="primary" plain @click="goToActivity(activity.id)">
-                查看详情
-              </el-button>
-              <el-button link type="primary" @click="handleActivitySignup(activity)">
-                立即报名
-              </el-button>
-            </div>
-          </div>
-        </el-card>
+      <div class="moment-title">
+        <h3>{{ heroHighlight.title }}</h3>
+        <span class="icon">🔍</span>
       </div>
-    </div>
+      <div class="moment-desc">
+        <strong>{{ heroHighlight.tag }}</strong>
+        <p>{{ heroHighlight.desc }}</p>
+      </div>
+    </section>
 
-    <div class="section-card">
-      <div class="section-card__header">
-        <span class="section-card__title">福利专区</span>
-        <el-text type="info">优惠券、积分兑换、免费试用，为生活加点福利</el-text>
+    <section class="moment-feed">
+      <header>
+        <h3>谷粒瞬间</h3>
+        <button type="button">更多</button>
+      </header>
+      <article v-for="item in momentFeed" :key="item.id" @click="goActivity(item.id)">
+        <div class="feed-tag">{{ item.tag }}</div>
+        <h4>{{ item.title }}</h4>
+        <p>{{ item.desc }}...</p>
+      </article>
+    </section>
+
+    <section class="benefit-banner">
+      <div class="benefit-meta">
+        <span class="tag">小谷粒福利</span>
+        <h3>谷粒请你看电影</h3>
+        <p>春季特惠，福利实时更新</p>
       </div>
-      <div class="grid grid--3 benefit-grid">
-        <el-card
-          v-for="benefit in discoverBenefits"
-          :key="benefit.id"
-          class="benefit-card"
-          shadow="hover"
-        >
-          <img :src="benefit.cover" alt="" class="benefit-card__cover" />
-          <div class="benefit-card__body">
-            <div class="benefit-card__head">
-              <el-tag type="primary" effect="dark">{{ benefit.type }}</el-tag>
-              <span class="benefit-card__expire">有效期至 {{ benefit.expire }}</span>
-            </div>
-            <h4>{{ benefit.title }}</h4>
-            <p>{{ benefit.desc }}</p>
-            <div class="benefit-card__actions">
-              <el-button type="primary" plain @click="goToBenefit(benefit.id)">查看详情</el-button>
-              <el-button link type="primary" @click="handleBenefitClaim(benefit)">
-                立即领取
-              </el-button>
-            </div>
+      <img
+        src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=780&q=80"
+        alt="movie"
+      />
+    </section>
+
+    <section class="benefit-list">
+      <header>
+        <h3>福利中心</h3>
+        <button type="button" @click="goBenefit(discoverBenefits[0].id)">
+          查看全部
+        </button>
+      </header>
+      <article v-for="benefit in discoverBenefits" :key="benefit.id">
+        <img :src="benefit.cover" :alt="benefit.title" />
+        <div>
+          <div class="benefit-head">
+            <span class="benefit-type">{{ benefit.type }}</span>
+            <span class="benefit-expire">有效期至 {{ benefit.expire }}</span>
           </div>
-        </el-card>
-      </div>
-    </div>
+          <h4>{{ benefit.title }}</h4>
+          <p>{{ benefit.desc }}</p>
+          <button type="button" @click="goBenefit(benefit.id)">立即领取</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="activity-list">
+      <header>
+        <h3>线下活动</h3>
+        <button type="button" @click="goActivity(discoverActivities[0].id)">查看更多</button>
+      </header>
+      <article v-for="activity in discoverActivities" :key="activity.id" @click="goActivity(activity.id)">
+        <img :src="activity.cover" :alt="activity.title" />
+        <div class="activity-body">
+          <div class="activity-tag">{{ activity.tag }}</div>
+          <h4>{{ activity.title }}</h4>
+          <p>
+            <el-icon><Clock /></el-icon>
+            {{ activity.time }}
+          </p>
+          <p>
+            <el-icon><Location /></el-icon>
+            {{ activity.location }}
+          </p>
+        </div>
+      </article>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.page-wrapper {
+.discover-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.activity-grid,
-.benefit-grid {
   gap: 20px;
+  padding-bottom: 32px;
 }
 
-.activity-card,
-.benefit-card {
+.hero {
+  background: linear-gradient(180deg, #abf1d2 0%, #d9f8e9 60%, #ffffff 100%);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 18px 32px rgba(28, 108, 88, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #1f4c43;
+}
+
+.hero header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.hero header p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.hero-meta {
+  margin-top: 12px;
+  display: inline-flex;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.hero-bubbles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-bubbles button {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.moment-highlight {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 16px 28px rgba(18, 78, 64, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.moment-tags {
+  display: flex;
+  gap: 8px;
+}
+
+.moment-tags .tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 12px;
+}
+
+.moment-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #244d43;
+}
+
+.moment-title h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.moment-title .icon {
+  font-size: 20px;
+}
+
+.moment-desc {
+  color: #244d43;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.moment-desc strong {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.moment-feed {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 16px 28px rgba(18, 78, 64, 0.12);
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.activity-card__cover,
-.benefit-card__cover {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: var(--border-radius-md);
+.moment-feed header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #244d43;
 }
 
-.activity-card__body,
-.benefit-card__body {
+.moment-feed header button {
+  border: none;
+  background: transparent;
+  color: #0c9f71;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.moment-feed article {
+  background: rgba(12, 159, 113, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+  color: #244d43;
+  cursor: pointer;
+}
+
+.feed-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.moment-feed h4 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.moment-feed p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.benefit-banner {
+  background: linear-gradient(135deg, #e6fff5 0%, #c9f7e3 100%);
+  border-radius: 22px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #244d43;
+  box-shadow: 0 18px 32px rgba(18, 78, 64, 0.12);
+}
+
+.benefit-banner .tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.12);
+  color: #0c9f71;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.benefit-banner h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.benefit-banner p {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+.benefit-banner img {
+  width: 120px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.benefit-list {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 16px 28px rgba(18, 78, 64, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
-.activity-card__head {
+.benefit-list header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  color: #244d43;
 }
 
-.activity-card__head h4 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--gray-1);
-}
-
-.activity-card__meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.benefit-list header button {
+  border: none;
+  background: transparent;
+  color: #0c9f71;
+  cursor: pointer;
   font-size: 13px;
-  color: var(--gray-3);
 }
 
-.activity-card__desc {
-  margin: 0;
-  font-size: 14px;
-  color: var(--gray-2);
-  line-height: 1.6;
+.benefit-list article {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(12, 159, 113, 0.08);
+  border-radius: 18px;
+  padding: 12px;
 }
 
-.activity-card__actions,
-.benefit-card__actions {
+.benefit-list img {
+  width: 82px;
+  height: 82px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.benefit-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.benefit-card__head {
-  display: flex;
   justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: rgba(36, 77, 67, 0.7);
+}
+
+.benefit-type {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: rgba(12, 159, 113, 0.16);
+  color: #0c9f71;
+  font-weight: 600;
+}
+
+.benefit-list h4 {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: #244d43;
+}
+
+.benefit-list p {
+  margin: 4px 0 10px;
+  font-size: 12px;
+  color: rgba(36, 77, 67, 0.75);
+}
+
+.benefit-list button {
+  border: none;
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.activity-list {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 18px 28px rgba(18, 78, 64, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.activity-list header {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  color: #244d43;
+}
+
+.activity-list header button {
+  border: none;
+  background: transparent;
+  color: #0c9f71;
+  cursor: pointer;
   font-size: 13px;
-  color: var(--gray-4);
 }
 
-.benefit-card__body h4 {
+.activity-list article {
+  display: flex;
+  gap: 12px;
+  border-radius: 18px;
+  background: rgba(12, 159, 113, 0.08);
+  padding: 12px;
+  color: #244d43;
+  cursor: pointer;
+}
+
+.activity-list img {
+  width: 112px;
+  height: 88px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.activity-body h4 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.activity-body p {
   margin: 4px 0 0;
-  font-size: 18px;
-  color: var(--gray-1);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(36, 77, 67, 0.7);
 }
 
-.benefit-card__body p {
-  margin: 4px 0 0;
-  color: var(--gray-3);
-  line-height: 1.6;
+.activity-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(12, 159, 113, 0.16);
+  color: #0c9f71;
+  font-size: 12px;
+  margin-bottom: 6px;
 }
 
-@media (max-width: 991px) {
-  .activity-grid {
-    grid-template-columns: repeat(2, minmax(240px, 1fr));
+@media (max-width: 420px) {
+  .benefit-banner {
+    flex-direction: column;
+    align-items: flex-start;
   }
-}
 
-@media (max-width: 767px) {
-  .activity-grid,
-  .benefit-grid {
-    grid-template-columns: repeat(1, minmax(220px, 1fr));
+  .benefit-banner img {
+    width: 100%;
   }
 
-  .activity-card__cover,
-  .benefit-card__cover {
-    height: 180px;
+  .benefit-list article,
+  .activity-list article {
+    flex-direction: column;
+  }
+
+  .benefit-list img,
+  .activity-list img {
+    width: 100%;
+    height: 160px;
   }
 }
 </style>
