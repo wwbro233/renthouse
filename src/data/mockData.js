@@ -126,7 +126,7 @@ export const nearbyProperties = [
   },
   {
     id: 203,
-    cover: 'https://images.unsplash.com/photo-1613553481961-02920c4024d2?auto=format&fit=crop&w=900&q=80',
+    cover: '/images/图片1.png',
     title: '广渠门 合租大次卧',
     price: 3200,
     layout: '3室1厅',

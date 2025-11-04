@@ -78,11 +78,32 @@ const serviceStrip = [
     id: 'smart',
     title: '硅谷智能',
     desc: '全屋智能家装',
-    cover:
-      'https://images.unsplash.com/photo-1616627459430-1e6c82853f38?auto=format&fit=crop&w=900&q=80',
+    cover: '/images/图片1.png',
     route: '/service'
   }
 ]
+
+// 为远程图片提供代理与回退，仅代理 http(s) 链接
+const safeImg = (url) => {
+  try {
+    if (typeof url !== 'string') return url
+    if (!/^https?:\/\//i.test(url)) return url // 本地或相对路径，直连
+    const stripped = url.replace(/^https?:\/\//i, '')
+    return `https://images.weserv.nl/?url=${encodeURIComponent(stripped)}&w=900&q=80`
+  } catch {
+    return url
+  }
+}
+
+const handleImgError = (e) => {
+  const img = e?.target
+  if (!img) return
+  // 避免死循环：只回退一次
+  if (!img.dataset.fallbacked) {
+    img.dataset.fallbacked = '1'
+    img.src = '/favicon.ico'
+  }
+}
 
 const planCards = [
   {
@@ -230,7 +251,13 @@ const handleQuickCategory = () => {
         class="service-strip__item"
         @click="handleClick(item.route)"
       >
-        <img :src="item.cover" :alt="item.title" />
+        <img
+          :src="safeImg(item.cover)"
+          :alt="item.title"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          @error="handleImgError"
+        />
         <div>
           <h4>{{ item.title }}</h4>
           <p>{{ item.desc }}</p>

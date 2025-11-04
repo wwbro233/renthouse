@@ -161,9 +161,14 @@ const openChat = async () => {
     <main class="site-main">
       <router-view v-slot="{ Component }">
         <transition name="fade-slide" mode="out-in">
-          <div v-if="Component" :class="showLayout ? 'content-container' : 'content-blank'">
-            <component :is="Component" />
-          </div>
+          <template v-if="Component">
+            <div v-if="showLayout" class="content-container">
+              <component :is="Component" />
+            </div>
+            <div v-else :class="route.meta?.noPadding ? '' : 'content-blank'">
+              <component :is="Component" />
+            </div>
+          </template>
         </transition>
       </router-view>
     </main>
@@ -181,6 +186,7 @@ const openChat = async () => {
             <router-link to="/want">找房首页</router-link>
             <router-link to="/service">家居服务</router-link>
             <router-link to="/discover">生活资讯</router-link>
+            <router-link to="/about">关于我们</router-link>
           </div>
           <div>
             <h4>帮助中心</h4>
