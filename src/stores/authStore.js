@@ -1,5 +1,6 @@
 import { computed, reactive } from 'vue'
 import { assetUrl } from '../utils/assets'
+import { useWalletStore } from './walletStore'
 
 const STORAGE_KEY = 'link-house-auth'
 
@@ -153,7 +154,21 @@ const logout = () => {
 
 const currentUser = computed(() => {
   if (!state.currentPhone) return null
-  return findUser(state.currentPhone) || null
+  const user = findUser(state.currentPhone)
+  if (!user) return null
+
+  // 同步钱包的积分到用户数据
+  try {
+    const walletStore = useWalletStore()
+    const wallet = walletStore.getUserWallet(state.currentPhone)
+    if (wallet) {
+      user.points = wallet.points
+    }
+  } catch (error) {
+    // 钱包store可能还未初始化，忽略错误
+  }
+
+  return user
 })
 
 const isAuthenticated = computed(() => !!currentUser.value)

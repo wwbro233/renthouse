@@ -22,7 +22,7 @@ const shortcutList = [
   { id: 'bill', label: '账单', icon: 'Tickets', route: '/service' },
   { id: 'order', label: '订单', icon: 'List', route: '/my/orders' },
   { id: 'comment', label: '评价', icon: 'EditPen', route: '/service' },
-  { id: 'wallet', label: '钱包', icon: 'Wallet', route: '/service' }
+  { id: 'wallet', label: '钱包', icon: 'Wallet', route: '/my/wallet' }
 ]
 
 const planCards = [
