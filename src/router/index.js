@@ -145,6 +145,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/my/orders',
+      name: 'my-orders',
+      component: () => import('../views/MyOrderView.vue'),
+      meta: {
+        title: '我的订单',
+        activeMenu: '/my'
+      }
+    },
+    {
       path: '/my/profile',
       name: 'user-profile',
       component: () => import('../views/UserProfileView.vue'),
