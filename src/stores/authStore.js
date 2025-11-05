@@ -162,6 +162,28 @@ const resetPending = () => {
   state.pending = { phone: '', code: '', expires: 0 }
 }
 
+const updateUserProfile = (updates) => {
+  if (!state.currentPhone) {
+    return { success: false, message: '未登录' }
+  }
+  const user = findUser(state.currentPhone)
+  if (!user) {
+    return { success: false, message: '用户不存在' }
+  }
+
+  // 允许更新的字段
+  const allowedFields = ['name', 'nickname', 'avatar', 'gender', 'birthday', 'email', 'signature', 'password']
+
+  Object.keys(updates).forEach(key => {
+    if (allowedFields.includes(key) && updates[key] !== undefined) {
+      user[key] = updates[key]
+    }
+  })
+
+  persist()
+  return { success: true, user }
+}
+
 if (state.users.length === 0) {
   loadFromStorage()
 }
@@ -174,5 +196,6 @@ export const useAuthStore = () => ({
   requestVerifyCode,
   verifyCode,
   logout,
-  resetPending
+  resetPending,
+  updateUserProfile
 })
