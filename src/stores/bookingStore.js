@@ -26,7 +26,7 @@ const addBooking = (booking) => {
     type: booking.type || '约看',
     time: booking.time,
     status: booking.status || '待确认',
-    cover: booking.cover || assetUrl('booking-default.svg'),
+    cover: booking.cover || assetUrl('booking-default.jpg'),
     address: booking.address || '地址待确认',
     contactName: booking.contactName,
     contactPhone: booking.contactPhone,

@@ -7,7 +7,7 @@ import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
-const heroVisual = assetUrl('hero-visual.svg')
+const heroVisual = assetUrl('hero-visual.jpg')
 
 const searchKeyword = ref('')
 

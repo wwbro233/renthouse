@@ -9,7 +9,7 @@ const defaultUsers = [
     phone: '18512345678',
     name: '小谷粒',
     nickname: '谷粒会员',
-    avatar: assetUrl('avatars/avatar-default.svg'),
+    avatar: assetUrl('avatars/avatar-default.jpg'),
     points: 15
   }
 ]
@@ -59,10 +59,10 @@ const persist = () => {
 }
 
 const avatarPool = [
-  'avatars/avatar-default.svg',
-  'avatars/avatar-review-1.svg',
-  'avatars/avatar-review-2.svg',
-  'avatars/avatar-landlord.svg'
+  'avatars/avatar-default.jpg',
+  'avatars/avatar-review-1.jpg',
+  'avatars/avatar-review-2.jpg',
+  'avatars/avatar-landlord.jpg'
 ]
 
 const generateAvatar = (phone = '') => {
