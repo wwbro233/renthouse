@@ -1,10 +1,11 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { assetUrl } from '../utils/assets'
 
 const profileFormRef = ref()
 const profileForm = reactive({
-  avatar: 'https://picsum.photos/120?random=5',
+  avatar: assetUrl('avatars/avatar-default.svg'),
   nickname: '张租客',
   gender: 'male',
   birthday: '1995-08-16',

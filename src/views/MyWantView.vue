@@ -34,7 +34,7 @@ const filteredData = computed(() => {
   if (filters.layout) {
     result = result.filter((item) => item.layout.includes(filters.layout))
   }
-  if (filters.priceOrder) {
+  if (filters.priceOrder) { //过滤价格
     const multiplier = filters.priceOrder === 'asc' ? 1 : -1
     result = result.sort((a, b) => (a.price - b.price) * multiplier)
   }

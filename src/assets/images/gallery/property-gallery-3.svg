@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720">
+  <defs>
+    <linearGradient id="grad-gallery-property-gallery-3-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9ae7d0"/>
+      <stop offset="100%" stop-color="#ecfff7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#grad-gallery-property-gallery-3-svg)" rx="43.199999999999996"/>
+  <g opacity="0.2">
+    <circle cx="936" cy="201.60000000000002" r="129.6" fill="#0f9268"/>
+    <circle cx="216" cy="590.4" r="158.4" fill="#0f9268"/>
+  </g>
+  <g fill="#0f9268" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="96" y="302.4" font-size="86.39999999999999" font-weight="600">Kitchen Bar</text>
+    <text x="96" y="403.2" font-size="57.6" font-weight="500" opacity="0.78">Bright</text>
+  </g>
+</svg>

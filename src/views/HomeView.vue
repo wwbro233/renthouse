@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { featuredProperties, nearbyProperties } from '../data/mockData'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
-const heroVisual =
-  'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1000&q=80'
+const heroVisual = assetUrl('hero-visual.svg')
 
 const searchKeyword = ref('')
 
@@ -18,50 +18,50 @@ const categoryTiles = [
   {
     id: 'share',
     title: '合租',
-    cover:
-      'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80'
+    theme: 'share',
+    cover: assetUrl('categories/category-share.svg')
   },
   {
     id: 'studio',
     title: '独卫主卧',
-    cover:
-      'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80'
+    theme: 'studio',
+    cover: assetUrl('categories/category-studio.svg')
   },
   {
     id: 'one-room',
     title: '整租1居',
-    cover:
-      'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80'
+    theme: 'one-room',
+    cover: assetUrl('categories/category-one.svg')
   },
   {
     id: 'two-room',
     title: '整租2-3居',
-    cover:
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80'
+    theme: 'two-room',
+    cover: assetUrl('categories/category-two.svg')
   },
   {
     id: 'small-living',
     title: '小客厅',
-    cover:
-      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80'
+    theme: 'small-living',
+    cover: assetUrl('categories/category-small.svg')
   },
   {
     id: 'large-living',
     title: '大客厅',
-    cover:
-      'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80'
+    theme: 'large-living',
+    cover: assetUrl('categories/category-large.svg')
   },
   {
     id: 'short-rent',
     title: '短租',
-    cover:
-      'https://images.unsplash.com/photo-1543248939-ff40856f65d4?auto=format&fit=crop&w=320&q=80'
+    theme: 'short-rent',
+    cover: assetUrl('categories/category-short.svg')
   },
   {
     id: 'deposit',
     title: '押金0首付',
-    cover:
-      'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=320&q=80'
+    theme: 'deposit',
+    cover: assetUrl('categories/category-deposit.svg')
   }
 ]
 
@@ -70,15 +70,14 @@ const serviceStrip = [
     id: 'move',
     title: '硅谷家服',
     desc: '搬家·保洁·清洁·维修',
-    cover:
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-strip-move.svg'),
     route: '/service'
   },
   {
     id: 'smart',
     title: '硅谷智能',
     desc: '全屋智能家装',
-    cover: '/images/图片1.png',
+    cover: assetUrl('services/service-strip-smart.svg'),
     route: '/service'
   }
 ]
@@ -160,6 +159,15 @@ const performSearch = () => {
 const handleQuickCategory = () => {
   router.push('/want')
 }
+
+const handleCategorySelect = (tile) => {
+  router
+    .push({
+      path: '/want',
+      query: { theme: tile.theme }
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -189,7 +197,6 @@ const handleQuickCategory = () => {
               placeholder="输入地铁、商圈、小区，快速找房"
               @keyup.enter="performSearch"
             />
-            <el-icon><Position /></el-icon>
           </div>
           <button type="button" class="hero-search__button" @click="performSearch">搜索房源</button>
         </div>
@@ -234,7 +241,7 @@ const handleQuickCategory = () => {
           :key="item.id"
           type="button"
           class="category-tile"
-          @click="handleClick('/want')"
+          @click="handleCategorySelect(item)"
         >
           <div class="category-tile__image">
             <img :src="item.cover" :alt="item.title" />

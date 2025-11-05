@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { myAppointments as seedAppointments } from '../data/mockData'
+import { assetUrl } from '../utils/assets'
 
 const state = reactive({
   bookings: seedAppointments.map((item, index) => ({
@@ -25,7 +26,7 @@ const addBooking = (booking) => {
     type: booking.type || '约看',
     time: booking.time,
     status: booking.status || '待确认',
-    cover: booking.cover || 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=420&q=80',
+    cover: booking.cover || assetUrl('booking-default.svg'),
     address: booking.address || '地址待确认',
     contactName: booking.contactName,
     contactPhone: booking.contactPhone,

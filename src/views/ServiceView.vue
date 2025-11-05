@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { homeServices, serviceCampaigns, vipServices } from '../data/mockData'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
 
@@ -22,8 +23,7 @@ const cleaningDeals = [
     desc: '推荐60㎡以内的房屋',
     price: 80,
     origin: 119,
-    cover:
-      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80'
+    cover: assetUrl('services/service-clean-basic.svg')
   },
   {
     id: 'clean-3',
@@ -31,8 +31,7 @@ const cleaningDeals = [
     desc: '推荐80㎡以内的房屋',
     price: 135,
     origin: 179,
-    cover:
-      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80'
+    cover: assetUrl('services/service-clean-plus.svg')
   }
 ]
 
@@ -161,10 +160,7 @@ const goCampaign = () => {
         <p>领30元专属优惠券</p>
         <button type="button" @click="goCampaign()">立即领取</button>
       </div>
-      <img
-        src="https://images.unsplash.com/photo-1600585154340-0ef3c08cc65c?auto=format&fit=crop&w=900&q=80"
-        alt="newbie"
-      />
+      <img :src="assetUrl('services/service-newbie.svg')" alt="newbie" />
     </section>
 
     <section class="cleaning-grid">
@@ -187,6 +183,9 @@ const goCampaign = () => {
 
 <style scoped>
 .service-page {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
