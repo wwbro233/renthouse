@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420">
+  <defs>
+    <linearGradient id="grad-categories-category-studio-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7b8f7"/>
+      <stop offset="100%" stop-color="#ffe9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="420" fill="url(#grad-categories-category-studio-svg)" rx="25.2"/>
+  <g opacity="0.2">
+    <circle cx="468" cy="117.60000000000001" r="75.6" fill="#9145a6"/>
+    <circle cx="108" cy="344.4" r="92.4" fill="#9145a6"/>
+  </g>
+  <g fill="#9145a6" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="48" y="176.4" font-size="50.4" font-weight="600">Private Suite</text>
+    <text x="48" y="235.20000000000002" font-size="33.6" font-weight="500" opacity="0.78">Cozy Space</text>
+  </g>
+</svg>

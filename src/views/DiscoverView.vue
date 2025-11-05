@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { discoverActivities, discoverBenefits } from '../data/mockData'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
 
@@ -84,10 +85,7 @@ const goBenefit = (id) => {
         <h3>谷粒请你看电影</h3>
         <p>春季特惠，福利实时更新</p>
       </div>
-      <img
-        src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=780&q=80"
-        alt="movie"
-      />
+      <img :src="assetUrl('discover/discover-movie.svg')" alt="movie" />
     </section>
 
     <section class="benefit-list">
@@ -137,6 +135,9 @@ const goBenefit = (id) => {
 
 <style scoped>
 .discover-page {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;

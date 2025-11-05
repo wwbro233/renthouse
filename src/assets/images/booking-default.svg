@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <defs>
+    <linearGradient id="grad-booking-default-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fe1c5"/>
+      <stop offset="100%" stop-color="#ecfbf3"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#grad-booking-default-svg)" rx="24"/>
+  <g opacity="0.2">
+    <circle cx="499.20000000000005" cy="112.00000000000001" r="72" fill="#0d7d5b"/>
+    <circle cx="115.19999999999999" cy="328" r="88" fill="#0d7d5b"/>
+  </g>
+  <g fill="#0d7d5b" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="51.2" y="168" font-size="48" font-weight="600">Viewing</text>
+    <text x="51.2" y="224" font-size="32" font-weight="500" opacity="0.78">Pending</text>
+  </g>
+</svg>

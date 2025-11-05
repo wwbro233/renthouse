@@ -3,11 +3,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
 import { featuredProperties } from '../data/mockData'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
-const heroVisual =
-  'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1000&q=80'
+const heroVisual = assetUrl('hero-visual.svg')
 
 const searchKeyword = ref('')
 
@@ -99,15 +99,14 @@ const serviceStrip = [
     id: 'move',
     title: '硅谷家服',
     desc: '搬家·保洁·清洁·维修',
-    cover:
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-strip-move.svg'),
     route: '/service'
   },
   {
     id: 'smart',
     title: '硅谷智能',
     desc: '全屋智能家装',
-    cover: '/images/图片1.png',
+    cover: assetUrl('services/service-strip-smart.svg'),
     route: '/service'
   },
   {
@@ -279,6 +278,15 @@ const performSearch = () => {
 const handleQuickCategory = () => {
   router.push('/want')
 }
+
+const handleCategorySelect = (tile) => {
+  router
+    .push({
+      path: '/want',
+      query: { theme: tile.theme }
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -308,7 +316,6 @@ const handleQuickCategory = () => {
               placeholder="输入地铁、商圈、小区，快速找房"
               @keyup.enter="performSearch"
             />
-            <el-icon><Position /></el-icon>
           </div>
           <button type="button" class="hero-search__button" @click="performSearch">搜索房源</button>
         </div>

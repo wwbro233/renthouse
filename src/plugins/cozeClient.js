@@ -2,7 +2,7 @@ const COZE_SCRIPT_ID = 'coze-websdk';
 const COZE_SCRIPT_SRC =
   'https://lf-cdn-tos.bytescm.com/obj/static/coze/cz-dashboard/CozeWebSDK/v1.0.0/webchat.umd.js';
 const DEFAULT_CLIENT_OPTIONS = {
-  token: 'sat_hXSGpFXidfjHBiqktmteqtijFhQ0FUXpto8Tix8LMzvFgQZb4wa1LcDmiAWFmSJ7'
+  token: 'sat_70nGuMFiKS8pajBwOb4QHc1WB3JyvJzN8tQVHCks57mrGT7I4sqcFpLzDX5VT4mD'
 };
 
 let loadPromise;
@@ -66,5 +66,8 @@ export const initCozeChat = async (options = {}) => {
   });
 
   window.__cozeChatClient = client;
+  if (typeof client.mount === 'function') {
+    client.mount();
+  }
   return client;
 };

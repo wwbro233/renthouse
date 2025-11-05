@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { initCozeChat } from '../plugins/cozeClient'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
 
@@ -142,7 +143,7 @@ const handleChannelAction = async (channel) => {
       </div>
       <div class="support-hero__visual">
         <img
-          src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80"
+          :src="assetUrl('support/support-hero.svg')"
           alt="客服团队"
         />
       </div>
@@ -218,6 +219,9 @@ const handleChannelAction = async (channel) => {
 
 <style scoped>
 .support-page {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 28px;

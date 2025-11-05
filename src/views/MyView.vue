@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useBookingStore } from '../stores/bookingStore'
 import { useAuthStore } from '../stores/authStore'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
@@ -74,16 +75,13 @@ const userInfo = computed(() => {
     return {
       name: '游客',
       points: 0,
-      avatar:
-        'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=200&q=80'
+      avatar: assetUrl('avatars/avatar-default.svg')
     }
   }
   return {
     name: user.name,
     points: user.points ?? 0,
-    avatar:
-      user.avatar ||
-      'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80'
+    avatar: user.avatar || assetUrl('avatars/avatar-default.svg')
   }
 })
 

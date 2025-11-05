@@ -1,4 +1,5 @@
 import { computed, reactive } from 'vue'
+import { assetUrl } from '../utils/assets'
 
 const STORAGE_KEY = 'link-house-auth'
 
@@ -8,7 +9,7 @@ const defaultUsers = [
     phone: '18512345678',
     name: '小谷粒',
     nickname: '谷粒会员',
-    avatar: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80',
+    avatar: assetUrl('avatars/avatar-default.svg'),
     points: 15
   }
 ]
@@ -57,8 +58,18 @@ const persist = () => {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
 }
 
-const generateAvatar = (phone) =>
-  `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(phone)}`
+const avatarPool = [
+  'avatars/avatar-default.svg',
+  'avatars/avatar-review-1.svg',
+  'avatars/avatar-review-2.svg',
+  'avatars/avatar-landlord.svg'
+]
+
+const generateAvatar = (phone = '') => {
+  const hash = [...phone].reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  const key = avatarPool[hash % avatarPool.length]
+  return assetUrl(key)
+}
 
 const generateCode = () => `${Math.floor(100000 + Math.random() * 900000)}`
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 520">
+  <defs>
+    <linearGradient id="grad-services-service-vip-b-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9ed6ff"/>
+      <stop offset="100%" stop-color="#e3f3ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="780" height="520" fill="url(#grad-services-service-vip-b-svg)" rx="31.2"/>
+  <g opacity="0.2">
+    <circle cx="608.4" cy="145.60000000000002" r="93.6" fill="#225a97"/>
+    <circle cx="140.4" cy="426.4" r="114.4" fill="#225a97"/>
+  </g>
+  <g fill="#225a97" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="62.4" y="218.4" font-size="62.4" font-weight="600">Butler Care</text>
+    <text x="62.4" y="291.20000000000005" font-size="41.6" font-weight="500" opacity="0.78">Worry Free</text>
+  </g>
+</svg>

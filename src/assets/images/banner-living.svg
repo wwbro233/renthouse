@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="grad-banner-living-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#66c7f0"/>
+      <stop offset="100%" stop-color="#e8f5ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#grad-banner-living-svg)" rx="36"/>
+  <g opacity="0.2">
+    <circle cx="936" cy="168.00000000000003" r="108" fill="#ffffff"/>
+    <circle cx="216" cy="491.99999999999994" r="132" fill="#ffffff"/>
+  </g>
+  <g fill="#ffffff" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="96" y="252" font-size="72" font-weight="600">Premium Rent</text>
+    <text x="96" y="336" font-size="48" font-weight="500" opacity="0.78">Limited Offer</text>
+  </g>
+</svg>

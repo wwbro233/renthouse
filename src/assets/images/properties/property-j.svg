@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+  <defs>
+    <linearGradient id="grad-properties-property-j-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#90d7ff"/>
+      <stop offset="100%" stop-color="#e0f3ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="600" fill="url(#grad-properties-property-j-svg)" rx="36"/>
+  <g opacity="0.2">
+    <circle cx="702" cy="168.00000000000003" r="108" fill="#155e91"/>
+    <circle cx="162" cy="491.99999999999994" r="132" fill="#155e91"/>
+  </g>
+  <g fill="#155e91" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="72" y="252" font-size="72" font-weight="600">Metro Life</text>
+    <text x="72" y="336" font-size="48" font-weight="500" opacity="0.78">Convenient</text>
+  </g>
+</svg>

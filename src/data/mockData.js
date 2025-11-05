@@ -1,23 +1,25 @@
+import { assetUrl, getPropertyImage } from '../utils/assets'
+
 export const bannerSlides = [
   {
     id: 1,
     title: '满租安心季·签约享首月减免',
     description: '精选整租房源，首月立减 500 元，免费赠送深度保洁服务一次。',
-    cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1280&q=80',
+    cover: assetUrl('banner-living.svg'),
     link: '/activity/1'
   },
   {
     id: 2,
     title: '通勤找房上新 · 地铁周边好房限时抢',
     description: '地铁 30 分钟圈内优质房源，每日 10 点更新，先到先得。',
-    cover: 'https://images.unsplash.com/photo-1464146072230-91cabc968266?auto=format&fit=crop&w=1280&q=80',
+    cover: assetUrl('banner-commute.svg'),
     link: '/want'
   },
   {
     id: 3,
     title: '搬家保洁套餐 · 一键预约更轻松',
     description: '搬家、保洁、维修一站式服务，专业团队保障，预约立享 9 折优惠。',
-    cover: 'https://images.unsplash.com/photo-1659535937978-cfb03434b9dc?auto=format&fit=crop&w=1280&q=80',
+    cover: assetUrl('banner-service.svg'),
     link: '/service'
   }
 ]
@@ -30,7 +32,7 @@ export const featuredProperties = [
     rentType: '整租',
     desc: '1室1厅 · 56㎡ · 南向 · 中楼层',
     area: '朝阳区 · 望京',
-    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('metro-life'),
     tags: ['地铁 400m', '智能门锁', '配套齐全']
   },
   {
@@ -40,7 +42,7 @@ export const featuredProperties = [
     rentType: '整租',
     desc: '2室1厅 · 89㎡ · 南北通透',
     area: '朝阳区 · 国贸',
-    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('cbd-elite'),
     tags: ['商圈核心', '南北通透', '带地下车位']
   },
   {
@@ -50,7 +52,7 @@ export const featuredProperties = [
     rentType: '合租',
     desc: '4室2厅 · 16㎡ · 朝南次卧',
     area: '海淀区 · 中关村',
-    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('digital-share'),
     tags: ['拎包入住', '智能家居', '高速宽带']
   },
   {
@@ -60,7 +62,7 @@ export const featuredProperties = [
     rentType: '整租',
     desc: '3室2厅 · 110㎡ · 南北通透',
     area: '大兴区 · 亦庄',
-    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('garden-home'),
     tags: ['学校旁', '大型社区', '健身房']
   }
 ]
@@ -106,50 +108,394 @@ export const serviceShortcuts = [
 export const nearbyProperties = [
   {
     id: 201,
-    cover: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('city-loft'),
     title: '东直门银座 精装整租一居',
     price: 6200,
     layout: '1室1厅',
+    rooms: 1,
     size: 52,
+    rentType: '整租',
+    district: '东城区',
+    area: '东直门',
     address: '东城区 · 东直门',
+    metroLines: ['2号线', '机场线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: true,
+    themes: ['one-room', 'small-living', 'studio', 'deposit'],
     release: '2025-03-01'
   },
   {
     id: 202,
-    cover: 'https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('duplex'),
     title: '朝阳公园 复式 LOFT',
     price: 8900,
     layout: '2室1厅',
+    rooms: 2,
     size: 95,
+    rentType: '整租',
+    district: '朝阳区',
+    area: '朝阳公园',
     address: '朝阳区 · 朝阳公园',
+    metroLines: ['10号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: true,
+    loft: true,
+    southFacing: true,
+    parking: true,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'large-living'],
     release: '2025-03-05'
   },
   {
     id: 203,
-    cover: '/images/图片1.png',
+    cover: getPropertyImage('co-living'),
     title: '广渠门 合租大次卧',
     price: 3200,
     layout: '3室1厅',
+    rooms: 1,
     size: 18,
+    rentType: '合租',
+    district: '东城区',
+    area: '广渠门',
     address: '东城区 · 广渠门',
+    metroLines: ['7号线'],
+    nearMetro: true,
+    hasElevator: false,
+    petFriendly: true,
+    loft: false,
+    southFacing: false,
+    parking: false,
+    shortRent: false,
+    depositFree: true,
+    themes: ['share', 'small-living'],
     release: '2025-02-28'
   },
   {
     id: 204,
-    cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80',
+    cover: getPropertyImage('family-home'),
     title: '望京小腰 精装两居',
     price: 7600,
     layout: '2室1厅',
+    rooms: 2,
     size: 84,
+    rentType: '整租',
+    district: '朝阳区',
+    area: '望京',
     address: '朝阳区 · 望京',
+    metroLines: ['14号线', '15号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: true,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'large-living'],
     release: '2025-02-26'
+  },
+  {
+    id: 205,
+    cover: getPropertyImage('creative-hub'),
+    title: '国贸 公寓短租一居',
+    price: 6800,
+    layout: '1室1厅',
+    rooms: 1,
+    size: 48,
+    rentType: '短租',
+    district: '朝阳区',
+    area: '国贸',
+    address: '朝阳区 · 国贸',
+    metroLines: ['1号线', '10号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: true,
+    depositFree: true,
+    themes: ['short-rent', 'one-room', 'studio'],
+    release: '2025-03-02'
+  },
+  {
+    id: 206,
+    cover: getPropertyImage('garden-villa'),
+    title: '亦庄金茂悦 拎包入住四居',
+    price: 9600,
+    layout: '4室2厅',
+    rooms: 4,
+    size: 128,
+    rentType: '整租',
+    district: '大兴区',
+    area: '亦庄',
+    address: '大兴区 · 亦庄',
+    metroLines: ['亦庄线'],
+    nearMetro: false,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: true,
+    shortRent: false,
+    depositFree: false,
+    themes: ['large-living', 'two-room'],
+    release: '2025-02-20'
+  },
+  {
+    id: 207,
+    cover: getPropertyImage('tech-suite'),
+    title: '中关村 科技公寓双卧',
+    price: 8200,
+    layout: '2室1厅',
+    rooms: 2,
+    size: 76,
+    rentType: '整租',
+    district: '海淀区',
+    area: '中关村',
+    address: '海淀区 · 中关村',
+    metroLines: ['4号线', '10号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'small-living'],
+    release: '2025-02-22'
+  },
+  {
+    id: 208,
+    cover: getPropertyImage('co-living'),
+    title: '双井 轻奢合租主卧',
+    price: 4200,
+    layout: '3室2厅',
+    rooms: 1,
+    size: 22,
+    rentType: '合租',
+    district: '朝阳区',
+    area: '双井',
+    address: '朝阳区 · 双井',
+    metroLines: ['7号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: true,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: true,
+    themes: ['share', 'small-living'],
+    release: '2025-03-03'
+  },
+  {
+    id: 209,
+    cover: getPropertyImage('family-home'),
+    title: '通州 运河畔 电梯三居',
+    price: 5600,
+    layout: '3室2厅',
+    rooms: 3,
+    size: 102,
+    rentType: '整租',
+    district: '通州区',
+    area: '北运河',
+    address: '通州区 · 北运河',
+    metroLines: ['6号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: true,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'large-living'],
+    release: '2025-02-18'
+  },
+  {
+    id: 210,
+    cover: getPropertyImage('digital-share'),
+    title: '回龙观 合租次卧可月付',
+    price: 2800,
+    layout: '4室2厅',
+    rooms: 1,
+    size: 15,
+    rentType: '合租',
+    district: '昌平区',
+    area: '回龙观',
+    address: '昌平区 · 回龙观',
+    metroLines: ['13号线'],
+    nearMetro: true,
+    hasElevator: false,
+    petFriendly: false,
+    loft: false,
+    southFacing: false,
+    parking: false,
+    shortRent: false,
+    depositFree: true,
+    themes: ['share', 'deposit'],
+    release: '2025-03-04'
+  },
+  {
+    id: 211,
+    cover: getPropertyImage('garden-home'),
+    title: '石景山 精装两居朝南',
+    price: 5200,
+    layout: '2室1厅',
+    rooms: 2,
+    size: 78,
+    rentType: '整租',
+    district: '石景山区',
+    area: '古城',
+    address: '石景山区 · 古城',
+    metroLines: ['1号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'small-living'],
+    release: '2025-02-25'
+  },
+  {
+    id: 212,
+    cover: getPropertyImage('cbd-elite'),
+    title: '顺义 国际社区 花园叠拼',
+    price: 11800,
+    layout: '4室2厅',
+    rooms: 4,
+    size: 165,
+    rentType: '整租',
+    district: '顺义区',
+    area: '后沙峪',
+    address: '顺义区 · 后沙峪',
+    metroLines: ['15号线'],
+    nearMetro: false,
+    hasElevator: false,
+    petFriendly: true,
+    loft: false,
+    southFacing: true,
+    parking: true,
+    shortRent: false,
+    depositFree: false,
+    themes: ['large-living'],
+    release: '2025-02-16'
+  },
+  {
+    id: 213,
+    cover: getPropertyImage('master-suite'),
+    title: '青年路 精装修小客厅一居',
+    price: 5400,
+    layout: '1室1厅',
+    rooms: 1,
+    size: 49,
+    rentType: '整租',
+    district: '朝阳区',
+    area: '青年路',
+    address: '朝阳区 · 青年路',
+    metroLines: ['6号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: true,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: true,
+    themes: ['small-living', 'one-room', 'studio'],
+    release: '2025-02-21'
+  },
+  {
+    id: 214,
+    cover: getPropertyImage('family-home'),
+    title: '西单文化中心 精装两居',
+    price: 6800,
+    layout: '2室1厅',
+    rooms: 2,
+    size: 78,
+    rentType: '整租',
+    district: '西城区',
+    area: '西单',
+    address: '西城区 · 西单',
+    metroLines: ['1号线', '8号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'small-living'],
+    release: '2025-03-03'
+  },
+  {
+    id: 215,
+    cover: getPropertyImage('garden-home'),
+    title: '丰台丽泽 轻奢三居',
+    price: 7200,
+    layout: '3室2厅',
+    rooms: 3,
+    size: 96,
+    rentType: '整租',
+    district: '丰台区',
+    area: '丽泽',
+    address: '丰台区 · 丽泽',
+    metroLines: ['10号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: true,
+    loft: false,
+    southFacing: true,
+    parking: true,
+    shortRent: false,
+    depositFree: false,
+    themes: ['two-room', 'large-living'],
+    release: '2025-03-04'
+  },
+  {
+    id: 216,
+    cover: getPropertyImage('creative-hub'),
+    title: '宋家庄 月付拎包公寓',
+    price: 1800,
+    layout: '1室0厅',
+    rooms: 1,
+    size: 28,
+    rentType: '整租',
+    district: '丰台区',
+    area: '宋家庄',
+    address: '丰台区 · 宋家庄',
+    metroLines: ['10号线'],
+    nearMetro: true,
+    hasElevator: true,
+    petFriendly: false,
+    loft: false,
+    southFacing: true,
+    parking: false,
+    shortRent: false,
+    depositFree: true,
+    themes: ['one-room', 'deposit', 'studio'],
+    release: '2025-03-06'
   }
 ]
 
 export const commuteRecommendations = [
   {
     id: 301,
-    cover: 'https://images.unsplash.com/photo-1529429617124-aee711a7cce0?auto=format&fit=crop&w=240&q=80',
+    cover: getPropertyImage('metro-life'),
     title: '国贸 CBD 品质公寓',
     price: 6800,
     commuteTime: '18分钟',
@@ -161,7 +507,7 @@ export const commuteRecommendations = [
   },
   {
     id: 302,
-    cover: 'https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=240&q=80',
+    cover: getPropertyImage('city-loft'),
     title: '双井 整租南向一居',
     price: 5800,
     commuteTime: '23分钟',
@@ -173,7 +519,7 @@ export const commuteRecommendations = [
   },
   {
     id: 303,
-    cover: 'https://images.unsplash.com/photo-1531973968078-9bb02785f13d?auto=format&fit=crop&w=240&q=80',
+    cover: getPropertyImage('co-living'),
     title: '潘家园 精装合租主卧',
     price: 3200,
     commuteTime: '28分钟',
@@ -221,21 +567,21 @@ export const vipServices = [
     id: 'vip-1',
     title: '尊享居住顾问',
     desc: '全程陪看、1对1签约指导，专属客服随时响应，保障租房流程顺畅。',
-    cover: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-vip-a.svg'),
     perks: ['陪看专车', '个性化房源甄选', '专家在线答疑']
   },
   {
     id: 'vip-2',
     title: '管家式服务包',
     desc: '7×24 托管服务，日常保洁、维修、缴费全覆盖，让租住更省心。',
-    cover: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-vip-b.svg'),
     perks: ['每周保洁', '维修优先', '生活缴费提醒']
   },
   {
     id: 'vip-3',
     title: '豪华搬家体验',
     desc: '专业团队+包装耗材全免，提供家具拆装、家电安置，入住零负担。',
-    cover: 'https://images.unsplash.com/photo-1549032305-9f71f9e198bb?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-vip-c.svg'),
     perks: ['全程搬运', '空调移机', '赠送保洁']
   }
 ]
@@ -315,14 +661,14 @@ export const serviceCampaigns = [
     id: 'camp-1',
     title: '3 月搬家早鸟礼',
     date: '2025-03-05 至 2025-03-31',
-    cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-strip-move.svg'),
     desc: '提前 10 天预约搬家服务，赠送 200 元搬家券+免费纸箱 6 个。'
   },
   {
     id: 'camp-2',
     title: '春季保洁焕新季',
     date: '2025-03-08 至 2025-04-08',
-    cover: 'https://images.unsplash.com/photo-1585421514738-01798e348b17?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-clean-plus.svg'),
     desc: '深度保洁套餐限时 8.8 折，针对厨房、卫生间特殊去污。'
   }
 ]
@@ -333,7 +679,7 @@ export const discoverActivities = [
     title: '周末露天电影派对',
     time: '2025-03-15 19:00',
     location: '望京·优设社区花园',
-    cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('discover/discover-activity-party.svg'),
     desc: '露天电影+社交派对，提供爆米花、饮品，入住用户享报名优先权。',
     tag: '报名中'
   },
@@ -342,7 +688,7 @@ export const discoverActivities = [
     title: '城市探索跑',
     time: '2025-03-22 08:30',
     location: '国贸CBD集合',
-    cover: 'https://images.unsplash.com/photo-1427384906349-30452365b5e8?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('discover/discover-activity-run.svg'),
     desc: '8km 城市慢跑路线，专业教练领跑，赛后提供能量补给。',
     tag: '报名中'
   },
@@ -351,7 +697,7 @@ export const discoverActivities = [
     title: '室内园艺工作坊',
     time: '2025-03-29 14:00',
     location: '朝阳北路社区客厅',
-    cover: 'https://images.unsplash.com/photo-1518733057094-95b53143d2a7?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('discover/discover-activity-garden.svg'),
     desc: '手作多肉绿植盆栽，学习打造高颜值阳台花园。',
     tag: '即将开始'
   }
@@ -363,7 +709,7 @@ export const discoverBenefits = [
     title: '春季保洁 100 元优惠券',
     type: '优惠券',
     expire: '2025-04-30',
-    cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('discover/discover-benefit.svg'),
     desc: '适用于全品类保洁服务，订单满 300 元可用。'
   },
   {
@@ -371,7 +717,7 @@ export const discoverBenefits = [
     title: '合租配套免费试用',
     type: '免费试用',
     expire: '2025-03-31',
-    cover: 'https://images.unsplash.com/photo-1616628182474-a1d49b2e1ad1?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-strip-smart.svg'),
     desc: '限新用户，提供智能门锁+空气净化器 14 天试用。'
   },
   {
@@ -379,7 +725,7 @@ export const discoverBenefits = [
     title: '社区商家积分兑换',
     type: '积分兑换',
     expire: '2025-05-15',
-    cover: 'https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-newbie.svg'),
     desc: '积分 500 起兑咖啡券、美甲体验、健身体验课。'
   }
 ]
@@ -393,7 +739,7 @@ export const myFavorites = [
     size: 45,
     address: '朝阳区 · 国贸',
     favoriteAt: '2025-03-02 18:32',
-    cover: 'https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=240&q=80'
+    cover: getPropertyImage('metro-life')
   },
   {
     id: 2,
@@ -403,7 +749,7 @@ export const myFavorites = [
     size: 84,
     address: '朝阳区 · 望京',
     favoriteAt: '2025-02-26 10:12',
-    cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=240&q=80'
+    cover: getPropertyImage('family-home')
   },
   {
     id: 3,
@@ -413,7 +759,7 @@ export const myFavorites = [
     size: 16,
     address: '海淀区 · 中关村',
     favoriteAt: '2025-02-20 14:06',
-    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=240&q=80'
+    cover: getPropertyImage('digital-share')
   }
 ]
 
@@ -423,21 +769,21 @@ export const myFootprints = [
     title: '北京欢乐谷春日活动',
     type: '活动',
     visitedAt: '2025-03-03 21:12',
-    cover: 'https://images.unsplash.com/photo-1475724017904-b712052c192a?auto=format&fit=crop&w=240&q=80'
+    cover: assetUrl('discover/discover-activity-party.svg')
   },
   {
     id: 12,
     title: '深度保洁 3 小时套餐',
     type: '服务',
     visitedAt: '2025-03-01 16:45',
-    cover: 'https://images.unsplash.com/photo-1584091370879-3ec58c91ed1a?auto=format&fit=crop&w=240&q=80'
+    cover: assetUrl('services/service-clean-plus.svg')
   },
   {
     id: 13,
     title: '国贸 CBD 品质公寓',
     type: '房源',
     visitedAt: '2025-02-28 13:26',
-    cover: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=240&q=80'
+    cover: getPropertyImage('city-loft')
   }
 ]
 
@@ -448,7 +794,7 @@ export const myAppointments = [
     type: '约看',
     time: '2025-03-06 14:30',
     status: '已确认',
-    cover: 'https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=240&q=80'
+    cover: getPropertyImage('metro-life')
   },
   {
     id: 22,
@@ -456,7 +802,7 @@ export const myAppointments = [
     type: '服务',
     time: '2025-03-07 09:00',
     status: '待服务',
-    cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=240&q=80'
+    cover: assetUrl('services/service-clean-basic.svg')
   },
   {
     id: 23,
@@ -464,7 +810,7 @@ export const myAppointments = [
     type: '活动',
     time: '2025-03-15 19:00',
     status: '已报名',
-    cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=240&q=80'
+    cover: assetUrl('discover/discover-activity-party.svg')
   }
 ]
 
@@ -500,15 +846,15 @@ export const propertyDetail = {
   address: '北京市朝阳区国贸核心区',
   landlord: {
     name: '李先生',
-    avatar: 'https://picsum.photos/72?random=3',
+    avatar: assetUrl('avatars/avatar-landlord.svg'),
     phone: '134-****-8890',
     rating: 4.9
   },
   gallery: [
-    'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1590490359854-dfeba9650925?auto=format&fit=crop&w=1200&q=80'
+    assetUrl('gallery/property-gallery-1.svg'),
+    assetUrl('gallery/property-gallery-2.svg'),
+    assetUrl('gallery/property-gallery-3.svg'),
+    assetUrl('gallery/property-gallery-4.svg')
   ],
   highlights: ['地铁 200 米', 'CBD 核心区', '租期灵活', '拎包入住'],
   description:
@@ -528,7 +874,7 @@ export const serviceDetail = {
   duration: '4 小时',
   rating: 4.95,
   appointmentCount: 1823,
-  cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+  cover: assetUrl('services/service-clean-plus.svg'),
   video: 'https://player.vimeo.com/video/76979871?h=8272103f6e',
   description:
     '适用于 90㎡ 以下家庭，包含厨房油污、卫生间除垢、卧室除螨三大模块。标准化流程，专业工具到位，保证每一处角落焕然一新。',
@@ -564,7 +910,7 @@ export const serviceDetail = {
     {
       id: 'rv-1',
       user: 'Lisa',
-      avatar: 'https://picsum.photos/40?random=8',
+      avatar: assetUrl('avatars/avatar-review-1.svg'),
       comment: '两个保洁阿姨很专业，厨房油烟机和灶台都擦得很干净，床垫除螨后睡觉更安心了。',
       rate: 5,
       date: '2025-02-28'
@@ -572,7 +918,7 @@ export const serviceDetail = {
     {
       id: 'rv-2',
       user: '陈先生',
-      avatar: 'https://picsum.photos/40?random=9',
+      avatar: assetUrl('avatars/avatar-review-2.svg'),
       comment: '预约流程顺畅，阿姨带来蒸汽机和除螨仪，细节到位，还贴心地帮我整理了衣柜。',
       rate: 5,
       date: '2025-02-25'
@@ -583,7 +929,7 @@ export const serviceDetail = {
 export const activityDetail = {
   id: 'act-1',
   title: '周末露天电影派对',
-  cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
+  cover: assetUrl('discover/discover-activity-party.svg'),
   time: '2025-03-15 19:00-22:00',
   location: '望京·优设社区花园',
   host: 'Link House 社区团队',
@@ -606,7 +952,7 @@ export const activityDetail = {
 export const benefitDetail = {
   id: 'ben-1',
   title: '春季保洁 100 元优惠券',
-  cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+  cover: assetUrl('discover/discover-benefit.svg'),
   type: '优惠券',
   start: '2025-03-01',
   end: '2025-04-30',
