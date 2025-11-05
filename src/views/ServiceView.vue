@@ -310,22 +310,30 @@ const goCampaign = () => {
 
 .service-grid__list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
 }
 
 .service-grid__list button {
   border: none;
   border-radius: 18px;
   background: rgba(12, 159, 113, 0.08);
-  padding: 14px 12px;
+  padding: 18px 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   align-items: flex-start;
   color: #245049;
   cursor: pointer;
-  min-height: 120px;
+  min-height: 140px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(20, 78, 64, 0.08);
+}
+
+.service-grid__list button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(20, 78, 64, 0.16);
+  background: rgba(12, 159, 113, 0.15);
 }
 
 .service-grid__list .icon-wrap {
@@ -488,9 +496,9 @@ const goCampaign = () => {
 }
 
 .vip-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
 
 .vip-cards article {
@@ -498,8 +506,16 @@ const goCampaign = () => {
   gap: 14px;
   border-radius: 18px;
   background: rgba(12, 159, 113, 0.08);
-  padding: 12px;
+  padding: 16px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(20, 78, 64, 0.08);
+}
+
+.vip-cards article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(20, 78, 64, 0.16);
+  background: rgba(12, 159, 113, 0.15);
 }
 
 .vip-cards img {
@@ -586,17 +602,26 @@ const goCampaign = () => {
 
 .cleaning-grid__list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
 }
 
 .cleaning-grid__list article {
   border-radius: 18px;
   background: rgba(12, 159, 113, 0.08);
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(20, 78, 64, 0.08);
+  cursor: pointer;
+}
+
+.cleaning-grid__list article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(20, 78, 64, 0.16);
+  background: rgba(12, 159, 113, 0.15);
 }
 
 .cleaning-grid__list img {

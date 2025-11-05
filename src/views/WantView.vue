@@ -127,34 +127,48 @@ const handleSearch = () => {
       </div>
     </section>
 
-    <section class="search-toolbar">
-      <el-input
-        v-model="searchKeyword"
-        placeholder="搜索房源标题或地址"
-        clearable
-        @keyup.enter="handleSearch"
-        @clear="handleSearch"
-      >
-        <template #prefix>
-          <el-icon><Search /></el-icon>
-        </template>
-      </el-input>
-      <el-button type="primary" @click="handleSearch">搜索</el-button>
-    </section>
-
-    <section class="filter-card">
-      <div
-        v-for="item in Object.keys(filterState)"
-        :key="item"
-        class="filter-chip"
-        @click="openFilterSheet(item)"
-      >
-        <span>{{ filterState[item] }}</span>
-        <el-icon><ArrowDown /></el-icon>
+    <!-- F型搜索筛选层 -->
+    <section class="search-filter-section">
+      <div class="search-bar">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索房源标题或地址"
+          clearable
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        >
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
+        </el-input>
+        <el-button type="primary" class="search-btn" @click="handleSearch">搜索</el-button>
+      </div>
+      <div class="filter-row">
+        <div class="filter-col filter-col--left">
+          <div class="filter-item" @click="openFilterSheet('position')">
+            <span>{{ filterState.position }}</span>
+            <el-icon><ArrowDown /></el-icon>
+          </div>
+          <div class="filter-item" @click="openFilterSheet('rent')">
+            <span>{{ filterState.rent }}</span>
+            <el-icon><ArrowDown /></el-icon>
+          </div>
+        </div>
+        <div class="filter-col filter-col--right">
+          <div class="filter-item" @click="openFilterSheet('layout')">
+            <span>{{ filterState.layout }}</span>
+            <el-icon><ArrowDown /></el-icon>
+          </div>
+          <div class="filter-item" @click="openFilterSheet('sort')">
+            <span>{{ filterState.sort }}</span>
+            <el-icon><ArrowDown /></el-icon>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="property-list">
+    <!-- 卡片式房源展示层 -->
+    <section class="property-grid">
       <article
         v-for="item in filteredList"
         :key="item.id"
@@ -166,31 +180,46 @@ const handleSearch = () => {
           <div class="property-card__badge">{{ item.tag }}</div>
         </div>
         <div class="property-card__body">
-          <div class="property-card__header">
-            <h3>{{ item.title }}</h3>
-            <span>¥{{ item.price }}/月</span>
-          </div>
-          <p class="property-card__sub">{{ item.layout }} · {{ item.size }}㎡</p>
-          <p class="property-card__sub">{{ item.address }}</p>
-          <div class="property-card__footer" @click.stop>
-            <button type="button" @click="handleBook(item)">预约看房</button>
-            <el-icon><ArrowRight /></el-icon>
+          <h3 class="property-card__title">{{ item.title }}</h3>
+          <p class="property-card__info">{{ item.layout }} · {{ item.size }}㎡</p>
+          <p class="property-card__address">{{ item.address }}</p>
+          <div class="property-card__footer">
+            <span class="property-card__price">¥{{ item.price }}/月</span>
+            <button type="button" class="property-card__btn" @click.stop="handleBook(item)">预约看房</button>
           </div>
         </div>
       </article>
     </section>
 
-    <section class="ideas-card">
-      <h4>房源推荐</h4>
-      <div class="ideas-timeline">
-        <article v-for="item in hotIdeas" :key="item.id">
-          <img :src="item.cover" :alt="item.title" />
-          <div>
-            <h5>{{ item.title }}</h5>
-            <p>{{ item.transport }} · {{ item.commuteTime }}</p>
-            <span>¥{{ item.price }}/月</span>
-          </div>
-        </article>
+    <!-- 底部辅助层 -->
+    <section class="footer-auxiliary">
+      <div class="auxiliary-section">
+        <h4>热门区域推荐</h4>
+        <div class="auxiliary-links">
+          <a href="#" @click.prevent>朝阳区</a>
+          <a href="#" @click.prevent>海淀区</a>
+          <a href="#" @click.prevent>丰台区</a>
+          <a href="#" @click.prevent>通州区</a>
+          <a href="#" @click.prevent>东城区</a>
+          <a href="#" @click.prevent>西城区</a>
+        </div>
+      </div>
+      <div class="auxiliary-section">
+        <h4>找房攻略</h4>
+        <div class="auxiliary-links">
+          <a href="#" @click.prevent>租房注意事项</a>
+          <a href="#" @click.prevent>合同签订指南</a>
+          <a href="#" @click.prevent>押金退还流程</a>
+          <a href="#" @click.prevent>房源选择技巧</a>
+        </div>
+      </div>
+      <div class="auxiliary-section">
+        <h4>客服入口</h4>
+        <div class="auxiliary-links">
+          <a href="#" @click.prevent>在线咨询</a>
+          <a href="#" @click.prevent>电话客服</a>
+          <a href="#" @click.prevent>投诉建议</a>
+        </div>
       </div>
     </section>
 
@@ -232,25 +261,80 @@ const handleSearch = () => {
   padding: 4px 0 32px;
 }
 
-.search-toolbar {
+/* F型搜索筛选层 */
+.search-filter-section {
+  background: var(--surface-0);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-bar {
   display: flex;
   gap: 12px;
   align-items: center;
-  background: var(--surface-0);
-  padding: 16px 20px;
-  border-radius: 18px;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
 }
 
-.search-toolbar :deep(.el-input__wrapper) {
-  padding-left: 8px;
+.search-bar :deep(.el-input) {
+  flex: 1;
+}
+
+.search-bar :deep(.el-input__wrapper) {
+  padding-left: 12px;
   background: rgba(243, 246, 250, 0.8);
   border: none;
   box-shadow: none;
 }
 
-.search-toolbar :deep(.el-input__inner) {
+.search-bar :deep(.el-input__inner) {
   font-size: 15px;
+}
+
+.search-btn {
+  background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
+  border: none;
+  padding: 12px 24px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(10, 205, 136, 0.3);
+  transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(10, 205, 136, 0.4);
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.filter-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(12, 159, 113, 0.08);
+  color: #256554;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-item:hover {
+  background: rgba(12, 159, 113, 0.15);
+  transform: translateY(-1px);
 }
 
 .hero {
@@ -339,32 +423,11 @@ const handleSearch = () => {
   cursor: pointer;
 }
 
-.filter-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 14px 12px;
+/* 卡片式房源展示层 */
+.property-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  box-shadow: 0 12px 24px rgba(40, 121, 102, 0.12);
-}
-
-.filter-chip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(12, 159, 113, 0.08);
-  color: #256554;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.property-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .property-card {
@@ -373,62 +436,70 @@ const handleSearch = () => {
   overflow: hidden;
   box-shadow: 0 14px 26px rgba(20, 78, 64, 0.14);
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(20, 78, 64, 0.2);
 }
 
 .property-card__media {
   position: relative;
-  width: 140px;
-  flex-shrink: 0;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
 }
 
 .property-card__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.property-card:hover .property-card__media img {
+  transform: scale(1.05);
 }
 
 .property-card__badge {
   position: absolute;
   left: 12px;
-  bottom: 12px;
+  top: 12px;
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(12, 159, 113, 0.9);
   color: #fff;
   font-size: 12px;
+  font-weight: 600;
 }
 
 .property-card__body {
   flex: 1;
-  padding: 14px 16px 14px 0;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   color: #26483f;
 }
 
-.property-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.property-card__header h3 {
+.property-card__title {
   margin: 0;
   font-size: 16px;
   line-height: 1.4;
-  flex: 1;
+  color: #1c443c;
+  font-weight: 600;
 }
 
-.property-card__header span {
-  color: #e7502a;
-  font-weight: 700;
-  white-space: nowrap;
+.property-card__info {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(38, 72, 63, 0.7);
 }
 
-.property-card__sub {
+.property-card__address {
   margin: 0;
   font-size: 12px;
   color: rgba(38, 72, 63, 0.65);
@@ -440,69 +511,90 @@ const handleSearch = () => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(12, 159, 113, 0.1);
 }
 
-.property-card__footer button {
+.property-card__price {
+  color: #e7502a;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.property-card__btn {
   border: none;
   background: linear-gradient(135deg, #0acd88 0%, #09a47a 100%);
   color: #ffffff;
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 8px 16px;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.ideas-card {
+.property-card__btn:hover {
+  background: linear-gradient(135deg, #09b57a 0%, #079569 100%);
+  transform: scale(1.05);
+}
+
+/* 底部辅助层 */
+.footer-auxiliary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
   background: #ffffff;
   border-radius: 22px;
-  padding: 16px;
+  padding: 24px;
   box-shadow: 0 16px 28px rgba(16, 70, 58, 0.12);
+}
+
+.auxiliary-section {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.ideas-card h4 {
+.auxiliary-section h4 {
   margin: 0;
   font-size: 16px;
   color: #254c42;
+  font-weight: 600;
 }
 
-.ideas-timeline {
+.auxiliary-links {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-.ideas-timeline article {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.ideas-timeline img {
-  width: 72px;
-  height: 72px;
-  border-radius: 16px;
-  object-fit: cover;
-}
-
-.ideas-timeline h5 {
-  margin: 0;
+.auxiliary-links a {
+  color: rgba(38, 72, 63, 0.7);
   font-size: 14px;
-  color: #26483f;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  padding-left: 0;
 }
 
-.ideas-timeline p {
-  margin: 4px 0;
-  font-size: 12px;
-  color: rgba(38, 72, 63, 0.65);
+.auxiliary-links a:hover {
+  color: #0c9f71;
+  padding-left: 8px;
 }
 
-.ideas-timeline span {
-  font-size: 12px;
-  color: #e7502a;
-  font-weight: 600;
+.auxiliary-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: #0c9f71;
+  transition: width 0.3s ease;
+}
+
+.auxiliary-links a:hover::after {
+  width: 100%;
 }
 
 .filter-sheet {
@@ -595,18 +687,23 @@ const handleSearch = () => {
   opacity: 0;
 }
 
+@media (max-width: 768px) {
+  .property-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-auxiliary {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 390px) {
-  .property-card {
-    flex-direction: column;
-  }
-
   .property-card__media {
-    width: 100%;
     height: 180px;
-  }
-
-  .property-card__body {
-    padding: 14px 16px 18px;
   }
 
   .filter-sheet__options {

@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { featuredProperties, nearbyProperties } from '../data/mockData'
+import { useBookingStore } from '../stores/bookingStore'
+import { featuredProperties } from '../data/mockData'
 
 const router = useRouter()
+const bookingStore = useBookingStore()
 const heroVisual =
   'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1000&q=80'
 
@@ -14,57 +16,84 @@ const quickTools = [
   { id: 'map', label: '地图找房', icon: 'MapLocation', route: '/want#map' }
 ]
 
-const categoryTiles = [
+// 大类分组 + 小类卡片结构（确保每行填满，至少4个或更多）
+const categoryGroups = [
   {
-    id: 'share',
-    title: '合租',
-    cover:
-      'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80'
+    id: 'duration',
+    title: '时长类',
+    items: [
+      { id: 'short-rent', title: '短租', cover: 'https://images.unsplash.com/photo-1543248939-ff40856f65d4?auto=format&fit=crop&w=320&q=80' },
+      { id: 'long-rent', title: '长租年付', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
+      { id: 'daily-rent', title: '日租', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
+      { id: 'quarter-rent', title: '季租', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
+      { id: 'half-year', title: '半年租', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
+      { id: 'monthly', title: '月租', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' }
+    ]
   },
   {
-    id: 'studio',
-    title: '独卫主卧',
-    cover:
-      'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80'
+    id: 'layout',
+    title: '房型类',
+    items: [
+      { id: 'share', title: '合租', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
+      { id: 'studio', title: '独卫主卧', cover: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80' },
+      { id: 'one-room', title: '整租1居', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
+      { id: 'two-room', title: '整租2-3居', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' },
+      { id: 'single-apt', title: '单身公寓', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
+      { id: 'loft', title: 'Loft公寓', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
+      { id: 'villa', title: '别墅', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
+      { id: 'penthouse', title: '复式', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' }
+    ]
   },
   {
-    id: 'one-room',
-    title: '整租1居',
-    cover:
-      'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80'
+    id: 'location',
+    title: '区位配套类',
+    items: [
+      { id: 'school', title: '学区房', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
+      { id: 'metro', title: '地铁房', cover: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80' },
+      { id: 'business', title: '商圈房', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
+      { id: 'scenic', title: '景区房', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' },
+      { id: 'hospital', title: '医院旁', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
+      { id: 'park', title: '公园旁', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' }
+    ]
   },
   {
-    id: 'two-room',
-    title: '整租2-3居',
-    cover:
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80'
+    id: 'decoration',
+    title: '装修风格类',
+    items: [
+      { id: 'furnished', title: '精装房', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
+      { id: 'homestay', title: '民宿风', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
+      { id: 'minimal', title: '极简风', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
+      { id: 'luxury', title: '轻奢风', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
+      { id: 'modern', title: '现代风', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
+      { id: 'european', title: '欧式', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' }
+    ]
   },
   {
-    id: 'small-living',
-    title: '小客厅',
-    cover:
-      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80'
+    id: 'special',
+    title: '特殊配置类',
+    items: [
+      { id: 'balcony', title: '带阳台', cover: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80' },
+      { id: 'pet-friendly', title: '宠物友好', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
+      { id: 'parking', title: '带车位', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' },
+      { id: 'smart-home', title: '智能家电', cover: '/images/图片1.png' },
+      { id: 'gym', title: '健身房', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
+      { id: 'pool', title: '游泳池', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' }
+    ]
   },
   {
-    id: 'large-living',
-    title: '大客厅',
-    cover:
-      'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80'
-  },
-  {
-    id: 'short-rent',
-    title: '短租',
-    cover:
-      'https://images.unsplash.com/photo-1543248939-ff40856f65d4?auto=format&fit=crop&w=320&q=80'
-  },
-  {
-    id: 'deposit',
-    title: '押金0首付',
-    cover:
-      'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=320&q=80'
+    id: 'payment',
+    title: '支付优惠类',
+    items: [
+      { id: 'deposit', title: '押金0首付', cover: 'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=320&q=80' },
+      { id: 'installment', title: '租金分期', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
+      { id: 'first-month', title: '首月减免', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
+      { id: 'discount', title: '租金折扣', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
+      { id: 'coupon', title: '优惠券', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' }
+    ]
   }
 ]
 
+// 顶部服务卡片（网格布局，每行固定4张，共8张）
 const serviceStrip = [
   {
     id: 'move',
@@ -79,6 +108,48 @@ const serviceStrip = [
     title: '硅谷智能',
     desc: '全屋智能家装',
     cover: '/images/图片1.png',
+    route: '/service'
+  },
+  {
+    id: 'trusteeship',
+    title: '房屋租赁托管',
+    desc: '租客省心托管',
+    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80',
+    route: '/service'
+  },
+  {
+    id: 'legal',
+    title: '房产法律咨询',
+    desc: '专业法务支持',
+    cover: 'https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=900&q=80',
+    route: '/service'
+  },
+  {
+    id: 'soft-design',
+    title: '软装设计',
+    desc: '全屋美学定制',
+    cover: 'https://images.unsplash.com/photo-1613553481961-02920c4024d2?auto=format&fit=crop&w=900&q=80',
+    route: '/service'
+  },
+  {
+    id: 'appliance-trade',
+    title: '家电以旧换新',
+    desc: '智能家电升级',
+    cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80',
+    route: '/service'
+  },
+  {
+    id: 'finance',
+    title: '房产金融服务',
+    desc: '房贷・车贷・理财咨询',
+    cover: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=900&q=80',
+    route: '/service'
+  },
+  {
+    id: 'inspection',
+    title: '房屋检测服务',
+    desc: '甲醛・水电・结构检测',
+    cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
     route: '/service'
   }
 ]
@@ -105,6 +176,7 @@ const handleImgError = (e) => {
   }
 }
 
+// 用户计划卡片（对称布局，每行6个）
 const planCards = [
   {
     id: 'student',
@@ -129,13 +201,43 @@ const planCards = [
     title: 'English',
     desc: 'lao wai',
     color: '#fff8eb'
+  },
+  {
+    id: 'startup',
+    title: '创业计划',
+    desc: '创业者',
+    color: '#f0f9ff'
+  },
+  {
+    id: 'international',
+    title: '留学生计划',
+    desc: 'International Student',
+    color: '#fef3f2'
   }
 ]
 
+// 房东直租类房源（统一结构与样式，减少为2个解决留白）
 const recommendActions = [
-  { id: 'price', badge: '大开间', label: '房东直租，巴拉巴拉卡…', price: 1900 },
-  { id: 'metro', badge: '近地铁', label: '房东直租方…', price: 1900 },
-  { id: 'tag', badge: '大开间', label: '房东直租巴拉巴拉…', price: 1900 }
+  {
+    id: 'price',
+    title: '房东直租，巴拉巴拉卡…',
+    price: 1900,
+    layout: '大开间',
+    size: 35,
+    address: '朝阳区 · 望京',
+    cover: '/images/租房 APP 文案创作 (2).png',
+    tag: '大开间'
+  },
+  {
+    id: 'metro',
+    title: '房东直租方…',
+    price: 1900,
+    layout: '1室1厅',
+    size: 40,
+    address: '海淀区 · 中关村',
+    cover: '/images/租房 APP 文案创作 (3).png',
+    tag: '近地铁'
+  }
 ]
 
 const handleClick = (route) => {
@@ -144,6 +246,23 @@ const handleClick = (route) => {
 
 const goProperty = (id) => {
   router.push(`/property/${id}`)
+}
+
+const handleBook = (item) => {
+  bookingStore.openBookingDialog({
+    propertyId: item.id,
+    title: item.title,
+    address: item.address
+  })
+}
+
+// 根据标签文本返回对应的class
+const getTagClass = (tag) => {
+  if (!tag) return 'tag-metro'
+  if (tag.includes('商圈')) return 'tag-business'
+  if (tag.includes('大开间')) return 'tag-studio'
+  if (tag.includes('近地铁')) return 'tag-metro'
+  return 'tag-metro'
 }
 
 const performSearch = () => {
@@ -217,50 +336,71 @@ const handleQuickCategory = () => {
       </div>
     </section>
 
+    <!-- 大类分组 + 小类卡片布局 -->
     <section class="category-section">
       <header class="category-section__head">
         <div>
           <h3>热门房源主题</h3>
           <p>灵活筛选，快速锁定匹配好房</p>
         </div>
-        <button type="button" @click="handleQuickCategory">
-          浏览更多
-          <el-icon><ArrowRight /></el-icon>
-        </button>
       </header>
-      <div class="category-grid">
-        <button
-          v-for="item in categoryTiles"
-          :key="item.id"
-          type="button"
-          class="category-tile"
-          @click="handleClick('/want')"
+      <div class="category-groups">
+        <div
+          v-for="group in categoryGroups"
+          :key="group.id"
+          class="category-group"
         >
-          <div class="category-tile__image">
-            <img :src="item.cover" :alt="item.title" />
+          <div class="category-group__header">
+            <h4 class="category-group__title">{{ group.title }}</h4>
+            <button type="button" class="category-group__more" @click="handleQuickCategory">
+              浏览更多
+              <el-icon><ArrowRight /></el-icon>
+            </button>
           </div>
-          <span>{{ item.title }}</span>
-        </button>
+          <div class="category-group__grid">
+            <button
+              v-for="item in group.items"
+              :key="item.id"
+              type="button"
+              class="category-card"
+              @click="handleClick('/want')"
+            >
+              <div class="category-card__image">
+                <img
+                  :src="safeImg(item.cover)"
+                  :alt="item.title"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                  @error="handleImgError"
+                />
+              </div>
+              <span class="category-card__label">{{ item.title }}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="service-strip">
+    <!-- 顶部服务卡片区（网格布局，每行至少3张） -->
+    <section class="service-grid">
       <article
         v-for="item in serviceStrip"
         :key="item.id"
-        class="service-strip__item"
+        class="service-card"
         @click="handleClick(item.route)"
       >
-        <img
-          :src="safeImg(item.cover)"
-          :alt="item.title"
-          loading="lazy"
-          referrerpolicy="no-referrer"
-          @error="handleImgError"
-        />
-        <div>
-          <h4>{{ item.title }}</h4>
-          <p>{{ item.desc }}</p>
+        <div class="service-card__image">
+          <img
+            :src="safeImg(item.cover)"
+            :alt="item.title"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            @error="handleImgError"
+          />
+        </div>
+        <div class="service-card__content">
+          <h4 class="service-card__title">{{ item.title }}</h4>
+          <p class="service-card__desc">{{ item.desc }}</p>
         </div>
       </article>
     </section>
@@ -285,43 +425,6 @@ const handleQuickCategory = () => {
       <span>立即委托</span>
     </section>
 
-    <section class="recommend-section">
-      <header>
-        <h3>周边房源推荐</h3>
-        <button type="button" @click="handleClick('/want')">
-          更多推荐
-          <el-icon><ArrowRight /></el-icon>
-        </button>
-      </header>
-      <div class="recommend-grid">
-        <article
-          v-for="item in nearbyProperties"
-          :key="item.id"
-          class="recommend-card"
-          @click="goProperty(item.id)"
-        >
-          <img :src="item.cover" :alt="item.title" />
-          <div class="recommend-card__content">
-            <div class="recommend-card__head">
-              <span class="recommend-card__tag">近地铁</span>
-              <span class="recommend-card__price">¥{{ item.price }}/月</span>
-            </div>
-            <h4>{{ item.title }}</h4>
-            <p>{{ item.address }}</p>
-            <p>{{ item.layout }} · {{ item.size }}㎡</p>
-          </div>
-        </article>
-      </div>
-
-      <div class="recommend-inline">
-        <article v-for="item in recommendActions" :key="item.id">
-          <div class="recommend-inline__badge">{{ item.badge }}</div>
-          <p>{{ item.label }}</p>
-          <strong>¥{{ item.price }}/月</strong>
-          <button type="button">去咨询</button>
-        </article>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -527,7 +630,7 @@ const handleQuickCategory = () => {
 .category-section {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
   background: linear-gradient(180deg, #f4f9f5 0%, #f9fcfb 100%);
   padding: 24px 26px 32px;
   border-radius: 26px;
@@ -544,127 +647,245 @@ const handleQuickCategory = () => {
 
 .category-section__head h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1c443c;
 }
 
 .category-section__head p {
   margin: 4px 0 0;
   color: var(--gray-3);
+  font-size: 14px;
 }
 
-.category-section__head button {
-  display: inline-flex;
-  align-items: center;
-  border: none;
-  background: transparent;
-  color: var(--brand-primary);
-  cursor: pointer;
-  gap: 6px;
-  font-weight: 600;
-}
-
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.category-tile {
-  border: none;
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 18px;
-  box-shadow:
-    0 18px 38px rgba(15, 23, 42, 0.08),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  color: #253c37;
-  transition: var(--transition-base);
+/* 大类分组容器 */
+.category-groups {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 32px;
 }
 
-.category-tile__image {
+.category-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-group__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.category-group__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #244d43;
+  letter-spacing: 0.5px;
+}
+
+.category-group__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  color: #0c9f71;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.category-group__more:hover {
+  color: #08a777;
+  background: rgba(12, 159, 113, 0.08);
+  transform: translateX(2px);
+}
+
+.category-group__grid {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(12, 159, 113, 0.3) transparent;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  /* 确保每行至少显示4个卡片，其余通过滚动查看 */
+  --min-cards-per-row: 4;
+}
+
+/* 隐藏滚动条但保持滚动功能 - Webkit浏览器 */
+.category-group__grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-group__grid::-webkit-scrollbar-track {
+  background: rgba(12, 159, 113, 0.05);
+  border-radius: 10px;
+}
+
+.category-group__grid::-webkit-scrollbar-thumb {
+  background: rgba(12, 159, 113, 0.3);
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.category-group__grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(12, 159, 113, 0.5);
+}
+
+/* 小类卡片 */
+.category-card {
+  flex: 0 0 calc((100% - 36px) / 4); /* 每行4个，减去3个gap */
+  border: none;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 0;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  min-width: 180px; /* 最小宽度保证 */
+  max-width: calc((100% - 36px) / 4); /* 最大宽度不超过4列布局 */
+}
+
+.category-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(47, 94, 77, 0.18);
+}
+
+.category-card__image {
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: 16px;
   overflow: hidden;
   background: #e8ede9;
+  position: relative;
 }
 
-.category-tile__image img {
+.category-card__image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.category-tile span {
+.category-card:hover .category-card__image img {
+  transform: scale(1.1);
+}
+
+.category-card__label {
+  padding: 14px 16px;
   font-weight: 600;
-  font-size: 16px;
-  text-align: left;
+  font-size: 15px;
+  text-align: center;
+  color: #253c37;
+  background: #ffffff;
+  transition: color 0.2s ease;
 }
 
-.category-tile:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 42px rgba(47, 94, 77, 0.18);
+.category-card:hover .category-card__label {
+  color: #0c9f71;
 }
 
-.category-tile:hover img {
-  transform: scale(1.05);
-}
-
-.service-strip {
+/* 顶部服务卡片区（网格布局，每行固定4张） */
+.service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
-.service-strip__item {
+.service-card {
   position: relative;
   border-radius: 22px;
   overflow: hidden;
   cursor: pointer;
-  min-height: 180px;
+  min-height: 200px;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   color: #ffffff;
   box-shadow: 0 18px 30px rgba(15, 23, 42, 0.18);
-  transition: var(--transition-base);
+  transition: all 0.3s ease;
+  background: #ffffff;
 }
 
-.service-strip__item img {
-  position: absolute;
-  inset: 0;
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 40px rgba(15, 23, 42, 0.24);
+  transition: all 0.3s ease;
+}
+
+.service-card__image {
+  position: relative;
+  width: 100%;
+  height: 192px; /* h-48 = 192px */
+  overflow: hidden;
+}
+
+.service-card__image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-.service-strip__item div {
+.service-card:hover .service-card__image img {
+  transform: scale(1.1);
+}
+
+.service-card__content {
   position: relative;
   z-index: 1;
   padding: 18px 20px;
-  backdrop-filter: blur(2px);
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(135deg, rgba(12, 159, 113, 0.95) 0%, rgba(9, 164, 122, 0.9) 100%);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.service-card__title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.service-card__desc {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
 }
 
 .plan-card-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
 }
 
 .plan-card {
   border-radius: 18px;
-  padding: 18px;
+  padding: 20px;
   box-shadow: 0 14px 24px rgba(15, 23, 42, 0.08);
-  transition: transform 0.25s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .plan-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 32px rgba(15, 23, 42, 0.12);
 }
 
 .owner-card {
@@ -677,6 +898,12 @@ const handleQuickCategory = () => {
   color: #6b3a00;
   cursor: pointer;
   box-shadow: 0 14px 24px rgba(255, 138, 0, 0.18);
+  transition: all 0.3s ease;
+}
+
+.owner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 32px rgba(255, 138, 0, 0.24);
 }
 
 .owner-card h4 {
@@ -687,131 +914,6 @@ const handleQuickCategory = () => {
   font-weight: 600;
 }
 
-.recommend-section {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.recommend-section header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.recommend-section header h3 {
-  margin: 0;
-  font-size: 22px;
-}
-
-.recommend-section header button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  background: transparent;
-  color: var(--brand-primary);
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.recommend-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
-}
-
-.recommend-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.08);
-  cursor: pointer;
-  transition: var(--transition-base);
-}
-
-.recommend-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 40px rgba(15, 23, 42, 0.12);
-}
-
-.recommend-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-.recommend-card__content {
-  padding: 18px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.recommend-card__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-}
-
-.recommend-card__tag {
-  background: rgba(29, 198, 140, 0.1);
-  color: var(--brand-primary);
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-weight: 600;
-}
-
-.recommend-card__price {
-  color: var(--brand-secondary);
-  font-weight: 700;
-}
-
-.recommend-card__content h4 {
-  margin: 0;
-  font-size: 17px;
-}
-
-.recommend-inline {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.recommend-inline article {
-  border-radius: 16px;
-  padding: 16px;
-  background: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(29, 198, 140, 0.12);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.recommend-inline__badge {
-  align-self: flex-start;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(255, 138, 0, 0.12);
-  color: var(--brand-secondary);
-  font-size: 12px;
-}
-
-.recommend-inline button {
-  align-self: flex-start;
-  border: none;
-  background: var(--brand-primary);
-  color: #ffffff;
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 13px;
-  cursor: pointer;
-}
 
 @media (max-width: 1024px) {
   .hero-card {
@@ -820,6 +922,26 @@ const handleQuickCategory = () => {
 
   .hero-card__visual {
     height: 260px;
+  }
+
+  .category-group__grid {
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+
+  .category-card {
+    flex: 0 0 calc((100% - 30px) / 3); /* 平板端每行3个 */
+    min-width: 160px;
+    max-width: calc((100% - 30px) / 3);
+  }
+
+  .service-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .plan-card-row {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -836,5 +958,26 @@ const handleQuickCategory = () => {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .category-group__grid {
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .category-card {
+    flex: 0 0 calc((100% - 16px) / 2); /* 移动端每行2个 */
+    min-width: 140px;
+    max-width: calc((100% - 16px) / 2);
+  }
+
+  .service-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .plan-card-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>
+

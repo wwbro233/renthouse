@@ -271,9 +271,17 @@ const goBenefit = (id) => {
 .moment-feed article {
   background: rgba(12, 159, 113, 0.08);
   border-radius: 18px;
-  padding: 14px;
+  padding: 16px;
   color: #244d43;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(18, 78, 64, 0.08);
+}
+
+.moment-feed article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(18, 78, 64, 0.16);
+  background: rgba(12, 159, 113, 0.15);
 }
 
 .feed-tag {
@@ -342,7 +350,7 @@ const goBenefit = (id) => {
   box-shadow: 0 16px 28px rgba(18, 78, 64, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .benefit-list header {
@@ -366,7 +374,16 @@ const goBenefit = (id) => {
   align-items: flex-start;
   background: rgba(12, 159, 113, 0.08);
   border-radius: 18px;
-  padding: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(18, 78, 64, 0.08);
+  cursor: pointer;
+}
+
+.benefit-list article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(18, 78, 64, 0.16);
+  background: rgba(12, 159, 113, 0.15);
 }
 
 .benefit-list img {
@@ -374,6 +391,11 @@ const goBenefit = (id) => {
   height: 82px;
   border-radius: 14px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.benefit-list article:hover img {
+  transform: scale(1.05);
 }
 
 .benefit-head {
@@ -423,7 +445,7 @@ const goBenefit = (id) => {
   box-shadow: 0 18px 28px rgba(18, 78, 64, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .activity-list header {
@@ -446,9 +468,17 @@ const goBenefit = (id) => {
   gap: 12px;
   border-radius: 18px;
   background: rgba(12, 159, 113, 0.08);
-  padding: 12px;
+  padding: 16px;
   color: #244d43;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(18, 78, 64, 0.08);
+}
+
+.activity-list article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(18, 78, 64, 0.16);
+  background: rgba(12, 159, 113, 0.15);
 }
 
 .activity-list img {
@@ -456,6 +486,11 @@ const goBenefit = (id) => {
   height: 88px;
   border-radius: 14px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.activity-list article:hover img {
+  transform: scale(1.05);
 }
 
 .activity-body h4 {
