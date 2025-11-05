@@ -854,6 +854,11 @@ watch(
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.property-card:hover .property-card__media img {
+  transform: scale(1.05);
 }
 
 .listing-card__badge {
@@ -865,6 +870,7 @@ watch(
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 12px;
+  font-weight: 600;
 }
 
 .listing-card__body {
@@ -960,7 +966,7 @@ watch(
 .aside-card__list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .aside-card__list article {

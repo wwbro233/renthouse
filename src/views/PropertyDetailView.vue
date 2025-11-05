@@ -49,7 +49,7 @@ const handleShare = () => {
           <el-icon><Share /></el-icon>
         </button>
       </div>
-      <el-carousel indicator-position="none" height="260px">
+      <el-carousel indicator-position="none" height="200px">
         <el-carousel-item v-for="img in detail.gallery" :key="img">
           <img :src="img" alt="房源图片" />
         </el-carousel-item>
@@ -168,6 +168,7 @@ const handleShare = () => {
   border-radius: 28px;
   overflow: hidden;
   background: #000;
+  height: 400px;
   box-shadow: 0 18px 32px rgba(18, 78, 64, 0.2);
 }
 
@@ -211,7 +212,7 @@ const handleShare = () => {
   position: absolute;
   left: 16px;
   right: 16px;
-  bottom: -40px;
+  bottom: 15px;  /* 向上移15px */
   background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.88) 100%);
   box-shadow: 0 16px 28px rgba(18, 78, 64, 0.18);
   border-radius: 18px;

@@ -10,6 +10,9 @@ const router = useRouter()
 const bookingStore = useBookingStore()
 const authStore = useAuthStore()
 
+// 创建本地 computed 用于模板
+const isAuthenticated = computed(() => authStore.isAuthenticated.value)
+
 const shortcutList = [
   { id: 'wish', label: '想看', icon: 'Collection', route: '/my/want' },
   { id: 'foot', label: '足迹', icon: 'View', route: '/my/footprint' },
@@ -104,7 +107,7 @@ const handleLogout = () => {
   <div class="my-page">
     <div class="page-toggle">
       <span>我的</span>
-      <template v-if="authStore.isAuthenticated">
+      <template v-if="isAuthenticated">
         <span class="status-pill">
           <el-icon><Select /></el-icon>
           已登录
@@ -113,7 +116,7 @@ const handleLogout = () => {
       <button v-else type="button" class="link-btn" @click="handleLogin">去登录</button>
     </div>
 
-    <template v-if="authStore.isAuthenticated">
+    <template v-if="isAuthenticated">
       <section class="profile-hero">
         <header>
           <div class="profile-tag">
