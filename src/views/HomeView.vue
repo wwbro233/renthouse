@@ -5,7 +5,7 @@ import { featuredProperties, nearbyProperties } from '../data/mockData'
 import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
-const heroVisual = assetUrl('hero-visual.svg')
+const heroVisual = assetUrl('hero-visual.jpg')
 
 const searchKeyword = ref('')
 
@@ -19,7 +19,7 @@ const categoryTiles = [
     id: 'share',
     title: '合租',
     theme: 'share',
-    cover: assetUrl('categories/category-share.svg')
+    cover: assetUrl('categories/category-share.jpg')
   },
   {
     id: 'studio',
@@ -70,7 +70,7 @@ const serviceStrip = [
     id: 'move',
     title: '硅谷家服',
     desc: '搬家·保洁·清洁·维修',
-    cover: assetUrl('services/service-strip-move.svg'),
+    cover: assetUrl('services/service-strip-move.jpg'),
     route: '/service'
   },
   {

@@ -5,21 +5,21 @@ export const bannerSlides = [
     id: 1,
     title: '满租安心季·签约享首月减免',
     description: '精选整租房源，首月立减 500 元，免费赠送深度保洁服务一次。',
-    cover: assetUrl('banner-living.svg'),
+    cover: assetUrl('banner-living.jpg'),
     link: '/activity/1'
   },
   {
     id: 2,
     title: '通勤找房上新 · 地铁周边好房限时抢',
     description: '地铁 30 分钟圈内优质房源，每日 10 点更新，先到先得。',
-    cover: assetUrl('banner-commute.svg'),
+    cover: assetUrl('banner-commute.jpg'),
     link: '/want'
   },
   {
     id: 3,
     title: '搬家保洁套餐 · 一键预约更轻松',
     description: '搬家、保洁、维修一站式服务，专业团队保障，预约立享 9 折优惠。',
-    cover: assetUrl('banner-service.svg'),
+    cover: assetUrl('banner-service.jpg'),
     link: '/service'
   }
 ]
@@ -567,21 +567,21 @@ export const vipServices = [
     id: 'vip-1',
     title: '尊享居住顾问',
     desc: '全程陪看、1对1签约指导，专属客服随时响应，保障租房流程顺畅。',
-    cover: assetUrl('services/service-vip-a.svg'),
+    cover: assetUrl('services/service-vip-a.jpg'),
     perks: ['陪看专车', '个性化房源甄选', '专家在线答疑']
   },
   {
     id: 'vip-2',
     title: '管家式服务包',
     desc: '7×24 托管服务，日常保洁、维修、缴费全覆盖，让租住更省心。',
-    cover: assetUrl('services/service-vip-b.svg'),
+    cover: assetUrl('services/service-vip-b.jpg'),
     perks: ['每周保洁', '维修优先', '生活缴费提醒']
   },
   {
     id: 'vip-3',
     title: '豪华搬家体验',
     desc: '专业团队+包装耗材全免，提供家具拆装、家电安置，入住零负担。',
-    cover: assetUrl('services/service-vip-c.svg'),
+    cover: assetUrl('services/service-vip-c.jpg'),
     perks: ['全程搬运', '空调移机', '赠送保洁']
   }
 ]
@@ -661,14 +661,14 @@ export const serviceCampaigns = [
     id: 'camp-1',
     title: '3 月搬家早鸟礼',
     date: '2025-03-05 至 2025-03-31',
-    cover: assetUrl('services/service-strip-move.svg'),
+    cover: assetUrl('services/service-strip-move.jpg'),
     desc: '提前 10 天预约搬家服务，赠送 200 元搬家券+免费纸箱 6 个。'
   },
   {
     id: 'camp-2',
     title: '春季保洁焕新季',
     date: '2025-03-08 至 2025-04-08',
-    cover: assetUrl('services/service-clean-plus.svg'),
+    cover: assetUrl('services/service-clean-plus.jpg'),
     desc: '深度保洁套餐限时 8.8 折，针对厨房、卫生间特殊去污。'
   }
 ]
@@ -679,7 +679,7 @@ export const discoverActivities = [
     title: '周末露天电影派对',
     time: '2025-03-15 19:00',
     location: '望京·优设社区花园',
-    cover: assetUrl('discover/discover-activity-party.svg'),
+    cover: assetUrl('discover/discover-activity-party.jpg'),
     desc: '露天电影+社交派对，提供爆米花、饮品，入住用户享报名优先权。',
     tag: '报名中'
   },
@@ -688,7 +688,7 @@ export const discoverActivities = [
     title: '城市探索跑',
     time: '2025-03-22 08:30',
     location: '国贸CBD集合',
-    cover: assetUrl('discover/discover-activity-run.svg'),
+    cover: assetUrl('discover/discover-activity-run.jpg'),
     desc: '8km 城市慢跑路线，专业教练领跑，赛后提供能量补给。',
     tag: '报名中'
   },
@@ -697,7 +697,7 @@ export const discoverActivities = [
     title: '室内园艺工作坊',
     time: '2025-03-29 14:00',
     location: '朝阳北路社区客厅',
-    cover: assetUrl('discover/discover-activity-garden.svg'),
+    cover: assetUrl('discover/discover-activity-garden.jpg'),
     desc: '手作多肉绿植盆栽，学习打造高颜值阳台花园。',
     tag: '即将开始'
   }
@@ -709,7 +709,7 @@ export const discoverBenefits = [
     title: '春季保洁 100 元优惠券',
     type: '优惠券',
     expire: '2025-04-30',
-    cover: assetUrl('discover/discover-benefit.svg'),
+    cover: assetUrl('discover/discover-benefit.jpg'),
     desc: '适用于全品类保洁服务，订单满 300 元可用。'
   },
   {
@@ -717,7 +717,7 @@ export const discoverBenefits = [
     title: '合租配套免费试用',
     type: '免费试用',
     expire: '2025-03-31',
-    cover: assetUrl('services/service-strip-smart.svg'),
+    cover: assetUrl('services/service-strip-smart.jpg'),
     desc: '限新用户，提供智能门锁+空气净化器 14 天试用。'
   },
   {
@@ -725,7 +725,7 @@ export const discoverBenefits = [
     title: '社区商家积分兑换',
     type: '积分兑换',
     expire: '2025-05-15',
-    cover: assetUrl('services/service-newbie.svg'),
+    cover: assetUrl('services/service-newbie.jpg'),
     desc: '积分 500 起兑咖啡券、美甲体验、健身体验课。'
   }
 ]
@@ -769,14 +769,14 @@ export const myFootprints = [
     title: '北京欢乐谷春日活动',
     type: '活动',
     visitedAt: '2025-03-03 21:12',
-    cover: assetUrl('discover/discover-activity-party.svg')
+    cover: assetUrl('discover/discover-activity-party.jpg')
   },
   {
     id: 12,
     title: '深度保洁 3 小时套餐',
     type: '服务',
     visitedAt: '2025-03-01 16:45',
-    cover: assetUrl('services/service-clean-plus.svg')
+    cover: assetUrl('services/service-clean-plus.jpg')
   },
   {
     id: 13,
@@ -802,7 +802,7 @@ export const myAppointments = [
     type: '服务',
     time: '2025-03-07 09:00',
     status: '待服务',
-    cover: assetUrl('services/service-clean-basic.svg')
+    cover: assetUrl('services/service-clean-basic.jpg')
   },
   {
     id: 23,
@@ -810,7 +810,7 @@ export const myAppointments = [
     type: '活动',
     time: '2025-03-15 19:00',
     status: '已报名',
-    cover: assetUrl('discover/discover-activity-party.svg')
+    cover: assetUrl('discover/discover-activity-party.jpg')
   }
 ]
 
@@ -846,15 +846,15 @@ export const propertyDetail = {
   address: '北京市朝阳区国贸核心区',
   landlord: {
     name: '李先生',
-    avatar: assetUrl('avatars/avatar-landlord.svg'),
+    avatar: assetUrl('avatars/avatar-landlord.jpg'),
     phone: '134-****-8890',
     rating: 4.9
   },
   gallery: [
-    assetUrl('gallery/property-gallery-1.svg'),
-    assetUrl('gallery/property-gallery-2.svg'),
-    assetUrl('gallery/property-gallery-3.svg'),
-    assetUrl('gallery/property-gallery-4.svg')
+    assetUrl('gallery/property-gallery-1.jpg'),
+    assetUrl('gallery/property-gallery-2.jpg'),
+    assetUrl('gallery/property-gallery-3.jpg'),
+    assetUrl('gallery/property-gallery-4.jpg')
   ],
   highlights: ['地铁 200 米', 'CBD 核心区', '租期灵活', '拎包入住'],
   description:
@@ -874,7 +874,7 @@ export const serviceDetail = {
   duration: '4 小时',
   rating: 4.95,
   appointmentCount: 1823,
-  cover: assetUrl('services/service-clean-plus.svg'),
+  cover: assetUrl('services/service-clean-plus.jpg'),
   video: 'https://player.vimeo.com/video/76979871?h=8272103f6e',
   description:
     '适用于 90㎡ 以下家庭，包含厨房油污、卫生间除垢、卧室除螨三大模块。标准化流程，专业工具到位，保证每一处角落焕然一新。',
@@ -910,7 +910,7 @@ export const serviceDetail = {
     {
       id: 'rv-1',
       user: 'Lisa',
-      avatar: assetUrl('avatars/avatar-review-1.svg'),
+      avatar: assetUrl('avatars/avatar-review-1.jpg'),
       comment: '两个保洁阿姨很专业，厨房油烟机和灶台都擦得很干净，床垫除螨后睡觉更安心了。',
       rate: 5,
       date: '2025-02-28'
@@ -918,7 +918,7 @@ export const serviceDetail = {
     {
       id: 'rv-2',
       user: '陈先生',
-      avatar: assetUrl('avatars/avatar-review-2.svg'),
+      avatar: assetUrl('avatars/avatar-review-2.jpg'),
       comment: '预约流程顺畅，阿姨带来蒸汽机和除螨仪，细节到位，还贴心地帮我整理了衣柜。',
       rate: 5,
       date: '2025-02-25'
@@ -929,7 +929,7 @@ export const serviceDetail = {
 export const activityDetail = {
   id: 'act-1',
   title: '周末露天电影派对',
-  cover: assetUrl('discover/discover-activity-party.svg'),
+  cover: assetUrl('discover/discover-activity-party.jpg'),
   time: '2025-03-15 19:00-22:00',
   location: '望京·优设社区花园',
   host: 'Link House 社区团队',
@@ -952,7 +952,7 @@ export const activityDetail = {
 export const benefitDetail = {
   id: 'ben-1',
   title: '春季保洁 100 元优惠券',
-  cover: assetUrl('discover/discover-benefit.svg'),
+  cover: assetUrl('discover/discover-benefit.jpg'),
   type: '优惠券',
   start: '2025-03-01',
   end: '2025-04-30',

@@ -17,6 +17,17 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(router)
 app.use(ElementPlus, { locale: zhCn })
 
+// 全局错误处理
+app.config.errorHandler = (err, instance, info) => {
+  console.error('全局错误:', err, info)
+  // 可以在这里添加错误上报逻辑
+}
+
+// 性能优化：预加载关键资源
+if (import.meta.env.PROD) {
+  // 生产环境可以添加资源预加载
+}
+
 app.mount('#app')
 
 initCozeChat().catch((error) => {
