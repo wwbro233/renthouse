@@ -67,15 +67,9 @@ const goLogin = () => {
   router.push('/login')
 }
 
-const openChat = async () => {
-  try {
-    const client = await initCozeChat()
-    if (client?.open) {
-      client.open()
-    }
-  } catch (error) {
-    console.error('[Coze] 打开客服失败', error)
-  }
+// 跳转到 SupportView 页面
+const goToSupportView = () => {
+  router.push('/support')
 }
 </script>
 
@@ -103,7 +97,7 @@ const openChat = async () => {
           </button>
           <span class="divider"></span>
           <button type="button" class="top-link" @click="goLogin">登录 / 注册</button>
-          <button type="button" class="top-link top-link--chat" @click="openChat">
+          <button type="button" class="top-link top-link--chat" @click="goToSupportView">
             在线客服
           </button>
         </div>
@@ -178,7 +172,7 @@ const openChat = async () => {
         <div class="footer-brand">
           <h3>链房</h3>
           <p>灵感源自安居客，为你打造可信赖的找房体验。</p>
-          <button type="button" @click="openChat">在线客服咨询</button>
+          <button type="button" @click="goToSupportView">在线客服咨询</button>
         </div>
         <div class="footer-links">
           <div>
