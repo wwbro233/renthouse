@@ -148,7 +148,7 @@ const handleShare = () => {
           <el-icon><Share /></el-icon>
         </button>
       </div>
-      <el-carousel indicator-position="none" class="carousel" height="200px">
+      <el-carousel indicator-position="none" class="carousel" height="300px">
           <el-carousel-item v-for="img in detail.gallery" :key="img">
             <SmartImage :src="img" alt="房源图片" />
           </el-carousel-item>
