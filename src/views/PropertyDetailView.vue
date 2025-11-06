@@ -4,11 +4,14 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { mapBoundary, propertyDetail, nearbyProperties, featuredProperties, commuteRecommendations } from '../data/mockData'
 import { useBookingStore } from '../stores/bookingStore'
+import { useFavoriteStore } from '../stores/favoriteStore'
 import { assetUrl } from '../utils/assets'
+import SmartImage from '../components/SmartImage.vue'
 
 const router = useRouter()
 const route = useRoute()
 const bookingStore = useBookingStore()
+const favoriteStore = useFavoriteStore()
 
 // 根据路由 ID 获取房源详情
 const getPropertyDetail = () => {
@@ -95,6 +98,9 @@ const markerPosition = computed(() => {
   return { left: `${left}%`, top: `${top}%` }
 })
 
+// 检查当前房源是否已收藏
+const isFavorited = computed(() => favoriteStore.isFavorite(detail.value.id))
+
 const goBack = () => router.back()
 
 const handleBookVisit = () => {
@@ -106,7 +112,21 @@ const handleBookVisit = () => {
 }
 
 const handleFavorite = () => {
-  ElMessage.success('已加入想看清单')
+  const isAdded = favoriteStore.toggleFavorite({
+    id: detail.value.id,
+    title: detail.value.title,
+    price: detail.value.price,
+    layout: detail.value.layout,
+    area: detail.value.area,
+    address: detail.value.address,
+    cover: detail.value.gallery[0]
+  })
+  
+  if (isAdded) {
+    ElMessage.success('已加入想看清单')
+  } else {
+    ElMessage.info('已取消想看')
+  }
 }
 
 const handleShare = () => {
@@ -121,8 +141,8 @@ const handleShare = () => {
         <el-icon><ArrowLeft /></el-icon>
       </button>
       <div class="hero-icons">
-        <button type="button" @click="handleFavorite">
-          <el-icon><Star /></el-icon>
+        <button type="button" @click="handleFavorite" :class="{ 'is-favorited': isFavorited }">
+          <el-icon><component :is="isFavorited ? 'StarFilled' : 'Star'" /></el-icon>
         </button>
         <button type="button" @click="handleShare">
           <el-icon><Share /></el-icon>
@@ -227,7 +247,9 @@ const handleShare = () => {
         <span>可随时入住</span>
         <strong>支持月付 · 可长租 2 年</strong>
       </div>
-      <button type="button" class="ghost" @click="handleFavorite">加入想看</button>
+      <button type="button" class="ghost" @click="handleFavorite" :class="{ 'is-favorited': isFavorited }">
+        {{ isFavorited ? '已想看' : '加入想看' }}
+      </button>
       <button type="button" class="primary" @click="handleBookVisit">预约看房</button>
     </footer>
   </div>
@@ -285,6 +307,11 @@ const handleShare = () => {
   display: flex;
   gap: 12px;
   z-index: 2;
+}
+
+.hero-icons button.is-favorited {
+  background: rgba(255, 193, 7, 0.9);
+  color: #fff;
 }
 .carousel{
   z-index: 1;
@@ -596,6 +623,11 @@ const handleShare = () => {
 .action-bar .ghost {
   background: rgba(12, 159, 113, 0.12);
   color: #0c9f71;
+}
+
+.action-bar .ghost.is-favorited {
+  background: rgba(255, 193, 7, 0.2);
+  color: #f57c00;
 }
 
 .action-bar .primary {

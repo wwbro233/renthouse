@@ -2,9 +2,10 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { myFavorites } from '../data/mockData'
+import { useFavoriteStore } from '../stores/favoriteStore'
 
 const router = useRouter()
+const favoriteStore = useFavoriteStore()
 
 const filters = reactive({
   keyword: '',
@@ -18,14 +19,13 @@ const pageState = reactive({
 })
 
 const selectedIds = ref([])
-const tableData = ref(myFavorites.map((item) => ({ ...item })))
 
 watch([() => filters.keyword, () => filters.layout, () => filters.priceOrder], () => {
   pageState.currentPage = 1
 })
 
 const filteredData = computed(() => {
-  let result = [...tableData.value]
+  let result = [...favoriteStore.state.favorites]
   if (filters.keyword) {
     result = result.filter((item) =>
       item.title.toLowerCase().includes(filters.keyword.toLowerCase())
@@ -55,11 +55,19 @@ const handleBatchRemove = () => {
     ElMessage.warning('请先选择需要取消收藏的房源')
     return
   }
-  tableData.value = tableData.value.filter((item) => !selectedIds.value.includes(item.id))
+  
+  // 批量删除
+  selectedIds.value.forEach((id) => {
+    favoriteStore.removeFavorite(id)
+  })
+  
   selectedIds.value = []
+  
+  // 检查当前页是否还有数据
   if ((pageState.currentPage - 1) * pageState.pageSize >= filteredData.value.length) {
     pageState.currentPage = Math.max(1, pageState.currentPage - 1)
   }
+  
   ElMessage.success('已批量取消收藏')
 }
 
@@ -68,10 +76,13 @@ const handleView = (id) => {
 }
 
 const handleRemove = (id) => {
-  tableData.value = tableData.value.filter((item) => item.id !== id)
+  favoriteStore.removeFavorite(id)
+  
+  // 检查当前页是否还有数据
   if ((pageState.currentPage - 1) * pageState.pageSize >= filteredData.value.length) {
     pageState.currentPage = Math.max(1, pageState.currentPage - 1)
   }
+  
   ElMessage.success('已取消收藏')
 }
 </script>
