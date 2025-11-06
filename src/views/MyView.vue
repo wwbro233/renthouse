@@ -299,11 +299,16 @@ const handleLogout = () => {
   color: #1d5143;
 }
 
-.profile-info img {
+.profile-avatar {
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  object-fit: cover;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-avatar :deep(img) {
+  border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.75);
 }
 
