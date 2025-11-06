@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { serviceDetail } from '../data/mockData'
+import SmartImage from '../components/SmartImage.vue'
 
 const detail = serviceDetail
 const selectedPackageId = ref(detail.packages[1]?.id ?? detail.packages[0].id)
@@ -78,7 +79,7 @@ const handleSubmit = async () => {
     <div class="detail-layout">
       <div class="detail-main">
         <div class="section-card hero-card">
-          <img :src="detail.cover" alt="" class="hero-img" />
+      <SmartImage :src="detail.cover" alt="" class="hero-img" />
           <div class="hero-info">
             <div class="hero-meta">
               <el-tag effect="dark" type="primary">{{ detail.duration }}</el-tag>

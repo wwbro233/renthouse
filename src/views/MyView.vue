@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import { useBookingStore } from '../stores/bookingStore'
 import { useAuthStore } from '../stores/authStore'
 import { assetUrl } from '../utils/assets'
+import SmartImage from '../components/SmartImage.vue'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
@@ -78,13 +79,13 @@ const userInfo = computed(() => {
     return {
       name: '游客',
       points: 0,
-      avatar: assetUrl('avatars/avatar-default.svg')
+      avatar: assetUrl('avatars/avatar-default.jpg')
     }
   }
   return {
     name: user.name,
     points: user.points ?? 0,
-    avatar: user.avatar || assetUrl('avatars/avatar-default.svg')
+    avatar: user.avatar || assetUrl('avatars/avatar-default.jpg')
   }
 })
 
@@ -130,7 +131,7 @@ const handleLogout = () => {
           </div>
         </header>
         <div class="profile-info">
-          <img :src="userInfo.avatar" alt="avatar" />
+          <SmartImage :src="userInfo.avatar" alt="avatar" class="profile-avatar" />
           <div>
             <h3>Hi，{{ userInfo.name }}</h3>
             <p>谷粒点 {{ userInfo.points }}</p>

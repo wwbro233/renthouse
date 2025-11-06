@@ -1,6 +1,7 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { benefitDetail } from '../data/mockData'
+import SmartImage from '../components/SmartImage.vue'
 
 const detail = benefitDetail
 
@@ -28,7 +29,7 @@ const handleSave = () => {
     </div>
 
     <div class="section-card">
-      <img :src="detail.cover" alt="" class="hero-img" />
+  <SmartImage :src="detail.cover" alt="" class="hero-img" />
       <div class="info-grid">
         <div class="info-item">
           <span>领取时间</span>

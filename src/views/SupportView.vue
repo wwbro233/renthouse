@@ -143,7 +143,7 @@ const handleChannelAction = async (channel) => {
       </div>
       <div class="support-hero__visual">
         <img
-          :src="assetUrl('support/support-hero.svg')"
+          :src="assetUrl('support/support-hero.jpg')"
           alt="客服团队"
         />
       </div>
@@ -220,7 +220,7 @@ const handleChannelAction = async (channel) => {
 <style scoped>
 .support-page {
   width: 100%;
-  max-width: 980px;
+  max-width: 850px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

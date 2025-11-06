@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { mapBoundary, propertyDetail } from '../data/mockData'
+import SmartImage from '../components/SmartImage.vue'
 import { useBookingStore } from '../stores/bookingStore'
 
 const router = useRouter()
@@ -50,9 +51,9 @@ const handleShare = () => {
         </button>
       </div>
       <el-carousel indicator-position="none" height="200px">
-        <el-carousel-item v-for="img in detail.gallery" :key="img">
-          <img :src="img" alt="房源图片" />
-        </el-carousel-item>
+          <el-carousel-item v-for="img in detail.gallery" :key="img">
+            <SmartImage :src="img" alt="房源图片" />
+          </el-carousel-item>
       </el-carousel>
       <div class="price-card">
         <div class="price-main">

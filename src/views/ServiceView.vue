@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { homeServices, serviceCampaigns, vipServices } from '../data/mockData'
 import { assetUrl } from '../utils/assets'
+import SmartImage from '../components/SmartImage.vue'
 
 const router = useRouter()
 
@@ -23,7 +24,7 @@ const cleaningDeals = [
     desc: '推荐60㎡以内的房屋',
     price: 80,
     origin: 119,
-    cover: assetUrl('services/service-clean-basic.svg')
+    cover: assetUrl('services/service-clean-basic.jpg')
   },
   {
     id: 'clean-3',
@@ -31,7 +32,7 @@ const cleaningDeals = [
     desc: '推荐80㎡以内的房屋',
     price: 135,
     origin: 179,
-    cover: assetUrl('services/service-clean-plus.svg')
+    cover: assetUrl('services/service-clean-plus.jpg')
   }
 ]
 
@@ -144,7 +145,7 @@ const goCampaign = () => {
           :key="item.id"
           @click="goVipDetail(item.id)"
         >
-          <img :src="item.cover" :alt="item.title" />
+          <SmartImage :src="item.cover" :alt="item.title" />
           <div>
             <h4>{{ item.title }}</h4>
             <p>{{ item.desc }}</p>
@@ -160,14 +161,14 @@ const goCampaign = () => {
         <p>领30元专属优惠券</p>
         <button type="button" @click="goCampaign()">立即领取</button>
       </div>
-      <img :src="assetUrl('services/service-newbie.svg')" alt="newbie" />
+  <SmartImage :src="assetUrl('services/service-newbie.jpg')" alt="newbie" />
     </section>
 
     <section class="cleaning-grid">
       <header>洁净家</header>
       <div class="cleaning-grid__list">
         <article v-for="deal in cleaningDeals" :key="deal.id">
-          <img :src="deal.cover" :alt="deal.title" />
+          <SmartImage :src="deal.cover" :alt="deal.title" />
           <h5>{{ deal.title }}</h5>
           <p>{{ deal.desc }}</p>
           <div class="cleaning-grid__price">
@@ -184,7 +185,7 @@ const goCampaign = () => {
 <style scoped>
 .service-page {
   width: 100%;
-  max-width: 1080px;
+  max-width: 900px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
