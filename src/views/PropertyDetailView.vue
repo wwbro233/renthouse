@@ -4,6 +4,14 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { mapBoundary, propertyDetail } from '../data/mockData'
 import { useBookingStore } from '../stores/bookingStore'
+// 在组件中直接导入图片
+import gallery1 from '@/assets/images/gallery/property-gallery-1.jpg'
+import gallery2 from '@/assets/images/gallery/property-gallery-2.jpg'
+import gallery3 from '@/assets/images/gallery/property-gallery-3.jpg'
+import gallery4 from '@/assets/images/gallery/property-gallery-4.jpg'
+
+// 然后在数据中使用
+const gallery = [gallery1, gallery2, gallery3, gallery4];
 
 const router = useRouter()
 const bookingStore = useBookingStore()
@@ -49,8 +57,8 @@ const handleShare = () => {
           <el-icon><Share /></el-icon>
         </button>
       </div>
-      <el-carousel indicator-position="none" height="200px">
-        <el-carousel-item v-for="img in detail.gallery" :key="img">
+      <el-carousel indicator-position="none" class="carousel">
+        <el-carousel-item v-for="img in gallery" :key="img">
           <img :src="img" alt="房源图片" />
         </el-carousel-item>
       </el-carousel>
@@ -167,7 +175,7 @@ const handleShare = () => {
   position: relative;
   border-radius: 28px;
   overflow: hidden;
-  background: #000;
+  background: #fff;
   height: 400px;
   box-shadow: 0 18px 32px rgba(18, 78, 64, 0.2);
 }
@@ -207,13 +215,17 @@ const handleShare = () => {
   gap: 12px;
   z-index: 2;
 }
+.carousel{
+  z-index: 1;
+  position: relative;
+}
 
 .price-card {
   position: absolute;
   left: 16px;
   right: 16px;
-  bottom: 15px;  /* 向上移15px */
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.88) 100%);
+  bottom: 20px;  /* 向上移15px */
+  background: linear-gradient(135deg, #e4e4e4 0%, rgba(255, 255, 255, 0.88) 100%);
   box-shadow: 0 16px 28px rgba(18, 78, 64, 0.18);
   border-radius: 18px;
   padding: 16px 18px;
@@ -221,6 +233,7 @@ const handleShare = () => {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+  z-index: 2;
 }
 
 .price-main {
