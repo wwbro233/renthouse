@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="grad-avatars-avatar-review-1-svg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff9fb1"/>
+      <stop offset="100%" stop-color="#ffe3ea"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#grad-avatars-avatar-review-1-svg)" rx="12"/>
+  <g opacity="0.2">
+    <circle cx="156" cy="56.00000000000001" r="36" fill="#b32f52"/>
+    <circle cx="36" cy="164" r="44" fill="#b32f52"/>
+  </g>
+  <g fill="#b32f52" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="16" y="84" font-size="24" font-weight="600">Lisa</text>
+    <text x="16" y="112" font-size="16" font-weight="500" opacity="0.78">Happy</text>
+  </g>
+</svg>

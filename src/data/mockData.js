@@ -276,7 +276,7 @@ export const nearbyProperties = [
   },
   {
     id: 208,
-    cover: getPropertyImage(203),
+    cover: getPropertyImage(208),
     title: '双井 轻奢合租主卧',
     price: 4200,
     layout: '3室2厅',
@@ -300,7 +300,7 @@ export const nearbyProperties = [
   },
   {
     id: 209,
-    cover: getPropertyImage(204),
+    cover: getPropertyImage(209),
     title: '通州 运河畔 电梯三居',
     price: 5600,
     layout: '3室2厅',
@@ -420,7 +420,7 @@ export const nearbyProperties = [
   },
   {
     id: 214,
-    cover: getPropertyImage(204),
+    cover: getPropertyImage(214),
     title: '西单文化中心 精装两居',
     price: 6800,
     layout: '2室1厅',
@@ -444,7 +444,7 @@ export const nearbyProperties = [
   },
   {
     id: 215,
-    cover: getPropertyImage(211),
+    cover: getPropertyImage(215),
     title: '丰台丽泽 轻奢三居',
     price: 7200,
     layout: '3室2厅',
@@ -468,7 +468,7 @@ export const nearbyProperties = [
   },
   {
     id: 216,
-    cover: getPropertyImage(205),
+    cover: getPropertyImage(216),
     title: '宋家庄 月付拎包公寓',
     price: 1800,
     layout: '1室0厅',
@@ -507,7 +507,7 @@ export const commuteRecommendations = [
   },
   {
     id: 302,
-    cover: getPropertyImage(201),
+    cover: getPropertyImage(302),
     title: '双井 整租南向一居',
     price: 5800,
     commuteTime: '23分钟',
@@ -519,7 +519,7 @@ export const commuteRecommendations = [
   },
   {
     id: 303,
-    cover: getPropertyImage(203),
+    cover: getPropertyImage(303),
     title: '潘家园 精装合租主卧',
     price: 3200,
     commuteTime: '28分钟',

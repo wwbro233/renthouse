@@ -1,7 +1,6 @@
 <script setup>
 import { computed, toRef, useAttrs } from 'vue'
 import { useImageLoader } from '../composables/useImageLoader'
-import { assetUrl } from '../utils/assets'
 
 const props = defineProps({
   src: { type: [String], required: true },
@@ -13,7 +12,7 @@ const attrs = useAttrs()
 const srcRef = toRef(props, 'src')
 const { isLoading, isError, currentSrc, reload } = useImageLoader(srcRef)
 
-const placeholder = assetUrl('booking-default.jpg')
+const placeholder = '/images/booking-default.jpg'
 
 const displaySrc = computed(() => {
   // 如果已经加载成功，使用加载的图片
