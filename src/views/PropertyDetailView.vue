@@ -128,10 +128,10 @@ const handleShare = () => {
           <el-icon><Share /></el-icon>
         </button>
       </div>
-      <el-carousel indicator-position="none" height="200px">
-        <el-carousel-item v-for="img in detail.gallery" :key="img">
-          <img :src="img" alt="房源图片" />
-        </el-carousel-item>
+      <el-carousel indicator-position="none" class="carousel" height="200px">
+          <el-carousel-item v-for="img in detail.gallery" :key="img">
+            <SmartImage :src="img" alt="房源图片" />
+          </el-carousel-item>
       </el-carousel>
       <div class="price-card">
         <div class="price-main">
@@ -246,7 +246,7 @@ const handleShare = () => {
   position: relative;
   border-radius: 28px;
   overflow: hidden;
-  background: #000;
+  background: #fff;
   height: 400px;
   box-shadow: 0 18px 32px rgba(18, 78, 64, 0.2);
 }
@@ -286,13 +286,17 @@ const handleShare = () => {
   gap: 12px;
   z-index: 2;
 }
+.carousel{
+  z-index: 1;
+  position: relative;
+}
 
 .price-card {
   position: absolute;
   left: 16px;
   right: 16px;
-  bottom: 15px;  /* 向上移15px */
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.88) 100%);
+  bottom: 20px;  /* 向上移15px */
+  background: linear-gradient(135deg, #e4e4e4 0%, rgba(255, 255, 255, 0.88) 100%);
   box-shadow: 0 16px 28px rgba(18, 78, 64, 0.18);
   border-radius: 18px;
   padding: 16px 18px;
@@ -300,6 +304,7 @@ const handleShare = () => {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+  z-index: 2;
 }
 
 .price-main {

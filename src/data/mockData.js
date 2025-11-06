@@ -1,4 +1,4 @@
-import { assetUrl, getPropertyImage } from '../utils/assets'
+import { assetUrl, getPropertyImage, getServiceImage, getDiscoverImage, getGalleryImage } from '../utils/assets'
 
 export const bannerSlides = [
   {
@@ -32,7 +32,7 @@ export const featuredProperties = [
     rentType: '整租',
     desc: '1室1厅 · 56㎡ · 南向 · 中楼层',
     area: '朝阳区 · 望京',
-    cover: getPropertyImage('metro-life'),
+    cover: getPropertyImage(101),
     tags: ['地铁 400m', '智能门锁', '配套齐全']
   },
   {
@@ -42,7 +42,7 @@ export const featuredProperties = [
     rentType: '整租',
     desc: '2室1厅 · 89㎡ · 南北通透',
     area: '朝阳区 · 国贸',
-    cover: getPropertyImage('cbd-elite'),
+    cover: getPropertyImage(102),
     tags: ['商圈核心', '南北通透', '带地下车位']
   },
   {
@@ -52,7 +52,7 @@ export const featuredProperties = [
     rentType: '合租',
     desc: '4室2厅 · 16㎡ · 朝南次卧',
     area: '海淀区 · 中关村',
-    cover: getPropertyImage('digital-share'),
+    cover: getPropertyImage(103),
     tags: ['拎包入住', '智能家居', '高速宽带']
   },
   {
@@ -62,7 +62,7 @@ export const featuredProperties = [
     rentType: '整租',
     desc: '3室2厅 · 110㎡ · 南北通透',
     area: '大兴区 · 亦庄',
-    cover: getPropertyImage('garden-home'),
+    cover: getPropertyImage(104),
     tags: ['学校旁', '大型社区', '健身房']
   }
 ]
@@ -108,7 +108,7 @@ export const serviceShortcuts = [
 export const nearbyProperties = [
   {
     id: 201,
-    cover: getPropertyImage('city-loft'),
+    cover: getPropertyImage(201), // 使用自己的ID
     title: '东直门银座 精装整租一居',
     price: 6200,
     layout: '1室1厅',
@@ -132,7 +132,7 @@ export const nearbyProperties = [
   },
   {
     id: 202,
-    cover: getPropertyImage('duplex'),
+    cover: getPropertyImage(202),
     title: '朝阳公园 复式 LOFT',
     price: 8900,
     layout: '2室1厅',
@@ -156,7 +156,7 @@ export const nearbyProperties = [
   },
   {
     id: 203,
-    cover: getPropertyImage('co-living'),
+    cover: getPropertyImage(203),
     title: '广渠门 合租大次卧',
     price: 3200,
     layout: '3室1厅',
@@ -180,7 +180,7 @@ export const nearbyProperties = [
   },
   {
     id: 204,
-    cover: getPropertyImage('family-home'),
+    cover: getPropertyImage(204),
     title: '望京小腰 精装两居',
     price: 7600,
     layout: '2室1厅',
@@ -204,7 +204,7 @@ export const nearbyProperties = [
   },
   {
     id: 205,
-    cover: getPropertyImage('creative-hub'),
+    cover: getPropertyImage(205),
     title: '国贸 公寓短租一居',
     price: 6800,
     layout: '1室1厅',
@@ -228,7 +228,7 @@ export const nearbyProperties = [
   },
   {
     id: 206,
-    cover: getPropertyImage('garden-villa'),
+    cover: getPropertyImage(206),
     title: '亦庄金茂悦 拎包入住四居',
     price: 9600,
     layout: '4室2厅',
@@ -252,7 +252,7 @@ export const nearbyProperties = [
   },
   {
     id: 207,
-    cover: getPropertyImage('tech-suite'),
+    cover: getPropertyImage(207),
     title: '中关村 科技公寓双卧',
     price: 8200,
     layout: '2室1厅',
@@ -276,7 +276,7 @@ export const nearbyProperties = [
   },
   {
     id: 208,
-    cover: getPropertyImage('co-living'),
+    cover: getPropertyImage(203),
     title: '双井 轻奢合租主卧',
     price: 4200,
     layout: '3室2厅',
@@ -300,7 +300,7 @@ export const nearbyProperties = [
   },
   {
     id: 209,
-    cover: getPropertyImage('family-home'),
+    cover: getPropertyImage(204),
     title: '通州 运河畔 电梯三居',
     price: 5600,
     layout: '3室2厅',
@@ -324,7 +324,7 @@ export const nearbyProperties = [
   },
   {
     id: 210,
-    cover: getPropertyImage('digital-share'),
+    cover: getPropertyImage(210),
     title: '回龙观 合租次卧可月付',
     price: 2800,
     layout: '4室2厅',
@@ -348,7 +348,7 @@ export const nearbyProperties = [
   },
   {
     id: 211,
-    cover: getPropertyImage('garden-home'),
+    cover: getPropertyImage(211),
     title: '石景山 精装两居朝南',
     price: 5200,
     layout: '2室1厅',
@@ -372,7 +372,7 @@ export const nearbyProperties = [
   },
   {
     id: 212,
-    cover: getPropertyImage('cbd-elite'),
+    cover: getPropertyImage(212),
     title: '顺义 国际社区 花园叠拼',
     price: 11800,
     layout: '4室2厅',
@@ -396,7 +396,7 @@ export const nearbyProperties = [
   },
   {
     id: 213,
-    cover: getPropertyImage('master-suite'),
+    cover: getPropertyImage(213),
     title: '青年路 精装修小客厅一居',
     price: 5400,
     layout: '1室1厅',
@@ -420,7 +420,7 @@ export const nearbyProperties = [
   },
   {
     id: 214,
-    cover: getPropertyImage('family-home'),
+    cover: getPropertyImage(204),
     title: '西单文化中心 精装两居',
     price: 6800,
     layout: '2室1厅',
@@ -444,7 +444,7 @@ export const nearbyProperties = [
   },
   {
     id: 215,
-    cover: getPropertyImage('garden-home'),
+    cover: getPropertyImage(211),
     title: '丰台丽泽 轻奢三居',
     price: 7200,
     layout: '3室2厅',
@@ -468,7 +468,7 @@ export const nearbyProperties = [
   },
   {
     id: 216,
-    cover: getPropertyImage('creative-hub'),
+    cover: getPropertyImage(205),
     title: '宋家庄 月付拎包公寓',
     price: 1800,
     layout: '1室0厅',
@@ -495,7 +495,7 @@ export const nearbyProperties = [
 export const commuteRecommendations = [
   {
     id: 301,
-    cover: getPropertyImage('metro-life'),
+    cover: getPropertyImage(301),
     title: '国贸 CBD 品质公寓',
     price: 6800,
     commuteTime: '18分钟',
@@ -507,7 +507,7 @@ export const commuteRecommendations = [
   },
   {
     id: 302,
-    cover: getPropertyImage('city-loft'),
+    cover: getPropertyImage(201),
     title: '双井 整租南向一居',
     price: 5800,
     commuteTime: '23分钟',
@@ -519,7 +519,7 @@ export const commuteRecommendations = [
   },
   {
     id: 303,
-    cover: getPropertyImage('co-living'),
+    cover: getPropertyImage(203),
     title: '潘家园 精装合租主卧',
     price: 3200,
     commuteTime: '28分钟',
@@ -567,21 +567,21 @@ export const vipServices = [
     id: 'vip-1',
     title: '尊享居住顾问',
     desc: '全程陪看、1对1签约指导，专属客服随时响应，保障租房流程顺畅。',
-    cover: assetUrl('services/service-vip-a.jpg'),
+    cover: getServiceImage('vip-1'),
     perks: ['陪看专车', '个性化房源甄选', '专家在线答疑']
   },
   {
     id: 'vip-2',
     title: '管家式服务包',
     desc: '7×24 托管服务，日常保洁、维修、缴费全覆盖，让租住更省心。',
-    cover: assetUrl('services/service-vip-b.jpg'),
+    cover: getServiceImage('vip-2'),
     perks: ['每周保洁', '维修优先', '生活缴费提醒']
   },
   {
     id: 'vip-3',
     title: '豪华搬家体验',
     desc: '专业团队+包装耗材全免，提供家具拆装、家电安置，入住零负担。',
-    cover: assetUrl('services/service-vip-c.jpg'),
+    cover: getServiceImage('vip-3'),
     perks: ['全程搬运', '空调移机', '赠送保洁']
   }
 ]
@@ -661,14 +661,14 @@ export const serviceCampaigns = [
     id: 'camp-1',
     title: '3 月搬家早鸟礼',
     date: '2025-03-05 至 2025-03-31',
-    cover: assetUrl('services/service-strip-move.jpg'),
+    cover: getServiceImage('camp-1'),
     desc: '提前 10 天预约搬家服务，赠送 200 元搬家券+免费纸箱 6 个。'
   },
   {
     id: 'camp-2',
     title: '春季保洁焕新季',
     date: '2025-03-08 至 2025-04-08',
-    cover: assetUrl('services/service-clean-plus.jpg'),
+    cover: getServiceImage('camp-2'),
     desc: '深度保洁套餐限时 8.8 折，针对厨房、卫生间特殊去污。'
   }
 ]
@@ -679,7 +679,7 @@ export const discoverActivities = [
     title: '周末露天电影派对',
     time: '2025-03-15 19:00',
     location: '望京·优设社区花园',
-    cover: assetUrl('discover/discover-activity-party.jpg'),
+    cover: getDiscoverImage('act-1'),
     desc: '露天电影+社交派对，提供爆米花、饮品，入住用户享报名优先权。',
     tag: '报名中'
   },
@@ -688,7 +688,7 @@ export const discoverActivities = [
     title: '城市探索跑',
     time: '2025-03-22 08:30',
     location: '国贸CBD集合',
-    cover: assetUrl('discover/discover-activity-run.jpg'),
+    cover: getDiscoverImage('act-2'),
     desc: '8km 城市慢跑路线，专业教练领跑，赛后提供能量补给。',
     tag: '报名中'
   },
@@ -697,7 +697,7 @@ export const discoverActivities = [
     title: '室内园艺工作坊',
     time: '2025-03-29 14:00',
     location: '朝阳北路社区客厅',
-    cover: assetUrl('discover/discover-activity-garden.jpg'),
+    cover: getDiscoverImage('act-3'),
     desc: '手作多肉绿植盆栽，学习打造高颜值阳台花园。',
     tag: '即将开始'
   }
@@ -709,7 +709,7 @@ export const discoverBenefits = [
     title: '春季保洁 100 元优惠券',
     type: '优惠券',
     expire: '2025-04-30',
-    cover: assetUrl('discover/discover-benefit.jpg'),
+    cover: getDiscoverImage('ben-1'),
     desc: '适用于全品类保洁服务，订单满 300 元可用。'
   },
   {
@@ -717,7 +717,7 @@ export const discoverBenefits = [
     title: '合租配套免费试用',
     type: '免费试用',
     expire: '2025-03-31',
-    cover: assetUrl('services/service-strip-smart.jpg'),
+    cover: getServiceImage('ben-2'),
     desc: '限新用户，提供智能门锁+空气净化器 14 天试用。'
   },
   {
@@ -725,7 +725,7 @@ export const discoverBenefits = [
     title: '社区商家积分兑换',
     type: '积分兑换',
     expire: '2025-05-15',
-    cover: assetUrl('services/service-newbie.jpg'),
+    cover: getServiceImage('ben-3'),
     desc: '积分 500 起兑咖啡券、美甲体验、健身体验课。'
   }
 ]
@@ -739,7 +739,7 @@ export const myFavorites = [
     size: 56,
     address: '朝阳区 · 望京',
     favoriteAt: '2025-03-02 18:32',
-    cover: getPropertyImage('metro-life')
+    cover: getPropertyImage(301)
   },
   {
     id: 204,
@@ -749,7 +749,7 @@ export const myFavorites = [
     size: 84,
     address: '朝阳区 · 望京',
     favoriteAt: '2025-02-26 10:12',
-    cover: getPropertyImage('family-home')
+    cover: getPropertyImage(204)
   },
   {
     id: 103,
@@ -759,7 +759,7 @@ export const myFavorites = [
     size: 16,
     address: '海淀区 · 中关村',
     favoriteAt: '2025-02-20 14:06',
-    cover: getPropertyImage('digital-share')
+    cover: getPropertyImage(210)
   }
 ]
 
@@ -769,21 +769,21 @@ export const myFootprints = [
     title: '北京欢乐谷春日活动',
     type: '活动',
     visitedAt: '2025-03-03 21:12',
-    cover: assetUrl('discover/discover-activity-party.jpg')
+    cover: getDiscoverImage('act-1')
   },
   {
     id: 12,
     title: '深度保洁 3 小时套餐',
     type: '服务',
     visitedAt: '2025-03-01 16:45',
-    cover: assetUrl('services/service-clean-plus.jpg')
+    cover: getServiceImage('clean')
   },
   {
     id: 201,
     title: '东直门银座 精装整租一居',
     type: '房源',
     visitedAt: '2025-02-28 13:26',
-    cover: getPropertyImage('city-loft')
+    cover: getPropertyImage(201)
   }
 ]
 
@@ -794,7 +794,7 @@ export const myAppointments = [
     type: '约看',
     time: '2025-03-06 14:30',
     status: '已确认',
-    cover: getPropertyImage('metro-life')
+    cover: getPropertyImage(301)
   },
   {
     id: 22,
@@ -802,7 +802,7 @@ export const myAppointments = [
     type: '服务',
     time: '2025-03-07 09:00',
     status: '待服务',
-    cover: assetUrl('services/service-clean-basic.jpg')
+    cover: getServiceImage('clean')
   },
   {
     id: 23,
@@ -810,7 +810,7 @@ export const myAppointments = [
     type: '活动',
     time: '2025-03-15 19:00',
     status: '已报名',
-    cover: assetUrl('discover/discover-activity-party.jpg')
+    cover: getDiscoverImage('act-1')
   }
 ]
 
@@ -851,10 +851,10 @@ export const propertyDetail = {
     rating: 4.9
   },
   gallery: [
-    assetUrl('gallery/property-gallery-1.jpg'),
-    assetUrl('gallery/property-gallery-2.jpg'),
-    assetUrl('gallery/property-gallery-3.jpg'),
-    assetUrl('gallery/property-gallery-4.jpg')
+    getGalleryImage(0),
+    getGalleryImage(1),
+    getGalleryImage(2),
+    getGalleryImage(3)
   ],
   highlights: ['地铁 200 米', 'CBD 核心区', '租期灵活', '拎包入住'],
   description:

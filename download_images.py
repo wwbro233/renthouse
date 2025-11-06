@@ -122,7 +122,7 @@ IMAGE_CONFIGS = {
         'keywords': 'creative,hub,workspace'
     },
     'properties/property-g.jpg': {
-        'url': 'https://images.unsplash.com/photo-1560448075-cbc16ba4ae9b?w=800&h=600&fit=crop',
+        'url': 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop',
         'keywords': 'family,home,house'
     },
     'properties/property-h.jpg': {
@@ -204,7 +204,7 @@ IMAGE_CONFIGS = {
         'keywords': 'party,event,activity'
     },
     'discover/discover-activity-run.jpg': {
-        'url': 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=600&h=400&fit=crop',
+        'url': 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=600&h=400&fit=crop',
         'keywords': 'running,event,activity'
     },
     'discover/discover-activity-garden.jpg': {
@@ -265,13 +265,9 @@ def main():
         filepath = IMAGES_DIR / rel_path
         url = config['url']
         
-        # 如果文件已存在且大小合理，跳过
-        if filepath.exists() and filepath.stat().st_size > 1000:
-            print(f"⚠ 文件已存在，跳过: {rel_path}")
-            success_count += 1
-            continue
-        elif filepath.exists():
-            print(f"⚠ 文件已存在但可能损坏，重新下载: {rel_path}")
+        # 如果文件已存在，删除后重新下载（确保是最新的）
+        if filepath.exists():
+            print(f"⚠ 文件已存在，删除并重新下载: {rel_path}")
             filepath.unlink()
         
         if download_image(url, filepath):

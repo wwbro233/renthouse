@@ -10,7 +10,7 @@ const authStore = useAuthStore()
 
 const profileFormRef = ref()
 const profileForm = reactive({
-  avatar: assetUrl('avatars/avatar-default.svg'),
+  avatar: assetUrl('avatars/avatar-default.jpg'),
   name: '',
   nickname: '',
   gender: '',
@@ -44,7 +44,7 @@ const loadUserData = () => {
     return
   }
   
-  profileForm.avatar = user.avatar || assetUrl('avatars/avatar-default.svg')
+  profileForm.avatar = user.avatar || assetUrl('avatars/avatar-default.jpg')
   profileForm.name = user.name || ''
   profileForm.nickname = user.nickname || ''
   profileForm.gender = user.gender || ''

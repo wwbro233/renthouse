@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { serviceDetail } from '../data/mockData'
+import SmartImage from '../components/SmartImage.vue'
 import { useAuthStore } from '../stores/authStore'
 import { useOrderStore } from '../stores/orderStore'
 
@@ -143,7 +144,7 @@ const handleSubmit = async () => {
     <div class="detail-layout">
       <div class="detail-main">
         <div class="section-card hero-card">
-          <img :src="detail.cover" alt="" class="hero-img" />
+      <SmartImage :src="detail.cover" alt="" class="hero-img" />
           <div class="hero-info">
             <div class="hero-meta">
               <el-tag effect="dark" type="primary">{{ detail.duration }}</el-tag>

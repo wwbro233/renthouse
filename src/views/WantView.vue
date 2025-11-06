@@ -3,6 +3,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
 import { nearbyProperties, commuteRecommendations } from '../data/mockData'
+import SmartImage from '../components/SmartImage.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -503,7 +504,7 @@ watch(
           @click="goToProperty(item.id)"
         >
           <div class="listing-card__cover">
-            <img :src="item.cover" :alt="item.title" />
+            <SmartImage :src="item.cover" :alt="item.title" />
             <span v-if="item.shortRent" class="listing-card__badge">可短租</span>
             <span v-else-if="item.depositFree" class="listing-card__badge">押一付一</span>
           </div>
@@ -545,7 +546,7 @@ watch(
           <h4>热门推荐</h4>
           <div class="aside-card__list">
             <article v-for="item in hotIdeas" :key="item.id" @click="goToProperty(item.id)">
-              <img :src="item.cover" :alt="item.title" />
+              <SmartImage :src="item.cover" :alt="item.title" />
               <div>
                 <h5>{{ item.title }}</h5>
                 <p>{{ item.transport }} · {{ item.commuteTime }}</p>

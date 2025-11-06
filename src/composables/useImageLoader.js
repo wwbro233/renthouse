@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch } from 'vue'
 
 /**
  * 图片加载组合式函数
@@ -10,16 +10,22 @@ export function useImageLoader(imageUrl) {
   const currentSrc = ref('')
 
   const loadImage = () => {
-    if (!imageUrl.value) return
+    if (!imageUrl.value) {
+      currentSrc.value = ''
+      isLoading.value = false
+      return
+    }
 
     isLoading.value = true
     isError.value = false
+    currentSrc.value = ''
 
     const img = new Image()
     
     img.onload = () => {
       isLoading.value = false
       currentSrc.value = imageUrl.value
+      isError.value = false
     }
 
     img.onerror = () => {
@@ -35,20 +41,23 @@ export function useImageLoader(imageUrl) {
           isError.value = false
         }
         fallbackImg.onerror = () => {
-          currentSrc.value = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="100%25" height="100%25" fill="%23e0e0e0"/%3E%3C/svg%3E'
+          currentSrc.value = ''
+          isError.value = true
         }
         fallbackImg.src = fallbackUrl
       } else {
-        currentSrc.value = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="100%25" height="100%25" fill="%23e0e0e0"/%3E%3C/svg%3E'
+        currentSrc.value = ''
+        isError.value = true
       }
     }
 
     img.src = imageUrl.value
   }
 
-  onMounted(() => {
+  // 监听图片URL变化
+  watch(imageUrl, () => {
     loadImage()
-  })
+  }, { immediate: true })
 
   return {
     isLoading,

@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router'
 import { discoverActivities, discoverBenefits } from '../data/mockData'
 import { assetUrl } from '../utils/assets'
+import SmartImage from '../components/SmartImage.vue'
 
 const router = useRouter()
 
@@ -85,7 +86,7 @@ const goBenefit = (id) => {
         <h3>谷粒请你看电影</h3>
         <p>春季特惠，福利实时更新</p>
       </div>
-      <img :src="assetUrl('discover/discover-movie.svg')" alt="movie" />
+      <SmartImage :src="assetUrl('discover/discover-movie.jpg')" alt="movie" />
     </section>
 
     <section class="benefit-list">
@@ -96,7 +97,7 @@ const goBenefit = (id) => {
         </button>
       </header>
       <article v-for="benefit in discoverBenefits" :key="benefit.id">
-        <img :src="benefit.cover" :alt="benefit.title" />
+        <SmartImage :src="benefit.cover" :alt="benefit.title" />
         <div>
           <div class="benefit-head">
             <span class="benefit-type">{{ benefit.type }}</span>
@@ -115,7 +116,7 @@ const goBenefit = (id) => {
         <button type="button" @click="goActivity(discoverActivities[0].id)">查看更多</button>
       </header>
       <article v-for="activity in discoverActivities" :key="activity.id" @click="goActivity(activity.id)">
-        <img :src="activity.cover" :alt="activity.title" />
+        <SmartImage :src="activity.cover" :alt="activity.title" />
         <div class="activity-body">
           <div class="activity-tag">{{ activity.tag }}</div>
           <h4>{{ activity.title }}</h4>
@@ -136,7 +137,7 @@ const goBenefit = (id) => {
 <style scoped>
 .discover-page {
   width: 100%;
-  max-width: 1080px;
+  max-width: 900px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

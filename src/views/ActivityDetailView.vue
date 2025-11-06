@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { activityDetail } from '../data/mockData'
+import SmartImage from '../components/SmartImage.vue'
 
 const detail = activityDetail
 const router = useRouter()
@@ -27,7 +28,7 @@ const handleSignup = () => {
     </div>
 
     <div class="section-card">
-      <img :src="detail.cover" alt="" class="hero-img" />
+  <SmartImage :src="detail.cover" alt="" class="hero-img" />
       <div class="hero-info">
         <div class="info-item">
           <el-icon><Clock /></el-icon>

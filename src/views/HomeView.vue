@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
 import { featuredProperties } from '../data/mockData'
 import { assetUrl } from '../utils/assets'
+import { getCategoryImage } from '../utils/categoryImages'
+import SmartImage from '../components/SmartImage.vue'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
@@ -22,73 +24,73 @@ const categoryGroups = [
     id: 'duration',
     title: '时长类',
     items: [
-      { id: 'short-rent', title: '短租', cover: 'https://images.unsplash.com/photo-1543248939-ff40856f65d4?auto=format&fit=crop&w=320&q=80' },
-      { id: 'long-rent', title: '长租年付', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
-      { id: 'daily-rent', title: '日租', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
-      { id: 'quarter-rent', title: '季租', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
-      { id: 'half-year', title: '半年租', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
-      { id: 'monthly', title: '月租', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' }
+      { id: 'short-rent', title: '短租', cover: getCategoryImage('short-rent') },
+      { id: 'long-rent', title: '长租年付', cover: getCategoryImage('long-rent') },
+      { id: 'daily-rent', title: '日租', cover: getCategoryImage('daily-rent') },
+      { id: 'quarter-rent', title: '季租', cover: getCategoryImage('quarter-rent') },
+      { id: 'half-year', title: '半年租', cover: getCategoryImage('half-year') },
+      { id: 'monthly', title: '月租', cover: getCategoryImage('monthly') }
     ]
   },
   {
     id: 'layout',
     title: '房型类',
     items: [
-      { id: 'share', title: '合租', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
-      { id: 'studio', title: '独卫主卧', cover: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80' },
-      { id: 'one-room', title: '整租1居', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
-      { id: 'two-room', title: '整租2-3居', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' },
-      { id: 'single-apt', title: '单身公寓', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
-      { id: 'loft', title: 'Loft公寓', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
-      { id: 'villa', title: '别墅', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
-      { id: 'penthouse', title: '复式', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' }
+      { id: 'share', title: '合租', cover: getCategoryImage('share') },
+      { id: 'studio', title: '独卫主卧', cover: getCategoryImage('studio') },
+      { id: 'one-room', title: '整租1居', cover: getCategoryImage('one-room') },
+      { id: 'two-room', title: '整租2-3居', cover: getCategoryImage('two-room') },
+      { id: 'single-apt', title: '单身公寓', cover: getCategoryImage('single-apt') },
+      { id: 'loft', title: 'Loft公寓', cover: getCategoryImage('loft') },
+      { id: 'villa', title: '别墅', cover: getCategoryImage('villa') },
+      { id: 'penthouse', title: '复式', cover: getCategoryImage('penthouse') }
     ]
   },
   {
     id: 'location',
     title: '区位配套类',
     items: [
-      { id: 'school', title: '学区房', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
-      { id: 'metro', title: '地铁房', cover: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80' },
-      { id: 'business', title: '商圈房', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
-      { id: 'scenic', title: '景区房', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' },
-      { id: 'hospital', title: '医院旁', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
-      { id: 'park', title: '公园旁', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' }
+      { id: 'school', title: '学区房', cover: getCategoryImage('school') },
+      { id: 'metro', title: '地铁房', cover: getCategoryImage('metro') },
+      { id: 'business', title: '商圈房', cover: getCategoryImage('business') },
+      { id: 'scenic', title: '景区房', cover: getCategoryImage('scenic') },
+      { id: 'hospital', title: '医院旁', cover: getCategoryImage('hospital') },
+      { id: 'park', title: '公园旁', cover: getCategoryImage('park') }
     ]
   },
   {
     id: 'decoration',
     title: '装修风格类',
     items: [
-      { id: 'furnished', title: '精装房', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
-      { id: 'homestay', title: '民宿风', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
-      { id: 'minimal', title: '极简风', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
-      { id: 'luxury', title: '轻奢风', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' },
-      { id: 'modern', title: '现代风', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
-      { id: 'european', title: '欧式', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' }
+      { id: 'furnished', title: '精装房', cover: getCategoryImage('furnished') },
+      { id: 'homestay', title: '民宿风', cover: getCategoryImage('homestay') },
+      { id: 'minimal', title: '极简风', cover: getCategoryImage('minimal') },
+      { id: 'luxury', title: '轻奢风', cover: getCategoryImage('luxury') },
+      { id: 'modern', title: '现代风', cover: getCategoryImage('modern') },
+      { id: 'european', title: '欧式', cover: getCategoryImage('european') }
     ]
   },
   {
     id: 'special',
     title: '特殊配置类',
     items: [
-      { id: 'balcony', title: '带阳台', cover: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=320&q=80' },
-      { id: 'pet-friendly', title: '宠物友好', cover: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=320&q=80' },
-      { id: 'parking', title: '带车位', cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=320&q=80' },
+      { id: 'balcony', title: '带阳台', cover: getCategoryImage('balcony') },
+      { id: 'pet-friendly', title: '宠物友好', cover: getCategoryImage('pet-friendly') },
+      { id: 'parking', title: '带车位', cover: getCategoryImage('parking') },
       { id: 'smart-home', title: '智能家电', cover: '/images/图片1.png' },
-      { id: 'gym', title: '健身房', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
-      { id: 'pool', title: '游泳池', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' }
+      { id: 'gym', title: '健身房', cover: getCategoryImage('gym') },
+      { id: 'pool', title: '游泳池', cover: getCategoryImage('pool') }
     ]
   },
   {
     id: 'payment',
     title: '支付优惠类',
     items: [
-      { id: 'deposit', title: '押金0首付', cover: 'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=320&q=80' },
-      { id: 'installment', title: '租金分期', cover: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=320&q=80' },
-      { id: 'first-month', title: '首月减免', cover: 'https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?auto=format&fit=crop&w=320&q=80' },
-      { id: 'discount', title: '租金折扣', cover: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=320&q=80' },
-      { id: 'coupon', title: '优惠券', cover: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=320&q=80' }
+      { id: 'deposit', title: '押金0首付', cover: getCategoryImage('deposit') },
+      { id: 'installment', title: '租金分期', cover: getCategoryImage('installment') },
+      { id: 'first-month', title: '首月减免', cover: getCategoryImage('first-month') },
+      { id: 'discount', title: '租金折扣', cover: getCategoryImage('discount') },
+      { id: 'coupon', title: '优惠券', cover: getCategoryImage('coupon') }
     ]
   }
 ]
@@ -99,56 +101,56 @@ const serviceStrip = [
     id: 'move',
     title: '硅谷家服',
     desc: '搬家·保洁·清洁·维修',
-    cover: assetUrl('services/service-strip-move.svg'),
+    cover: assetUrl('services/service-strip-move.jpg'),
     route: '/service'
   },
   {
     id: 'smart',
     title: '硅谷智能',
     desc: '全屋智能家装',
-    cover: assetUrl('services/service-strip-smart.svg'),
+    cover: assetUrl('services/service-strip-smart.jpg'),
     route: '/service'
   },
   {
     id: 'trusteeship',
     title: '房屋租赁托管',
     desc: '租客省心托管',
-    cover: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-vip-b.jpg'),
     route: '/service'
   },
   {
     id: 'legal',
     title: '房产法律咨询',
     desc: '专业法务支持',
-    cover: 'https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-vip-a.jpg'),
     route: '/service'
   },
   {
     id: 'soft-design',
     title: '软装设计',
     desc: '全屋美学定制',
-    cover: 'https://images.unsplash.com/photo-1613553481961-02920c4024d2?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-strip-smart.jpg'),
     route: '/service'
   },
   {
     id: 'appliance-trade',
     title: '家电以旧换新',
     desc: '智能家电升级',
-    cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-strip-smart.jpg'),
     route: '/service'
   },
   {
     id: 'finance',
     title: '房产金融服务',
     desc: '房贷・车贷・理财咨询',
-    cover: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-vip-c.jpg'),
     route: '/service'
   },
   {
     id: 'inspection',
     title: '房屋检测服务',
     desc: '甲醛・水电・结构检测',
-    cover: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
+    cover: assetUrl('services/service-clean-plus.jpg'),
     route: '/service'
   }
 ]
@@ -338,9 +340,9 @@ const handleCategorySelect = (tile) => {
           </button>
         </div>
       </div>
-      <div class="hero-card__visual">
-        <img :src="heroVisual" alt="客厅实景" />
-      </div>
+          <div class="hero-card__visual">
+            <SmartImage :src="heroVisual" alt="客厅实景" />
+          </div>
     </section>
 
     <!-- 大类分组 + 小类卡片布局 -->
@@ -373,13 +375,7 @@ const handleCategorySelect = (tile) => {
               @click="handleClick('/want')"
             >
               <div class="category-card__image">
-                <img
-                  :src="safeImg(item.cover)"
-                  :alt="item.title"
-                  loading="lazy"
-                  referrerpolicy="no-referrer"
-                  @error="handleImgError"
-                />
+                <SmartImage :src="safeImg(item.cover)" :alt="item.title" />
               </div>
               <span class="category-card__label">{{ item.title }}</span>
             </button>
@@ -397,13 +393,7 @@ const handleCategorySelect = (tile) => {
         @click="handleClick(item.route)"
       >
         <div class="service-card__image">
-          <img
-            :src="safeImg(item.cover)"
-            :alt="item.title"
-            loading="lazy"
-            referrerpolicy="no-referrer"
-            @error="handleImgError"
-          />
+          <SmartImage :src="safeImg(item.cover)" :alt="item.title" />
         </div>
         <div class="service-card__content">
           <h4 class="service-card__title">{{ item.title }}</h4>
