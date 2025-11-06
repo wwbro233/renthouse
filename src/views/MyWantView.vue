@@ -104,6 +104,7 @@ const handleRemove = (id) => {
           <el-option label="一居" value="1室" />
           <el-option label="两居" value="2室" />
           <el-option label="三居" value="3室" />
+          <el-option label="四居" value="4室" />
         </el-select>
         <el-select v-model="filters.priceOrder" placeholder="价格排序" clearable>
           <el-option label="价格从低到高" value="asc" />

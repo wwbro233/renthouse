@@ -1,16 +1,95 @@
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { mapBoundary, propertyDetail } from '../data/mockData'
+import { mapBoundary, propertyDetail, nearbyProperties, featuredProperties, commuteRecommendations } from '../data/mockData'
 import { useBookingStore } from '../stores/bookingStore'
+import { assetUrl } from '../utils/assets'
 
 const router = useRouter()
+const route = useRoute()
 const bookingStore = useBookingStore()
-const detail = propertyDetail
+
+// 根据路由 ID 获取房源详情
+const getPropertyDetail = () => {
+  const propertyId = parseInt(route.params.id)
+  
+  // 在所有房源列表中查找
+  const allProperties = [...nearbyProperties, ...featuredProperties, ...commuteRecommendations]
+  const property = allProperties.find(p => p.id === propertyId)
+  
+  if (!property) {
+    // 如果找不到，返回默认详情
+    return propertyDetail
+  }
+  
+  // 基于找到的房源构建详细信息
+  return {
+    id: property.id,
+    title: property.title,
+    price: property.price,
+    layout: property.layout || '1室1厅1卫',
+    area: property.size || 45,
+    orientation: property.southFacing ? '南' : '东南',
+    floor: '中层 / 28层',
+    decoration: '精装修',
+    release: property.release || '2025-02-20',
+    address: property.address || `${property.district || ''} · ${property.area || ''}`.trim(),
+    landlord: {
+      name: '李先生',
+      avatar: assetUrl('avatars/avatar-landlord.jpg'),
+      phone: '134-****-8890',
+      rating: 4.9
+    },
+    gallery: [
+      property.cover,
+      assetUrl('gallery/property-gallery-2.jpg'),
+      assetUrl('gallery/property-gallery-3.jpg'),
+      assetUrl('gallery/property-gallery-4.jpg')
+    ],
+    highlights: [
+      property.nearMetro ? '近地铁' : null,
+      property.hasElevator ? '电梯房' : null,
+      property.depositFree ? '押一付一' : null,
+      property.rentType,
+      property.tags?.[0],
+      '拎包入住'
+    ].filter(Boolean),
+    description: property.district 
+      ? `房源位于${property.district}${property.area}，${property.layout}，使用面积${property.size}㎡。${
+          property.nearMetro ? '距离地铁站仅几百米，' : ''
+        }周边配套完善：购物中心、餐厅、便利店等一应俱全。房屋采用现代简约设计，${
+          property.hasElevator ? '配备电梯，' : ''
+        }${property.petFriendly ? '可养宠物，' : ''}适合都市白领及家庭居住。`
+      : `精品房源位于${property.address}，${property.layout}，使用面积${property.size}㎡。周边配套完善，交通便利，${
+          property.transport ? `${property.transport}直达，` : ''
+        }适合追求高品质生活的都市白领。`,
+    facilities: [
+      property.hasElevator ? '电梯' : null,
+      '智能门锁',
+      '洗衣机',
+      '冰箱',
+      property.loft ? 'LOFT设计' : null,
+      property.parking ? '停车位' : null,
+      '高速宽带',
+      '空调'
+    ].filter(Boolean),
+    traffic: property.metroLines?.length
+      ? `距离${property.metroLines.join('、')}地铁站步行约 ${Math.floor(Math.random() * 10 + 5)} 分钟；周边有多条公交线路；交通便利，通勤便捷。`
+      : property.transport
+        ? `${property.transport}直达，${property.commuteTime || ''}；周边有多条公交线路，交通便利。`
+        : '周边有多条公交线路，交通便利，适合各类出行需求。',
+    map: {
+      lat: 39.90965 + (Math.random() - 0.5) * 0.05,
+      lng: 116.45668 + (Math.random() - 0.5) * 0.05
+    }
+  }
+}
+
+const detail = computed(() => getPropertyDetail())
 
 const markerPosition = computed(() => {
-  const { lat, lng } = detail.map
+  const { lat, lng } = detail.value.map
   const left = ((lng - mapBoundary.west) / (mapBoundary.east - mapBoundary.west)) * 100
   const top = ((mapBoundary.north - lat) / (mapBoundary.north - mapBoundary.south)) * 100
   return { left: `${left}%`, top: `${top}%` }
@@ -20,9 +99,9 @@ const goBack = () => router.back()
 
 const handleBookVisit = () => {
   bookingStore.openBookingDialog({
-    propertyId: detail.id,
-    title: detail.title,
-    address: detail.address
+    propertyId: detail.value.id,
+    title: detail.value.title,
+    address: detail.value.address
   })
 }
 

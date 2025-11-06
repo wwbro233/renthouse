@@ -732,17 +732,17 @@ export const discoverBenefits = [
 
 export const myFavorites = [
   {
-    id: 1,
-    title: '国贸 CBD 品质公寓',
-    price: 6800,
+    id: 101,
+    title: '望京 SOHO  双地铁 精装一居',
+    price: 5600,
     layout: '1室1厅',
-    size: 45,
-    address: '朝阳区 · 国贸',
+    size: 56,
+    address: '朝阳区 · 望京',
     favoriteAt: '2025-03-02 18:32',
     cover: getPropertyImage('metro-life')
   },
   {
-    id: 2,
+    id: 204,
     title: '望京小腰 精装两居',
     price: 7600,
     layout: '2室1厅',
@@ -752,7 +752,7 @@ export const myFavorites = [
     cover: getPropertyImage('family-home')
   },
   {
-    id: 3,
+    id: 103,
     title: '海淀黄庄 复式合租房',
     price: 3200,
     layout: '4室2厅',
@@ -779,8 +779,8 @@ export const myFootprints = [
     cover: assetUrl('services/service-clean-plus.jpg')
   },
   {
-    id: 13,
-    title: '国贸 CBD 品质公寓',
+    id: 201,
+    title: '东直门银座 精装整租一居',
     type: '房源',
     visitedAt: '2025-02-28 13:26',
     cover: getPropertyImage('city-loft')
@@ -789,8 +789,8 @@ export const myFootprints = [
 
 export const myAppointments = [
   {
-    id: 21,
-    title: '国贸 CBD 品质公寓',
+    id: 101,
+    title: '望京 SOHO  双地铁 精装一居',
     type: '约看',
     time: '2025-03-06 14:30',
     status: '已确认',

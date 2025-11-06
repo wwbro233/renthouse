@@ -18,10 +18,10 @@ const shortcutList = [
   { id: 'foot', label: '足迹', icon: 'View', route: '/my/footprint' },
   { id: 'book', label: '约看', icon: 'Calendar', route: '/my/appointment' },
   { id: 'share', label: '拼租', icon: 'Connection', route: '/my/share' },
-  { id: 'contract', label: '合同', icon: 'Document', route: '/service' },
-  { id: 'bill', label: '账单', icon: 'Tickets', route: '/service' },
+  { id: 'contract', label: '合同', icon: 'Document', route: '' },
+  { id: 'bill', label: '账单', icon: 'Tickets', route: '' },
   { id: 'order', label: '订单', icon: 'List', route: '/my/orders' },
-  { id: 'comment', label: '评价', icon: 'EditPen', route: '/service' },
+  { id: 'comment', label: '评价', icon: 'EditPen', route: '' },
   { id: 'wallet', label: '钱包', icon: 'Wallet', route: '/my/wallet' }
 ]
 
