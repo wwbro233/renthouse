@@ -1,8 +1,15 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { serviceDetail } from '../data/mockData'
 import SmartImage from '../components/SmartImage.vue'
+import { useAuthStore } from '../stores/authStore'
+import { useOrderStore } from '../stores/orderStore'
+
+const router = useRouter()
+const authStore = useAuthStore()
+const orderStore = useOrderStore()
 
 const detail = serviceDetail
 const selectedPackageId = ref(detail.packages[1]?.id ?? detail.packages[0].id)
@@ -53,10 +60,68 @@ const handlePackageSelect = (id) => {
 }
 
 const handleSubmit = async () => {
+  // 检查登录状态
+  if (!authStore.isAuthenticated.value) {
+    ElMessageBox.confirm(
+      '请先登录后再提交预约',
+      '提示',
+      {
+        confirmButtonText: '去登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ).then(() => {
+      router.push('/login')
+    }).catch(() => {})
+    return
+  }
+
   if (!bookingFormRef.value) return
   const valid = await bookingFormRef.value.validate().catch(() => false)
   if (!valid) return
-  ElMessage.success('预约提交成功，客服将尽快与您确认。')
+
+  // 获取选中的套餐信息
+  const selectedPkg = selectedPackage.value
+  if (!selectedPkg) {
+    ElMessage.error('请选择服务套餐')
+    return
+  }
+
+  // 创建订单
+  const orderData = {
+    serviceTitle: detail.title,
+    serviceCover: detail.cover,
+    packageName: selectedPkg.name,
+    packagePrice: selectedPkg.price,
+    date: bookingForm.date,
+    time: bookingForm.time,
+    address: bookingForm.address,
+    contact: bookingForm.contact,
+    phone: bookingForm.phone,
+    remark: bookingForm.remark
+  }
+
+  const result = orderStore.createOrder(orderData, authStore.state.currentPhone)
+  
+  if (result.success) {
+    ElMessageBox.confirm(
+      `预约提交成功！订单号：${result.order.orderNo}，客服将在10分钟内与您确认。`,
+      '预约成功',
+      {
+        confirmButtonText: '查看订单',
+        cancelButtonText: '继续浏览',
+        type: 'success'
+      }
+    ).then(() => {
+      router.push('/my/orders')
+    }).catch(() => {
+      // 重置表单
+      bookingFormRef.value?.resetFields()
+      bookingForm.packageId = selectedPackageId.value
+    })
+  } else {
+    ElMessage.error(result.message || '提交失败，请重试')
+  }
 }
 </script>
 
