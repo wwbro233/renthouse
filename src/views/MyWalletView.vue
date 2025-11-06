@@ -14,6 +14,8 @@ const rechargeDialogVisible = ref(false)
 const withdrawDialogVisible = ref(false)
 const rechargeAmount = ref('')
 const withdrawAmount = ref('')
+const isSelectMode = ref(false)
+const selectedTransactions = ref([])
 
 // 快捷充值金额
 const quickRechargeAmounts = [100, 200, 500, 1000, 2000, 5000]
@@ -160,6 +162,83 @@ const handleExchangePoints = () => {
     }
   }).catch(() => {})
 }
+
+// 切换选择模式
+const toggleSelectMode = () => {
+  isSelectMode.value = !isSelectMode.value
+  if (!isSelectMode.value) {
+    selectedTransactions.value = []
+  }
+}
+
+// 选择/取消选择交易
+const toggleSelectTransaction = (transactionId) => {
+  const index = selectedTransactions.value.indexOf(transactionId)
+  if (index > -1) {
+    selectedTransactions.value.splice(index, 1)
+  } else {
+    selectedTransactions.value.push(transactionId)
+  }
+}
+
+// 全选/取消全选
+const toggleSelectAll = () => {
+  if (selectedTransactions.value.length === transactions.value.length) {
+    selectedTransactions.value = []
+  } else {
+    selectedTransactions.value = transactions.value.map(t => t.id)
+  }
+}
+
+// 删除单条交易记录
+const handleDeleteTransaction = (transactionId) => {
+  ElMessageBox.confirm(
+    '确认删除这条交易记录吗？此操作不可恢复。',
+    '删除交易记录',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    const result = walletStore.deleteTransaction(authStore.state.currentPhone, transactionId)
+    if (result.success) {
+      ElMessage.success(result.message)
+    } else {
+      ElMessage.error(result.message)
+    }
+  }).catch(() => {})
+}
+
+// 批量删除交易记录
+const handleBatchDelete = () => {
+  if (selectedTransactions.value.length === 0) {
+    ElMessage.warning('请先选择要删除的交易记录')
+    return
+  }
+  
+  ElMessageBox.confirm(
+    `确认删除选中的 ${selectedTransactions.value.length} 条交易记录吗？此操作不可恢复。`,
+    '批量删除',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    const result = walletStore.deleteTransactions(
+      authStore.state.currentPhone,
+      selectedTransactions.value
+    )
+    if (result.success) {
+      ElMessage.success(result.message)
+      selectedTransactions.value = []
+      isSelectMode.value = false
+    } else {
+      ElMessage.error(result.message)
+    }
+  }).catch(() => {})
+}
 </script>
 
 <template>
@@ -228,10 +307,36 @@ const handleExchangePoints = () => {
       <div class="section-card">
         <div class="section-header">
           <h3>交易记录</h3>
-          <span>共 {{ transactions.length }} 条</span>
+          <div class="section-actions">
+            <span>共 {{ transactions.length }} 条</span>
+            <el-button 
+              v-if="!isSelectMode && transactions.length > 0" 
+              size="small" 
+              type="danger" 
+              plain
+              @click="toggleSelectMode"
+            >
+              <el-icon><Delete /></el-icon>
+              批量删除
+            </el-button>
+            <template v-if="isSelectMode">
+              <el-button size="small" @click="toggleSelectAll">
+                {{ selectedTransactions.length === transactions.length ? '取消全选' : '全选' }}
+              </el-button>
+              <el-button 
+                size="small" 
+                type="danger" 
+                :disabled="selectedTransactions.length === 0"
+                @click="handleBatchDelete"
+              >
+                删除选中 ({{ selectedTransactions.length }})
+              </el-button>
+              <el-button size="small" @click="toggleSelectMode">取消</el-button>
+            </template>
+          </div>
         </div>
 
-        <el-tabs v-model="activeTab">
+        <el-tabs v-model="activeTab" @tab-change="selectedTransactions = []">
           <el-tab-pane label="全部" name="all"></el-tab-pane>
           <el-tab-pane label="充值" name="recharge"></el-tab-pane>
           <el-tab-pane label="提现" name="withdraw"></el-tab-pane>
@@ -249,7 +354,18 @@ const handleExchangePoints = () => {
             v-for="transaction in transactions"
             :key="transaction.id"
             class="transaction-item"
+            :class="{ 
+              'is-selected': selectedTransactions.includes(transaction.id),
+              'is-select-mode': isSelectMode
+            }"
+            @click="isSelectMode && toggleSelectTransaction(transaction.id)"
           >
+            <el-checkbox
+              v-if="isSelectMode"
+              :model-value="selectedTransactions.includes(transaction.id)"
+              @change="toggleSelectTransaction(transaction.id)"
+              @click.stop
+            />
             <div class="transaction-icon">
               <el-icon
                 :size="24"
@@ -282,6 +398,15 @@ const handleExchangePoints = () => {
                 {{ walletStore.getTransactionStatusText(transaction.status) }}
               </el-tag>
             </div>
+            <el-button
+              v-if="!isSelectMode"
+              type="danger"
+              text
+              size="small"
+              @click.stop="handleDeleteTransaction(transaction.id)"
+            >
+              <el-icon><Delete /></el-icon>
+            </el-button>
           </div>
         </div>
       </div>
@@ -450,7 +575,13 @@ const handleExchangePoints = () => {
   color: var(--gray-1);
 }
 
-.section-header span {
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-actions span {
   font-size: 14px;
   color: var(--gray-4);
 }
@@ -474,6 +605,19 @@ const handleExchangePoints = () => {
 
 .transaction-item:hover {
   background: var(--gray-6);
+}
+
+.transaction-item.is-select-mode {
+  cursor: pointer;
+}
+
+.transaction-item.is-selected {
+  background: rgba(22, 119, 255, 0.1);
+  border-left: 3px solid #1677ff;
+}
+
+.transaction-item.is-selected:hover {
+  background: rgba(22, 119, 255, 0.15);
 }
 
 .transaction-icon {

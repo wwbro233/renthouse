@@ -295,6 +295,55 @@ const getTransactions = (userPhone, filter = 'all') => {
   return wallet.transactions.filter(t => t.type === filter)
 }
 
+// 删除交易记录
+const deleteTransaction = (userPhone, transactionId) => {
+  if (!userPhone) {
+    return { success: false, message: '请先登录' }
+  }
+
+  const wallet = getUserWallet(userPhone)
+  if (!wallet) {
+    return { success: false, message: '钱包不存在' }
+  }
+
+  const index = wallet.transactions.findIndex(t => t.id === transactionId)
+  if (index === -1) {
+    return { success: false, message: '交易记录不存在' }
+  }
+
+  // 删除交易记录
+  wallet.transactions.splice(index, 1)
+  persist()
+
+  return {
+    success: true,
+    message: '删除成功'
+  }
+}
+
+// 批量删除交易记录
+const deleteTransactions = (userPhone, transactionIds) => {
+  if (!userPhone) {
+    return { success: false, message: '请先登录' }
+  }
+
+  const wallet = getUserWallet(userPhone)
+  if (!wallet) {
+    return { success: false, message: '钱包不存在' }
+  }
+
+  // 过滤掉要删除的交易记录
+  wallet.transactions = wallet.transactions.filter(
+    t => !transactionIds.includes(t.id)
+  )
+  persist()
+
+  return {
+    success: true,
+    message: `成功删除 ${transactionIds.length} 条记录`
+  }
+}
+
 // 交易类型文本映射
 const transactionTypeMap = {
   recharge: '充值',
@@ -377,6 +426,8 @@ export const useWalletStore = () => ({
   earnPoints,
   usePoints,
   getTransactions,
+  deleteTransaction,
+  deleteTransactions,
   getTransactionTypeText,
   getTransactionStatusText,
   getTransactionTypeIcon,
