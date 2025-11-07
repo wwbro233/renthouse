@@ -1,14 +1,27 @@
+/**
+ * 钱包状态管理 Store
+ * 负责用户钱包余额、积分、交易记录的管理
+ * 数据持久化到 localStorage
+ */
 import { computed, reactive } from 'vue'
 
+// localStorage 存储键名
 const STORAGE_KEY = 'link-house-wallet'
 
+/**
+ * 钱包状态对象
+ * wallets: 用户钱包映射 { userPhone: { balance, points, transactions } }
+ */
 const state = reactive({
-  wallets: {} // { userPhone: { balance, points, transactions } }
+  wallets: {}
 })
 
+// 判断是否在浏览器环境
 const isBrowser = typeof window !== 'undefined'
 
-// 从 localStorage 加载钱包数据
+/**
+ * 从 localStorage 加载钱包数据
+ */
 const loadFromStorage = () => {
   if (!isBrowser) {
     state.wallets = {}
@@ -28,13 +41,20 @@ const loadFromStorage = () => {
   }
 }
 
-// 持久化到 localStorage
+/**
+ * 持久化钱包数据到 localStorage
+ */
 const persist = () => {
   if (!isBrowser) return
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.wallets))
 }
 
-// 获取或创建用户钱包
+/**
+ * 获取或创建用户钱包
+ * 如果用户钱包不存在，自动创建一个新钱包（初始余额0元，积分15点）
+ * @param {string} userPhone - 用户手机号
+ * @returns {Object|null} 钱包对象或null
+ */
 const getUserWallet = (userPhone) => {
   if (!userPhone) return null
 
@@ -50,14 +70,28 @@ const getUserWallet = (userPhone) => {
   return state.wallets[userPhone]
 }
 
-// 生成交易ID
+/**
+ * 生成唯一的交易ID
+ * 格式：TXN + 时间戳 + 4位随机数
+ * @returns {string} 交易ID
+ */
 const generateTransactionId = () => {
   const timestamp = Date.now()
   const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
   return `TXN${timestamp}${random}`
 }
 
-// 添加交易记录
+/**
+ * 添加交易记录
+ * @param {string} userPhone - 用户手机号
+ * @param {Object} transaction - 交易信息对象
+ * @param {string} transaction.type - 交易类型（recharge/withdraw/payment/refund/points_earn/points_use）
+ * @param {number} transaction.amount - 交易金额
+ * @param {number} transaction.points - 积分变动
+ * @param {string} transaction.description - 交易描述
+ * @param {string} transaction.status - 交易状态（pending/completed/failed）
+ * @returns {Object} 新创建的交易记录对象
+ */
 const addTransaction = (userPhone, transaction) => {
   const wallet = getUserWallet(userPhone)
   if (!wallet) return
@@ -78,7 +112,13 @@ const addTransaction = (userPhone, transaction) => {
   return newTransaction
 }
 
-// 充值
+/**
+ * 充值功能
+ * 充值100元赠送10谷粒点
+ * @param {string} userPhone - 用户手机号
+ * @param {number} amount - 充值金额
+ * @returns {Object} 包含 success、message、balance、points 的结果对象
+ */
 const recharge = (userPhone, amount) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -116,7 +156,13 @@ const recharge = (userPhone, amount) => {
   }
 }
 
-// 提现
+/**
+ * 提现功能
+ * 申请提现，预计1-3个工作日到账
+ * @param {string} userPhone - 用户手机号
+ * @param {number} amount - 提现金额
+ * @returns {Object} 包含 success、message、balance 的结果对象
+ */
 const withdraw = (userPhone, amount) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -151,7 +197,14 @@ const withdraw = (userPhone, amount) => {
   }
 }
 
-// 支付
+/**
+ * 支付功能
+ * 使用钱包余额进行支付
+ * @param {string} userPhone - 用户手机号
+ * @param {number} amount - 支付金额
+ * @param {string} description - 支付描述
+ * @returns {Object} 包含 success、message、balance 的结果对象
+ */
 const payment = (userPhone, amount, description) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -186,7 +239,14 @@ const payment = (userPhone, amount, description) => {
   }
 }
 
-// 退款
+/**
+ * 退款功能
+ * 将款项退回到钱包余额
+ * @param {string} userPhone - 用户手机号
+ * @param {number} amount - 退款金额
+ * @param {string} description - 退款描述
+ * @returns {Object} 包含 success、message、balance 的结果对象
+ */
 const refund = (userPhone, amount, description) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -216,7 +276,14 @@ const refund = (userPhone, amount, description) => {
   }
 }
 
-// 赚取积分
+/**
+ * 赚取积分功能
+ * 用于签到、活动奖励等场景
+ * @param {string} userPhone - 用户手机号
+ * @param {number} points - 积分数量
+ * @param {string} description - 获得积分的描述
+ * @returns {Object} 包含 success、message、points 的结果对象
+ */
 const earnPoints = (userPhone, points, description) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -247,7 +314,14 @@ const earnPoints = (userPhone, points, description) => {
   }
 }
 
-// 使用积分
+/**
+ * 使用积分功能
+ * 用于积分兑换、抵扣等场景
+ * @param {string} userPhone - 用户手机号
+ * @param {number} points - 积分数量
+ * @param {string} description - 使用积分的描述
+ * @returns {Object} 包含 success、message、points 的结果对象
+ */
 const usePoints = (userPhone, points, description) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -283,7 +357,12 @@ const usePoints = (userPhone, points, description) => {
   }
 }
 
-// 获取交易记录
+/**
+ * 获取交易记录
+ * @param {string} userPhone - 用户手机号
+ * @param {string} filter - 筛选类型（all/recharge/withdraw/payment/refund/points）
+ * @returns {Array} 交易记录数组
+ */
 const getTransactions = (userPhone, filter = 'all') => {
   const wallet = getUserWallet(userPhone)
   if (!wallet) return []
@@ -295,7 +374,12 @@ const getTransactions = (userPhone, filter = 'all') => {
   return wallet.transactions.filter(t => t.type === filter)
 }
 
-// 删除交易记录
+/**
+ * 删除单条交易记录
+ * @param {string} userPhone - 用户手机号
+ * @param {string} transactionId - 交易记录ID
+ * @returns {Object} 包含 success 和 message 的结果对象
+ */
 const deleteTransaction = (userPhone, transactionId) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -321,7 +405,12 @@ const deleteTransaction = (userPhone, transactionId) => {
   }
 }
 
-// 批量删除交易记录
+/**
+ * 批量删除交易记录
+ * @param {string} userPhone - 用户手机号
+ * @param {Array} transactionIds - 交易记录ID数组
+ * @returns {Object} 包含 success 和 message 的结果对象
+ */
 const deleteTransactions = (userPhone, transactionIds) => {
   if (!userPhone) {
     return { success: false, message: '请先登录' }
@@ -344,7 +433,9 @@ const deleteTransactions = (userPhone, transactionIds) => {
   }
 }
 
-// 交易类型文本映射
+/**
+ * 交易类型文本映射表
+ */
 const transactionTypeMap = {
   recharge: '充值',
   withdraw: '提现',
@@ -354,20 +445,34 @@ const transactionTypeMap = {
   points_use: '积分使用'
 }
 
-// 交易状态文本映射
+/**
+ * 交易状态文本映射表
+ */
 const transactionStatusMap = {
   pending: '处理中',
   completed: '已完成',
   failed: '失败'
 }
 
-// 获取交易类型文本
+/**
+ * 获取交易类型的中文文本
+ * @param {string} type - 交易类型
+ * @returns {string} 中文文本
+ */
 const getTransactionTypeText = (type) => transactionTypeMap[type] || type
 
-// 获取交易状态文本
+/**
+ * 获取交易状态的中文文本
+ * @param {string} status - 交易状态
+ * @returns {string} 中文文本
+ */
 const getTransactionStatusText = (status) => transactionStatusMap[status] || status
 
-// 获取交易类型图标
+/**
+ * 获取交易类型对应的图标名称
+ * @param {string} type - 交易类型
+ * @returns {string} Element Plus 图标名称
+ */
 const getTransactionTypeIcon = (type) => {
   const iconMap = {
     recharge: 'Plus',
@@ -380,7 +485,11 @@ const getTransactionTypeIcon = (type) => {
   return iconMap[type] || 'DocumentCopy'
 }
 
-// 获取交易类型颜色
+/**
+ * 获取交易类型对应的颜色
+ * @param {string} type - 交易类型
+ * @returns {string} 颜色值
+ */
 const getTransactionTypeColor = (type) => {
   const colorMap = {
     recharge: '#52c41a',
@@ -393,7 +502,11 @@ const getTransactionTypeColor = (type) => {
   return colorMap[type] || '#666666'
 }
 
-// 统计数据
+/**
+ * 钱包统计数据计算属性
+ * 统计所有用户的钱包总览数据
+ * @returns {Object} 包含总用户数、总余额、总积分、总交易数
+ */
 const walletStats = computed(() => {
   const stats = {
     totalUsers: Object.keys(state.wallets).length,
@@ -411,11 +524,15 @@ const walletStats = computed(() => {
   return stats
 })
 
-// 初始化加载
+// 初始化时从 localStorage 加载数据
 if (Object.keys(state.wallets).length === 0) {
   loadFromStorage()
 }
 
+/**
+ * 导出 walletStore 实例
+ * 提供钱包相关的所有方法和状态
+ */
 export const useWalletStore = () => ({
   state,
   getUserWallet,

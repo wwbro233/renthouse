@@ -1,27 +1,49 @@
+/**
+ * 我的订单页面组件
+ * 提供订单查看、状态管理、取消订单、删除订单等功能
+ */
 <script setup>
+// Vue核心功能导入
 import { computed, ref } from 'vue'
+// 路由功能
 import { useRouter } from 'vue-router'
+// Element Plus消息和确认框组件
 import { ElMessage, ElMessageBox } from 'element-plus'
+// 用户认证状态管理
 import { useAuthStore } from '../stores/authStore'
+// 订单状态管理
 import { useOrderStore } from '../stores/orderStore'
 
+// 初始化路由实例
 const router = useRouter()
+// 获取用户认证store实例
 const authStore = useAuthStore()
+// 获取订单store实例
 const orderStore = useOrderStore()
 
+// 当前激活的标签页：all(全部)、pending(待确认)、confirmed(已确认)、processing(服务中)、completed(已完成)、cancelled(已取消)
 const activeTab = ref('all')
 
-// 获取当前用户的订单
+/**
+ * 获取当前用户的订单列表计算属性
+ * 根据登录状态和选中的标签页筛选订单
+ * @returns {Array} 订单列表数组
+ */
 const userOrders = computed(() => {
   if (!authStore.isAuthenticated.value) return []
   const orders = orderStore.getUserOrders(authStore.state.currentPhone)
   
-  // 根据 tab 筛选
+  // 根据 tab 筛选订单
   if (activeTab.value === 'all') return orders
   return orders.filter(order => order.status === activeTab.value)
 })
 
-// 格式化日期
+/**
+ * 格式化日期函数
+ * 将日期字符串转换为中文本地化格式
+ * @param {string} dateStr - 日期字符串
+ * @returns {string} 格式化后的日期字符串（如：2024/01/01 12:00）
+ */
 const formatDate = (dateStr) => {
   const date = new Date(dateStr)
   return date.toLocaleString('zh-CN', {
@@ -33,7 +55,11 @@ const formatDate = (dateStr) => {
   })
 }
 
-// 取消订单
+/**
+ * 取消订单处理函数
+ * 显示确认对话框后执行取消操作
+ * @param {Object} order - 订单对象
+ */
 const handleCancelOrder = (order) => {
   ElMessageBox.confirm(
     '确定要取消该订单吗？',
@@ -53,7 +79,11 @@ const handleCancelOrder = (order) => {
   }).catch(() => {})
 }
 
-// 查看订单详情
+/**
+ * 查看订单详情处理函数
+ * 在弹窗中显示订单的完整信息
+ * @param {Object} order - 订单对象
+ */
 const handleViewDetail = (order) => {
   ElMessageBox.alert(
     `
@@ -80,7 +110,11 @@ const handleViewDetail = (order) => {
   )
 }
 
-// 确认订单
+/**
+ * 确认订单完成处理函数
+ * 将订单状态更新为已完成
+ * @param {Object} order - 订单对象
+ */
 const handleConfirmOrder = (order) => {
   ElMessageBox.confirm(
     '确认该订单已完成服务？',
@@ -100,7 +134,11 @@ const handleConfirmOrder = (order) => {
   }).catch(() => {})
 }
 
-// 修改订单状态（通用方法）
+/**
+ * 修改订单状态处理函数（通用方法）
+ * 显示状态选择对话框，支持修改为任意状态
+ * @param {Object} order - 订单对象
+ */
 const handleChangeStatus = (order) => {
   const statusOptions = [
     { value: 'pending', label: '待确认', disabled: order.status === 'pending' },
@@ -167,7 +205,13 @@ const handleChangeStatus = (order) => {
   }).catch(() => {})
 }
 
-// 快捷状态更新方法
+/**
+ * 快捷状态更新方法
+ * 提供快速修改订单状态的简化流程
+ * @param {Object} order - 订单对象
+ * @param {string} newStatus - 新的订单状态
+ * @param {string} actionText - 操作文本描述
+ */
 const handleQuickStatus = (order, newStatus, actionText) => {
   ElMessageBox.confirm(
     `确认将订单状态修改为"${orderStore.getStatusText(newStatus)}"吗？`,
@@ -187,7 +231,11 @@ const handleQuickStatus = (order, newStatus, actionText) => {
   }).catch(() => {})
 }
 
-// 删除单个订单
+/**
+ * 删除单个订单处理函数
+ * 显示确认对话框后删除指定订单
+ * @param {Object} order - 订单对象
+ */
 const handleDeleteOrder = (order) => {
   ElMessageBox.confirm(
     `确认删除订单"${order.orderNo}"吗？删除后将无法恢复。`,
@@ -208,15 +256,20 @@ const handleDeleteOrder = (order) => {
   }).catch(() => {})
 }
 
-// 批量删除已取消的订单
+/**
+ * 批量删除已取消的订单处理函数
+ * 删除当前用户所有状态为"已取消"的订单
+ */
 const handleDeleteAllCancelled = () => {
   const cancelledOrders = userOrders.value.filter(o => o.status === 'cancelled')
   
+  // 验证是否有已取消的订单
   if (cancelledOrders.length === 0) {
     ElMessage.warning('没有已取消的订单')
     return
   }
 
+  // 显示确认对话框
   ElMessageBox.confirm(
     `确认删除全部 ${cancelledOrders.length} 个已取消的订单吗？删除后将无法恢复。`,
     '批量删除',
@@ -236,7 +289,11 @@ const handleDeleteAllCancelled = () => {
   }).catch(() => {})
 }
 
-// 统计数据
+/**
+ * 订单统计数据计算属性
+ * 统计各种状态订单的数量
+ * @returns {Object} 包含各状态订单数量的对象
+ */
 const stats = computed(() => {
   if (!authStore.isAuthenticated.value) {
     return { total: 0, pending: 0, confirmed: 0, processing: 0, completed: 0 }
@@ -253,7 +310,9 @@ const stats = computed(() => {
 </script>
 
 <template>
+  <!-- 我的订单页面容器 -->
   <div class="page-wrapper">
+    <!-- 页面标题和面包屑导航 -->
     <div class="page-title">
       <div>
         <el-breadcrumb separator="/">
@@ -266,6 +325,7 @@ const stats = computed(() => {
       <el-tag type="success">共 {{ stats.total }} 个订单</el-tag>
     </div>
 
+    <!-- 订单统计卡片行：待确认、已确认、服务中、已完成 -->
     <div class="stats-row">
       <el-card class="stat-card">
         <div class="stat-content">
@@ -305,8 +365,10 @@ const stats = computed(() => {
       </el-card>
     </div>
 
+    <!-- 订单列表区 -->
     <div class="section-card">
       <div class="tabs-header">
+        <!-- 订单状态筛选标签页 -->
         <el-tabs v-model="activeTab">
           <el-tab-pane label="全部订单" name="all"></el-tab-pane>
           <el-tab-pane label="待确认" name="pending"></el-tab-pane>
@@ -330,18 +392,21 @@ const stats = computed(() => {
         </div>
       </div>
 
+      <!-- 未登录状态：显示登录引导 -->
       <div v-if="!authStore.isAuthenticated.value" class="empty-state">
         <el-empty description="请先登录查看订单">
           <el-button type="primary" @click="router.push('/login')">去登录</el-button>
         </el-empty>
       </div>
 
+      <!-- 已登录但无订单：显示预约引导 -->
       <div v-else-if="userOrders.length === 0" class="empty-state">
         <el-empty description="暂无订单记录">
           <el-button type="primary" @click="router.push('/service')">预约服务</el-button>
         </el-empty>
       </div>
 
+      <!-- 订单列表：显示订单卡片 -->
       <div v-else class="order-list">
         <el-card v-for="order in userOrders" :key="order.id" class="order-card" shadow="hover">
           <div class="order-header">

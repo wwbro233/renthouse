@@ -1,41 +1,81 @@
+/**
+ * 登录/注册页面组件
+ * 提供验证码登录和用户注册功能
+ * 支持三个阶段：输入手机号、输入验证码、用户注册
+ */
 <script setup>
+// Vue核心功能导入
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+// Element Plus消息组件
 import { ElMessage } from 'element-plus'
+// 路由功能
 import { useRoute, useRouter } from 'vue-router'
+// 用户认证状态管理
 import { useAuthStore } from '../stores/authStore'
 
+// 初始化路由实例
 const router = useRouter()
+// 获取当前路由信息
 const route = useRoute()
+// 获取用户认证store实例
 const authStore = useAuthStore()
 
-const stage = ref('phone') // phone | code | register
+// 当前所处阶段：phone(输入手机号)、code(输入验证码)、register(注册)
+const stage = ref('phone')
+// 用户输入的手机号
 const phone = ref('')
+// 用户输入的验证码
 const code = ref('')
+// 是否同意用户协议
 const agreement = ref(false)
+// 验证码倒计时（秒）
 const countdown = ref(0)
+// 注册表单数据
 const registerForm = reactive({
   phone: '',
   name: ''
 })
 
+// 用户认证状态
 const isAuthed = authStore.isAuthenticated
 
+// 倒计时定时器
 let timer = null
 
+/**
+ * 是否可以发送验证码计算属性
+ * 需要满足：手机号格式正确 && 同意用户协议
+ */
 const canSendCode = computed(
   () => /^1\d{10}$/.test(phone.value.trim()) && agreement.value
 )
+
+/**
+ * 是否可以确认验证码计算属性
+ * 需要验证码为6位数字
+ */
 const canConfirm = computed(() => code.value.trim().length === 6)
+
+/**
+ * 是否可以提交注册计算属性
+ * 需要满足：手机号格式正确 && 昵称至少2个字符
+ */
 const canRegister = computed(
   () => /^1\d{10}$/.test(registerForm.phone.trim()) && registerForm.name.trim().length >= 2
 )
 
+/**
+ * 开始验证码倒计时
+ * 从60秒开始倒计时，到0时自动停止
+ */
 const startCountdown = () => {
+  // 清除已存在的定时器
   if (timer) {
     window.clearInterval(timer)
     timer = null
   }
   countdown.value = 60
+  // 每秒减1
   timer = window.setInterval(() => {
     countdown.value -= 1
     if (countdown.value <= 0) {
@@ -45,13 +85,20 @@ const startCountdown = () => {
   }, 1000)
 }
 
+/**
+ * 发送验证码处理函数
+ * 验证手机号后发送验证码，未注册用户引导至注册页面
+ */
 const handleSendCode = () => {
+  // 验证是否可以发送
   if (!canSendCode.value) {
     ElMessage.warning('请输入手机号并同意协议')
     return
   }
+  // 请求发送验证码
   const result = authStore.requestVerifyCode(phone.value)
   if (!result.success) {
+    // 处理未注册用户
     if (result.reason === 'not_registered') {
       ElMessage.warning('手机号未注册，请先完成注册')
       registerForm.phone = phone.value
@@ -61,30 +108,43 @@ const handleSendCode = () => {
     }
     return
   }
+  // 切换到验证码输入阶段
   stage.value = 'code'
   startCountdown()
   ElMessage.success(`验证码已发送（演示：${result.code}）`)
 }
 
+/** * 确认验证码处理函数
+ * 校验验证码并完成登录
+ */
 const handleConfirm = () => {
+  // 验证验证码格式
   if (!canConfirm.value) {
     ElMessage.warning('请输入 6 位验证码')
     return
   }
+  // 校验验证码
   const result = authStore.verifyCode(phone.value, code.value)
   if (!result.success) {
     ElMessage.error(result.message || '验证码校验失败')
     return
   }
+  // 登录成功，跳转到个人中心
   ElMessage.success('登录成功')
   router.replace('/my')
 }
 
+/**
+ * 提交注册处理函数
+ * 验证注册信息并创建新用户
+ */
 const handleRegister = () => {
+  // 验证注册信息
   if (!canRegister.value) {
     ElMessage.warning('请填写完整的注册信息')
     return
   }
+  // 执行注册
   const result = authStore.registerUser({
     phone: registerForm.phone,
     name: registerForm.name
@@ -93,32 +153,52 @@ const handleRegister = () => {
     ElMessage.warning(result.message || '注册失败')
     return
   }
+  // 注册成功，返回登录页面
   ElMessage.success('注册成功，请获取验证码登录')
   phone.value = registerForm.phone.trim()
   agreement.value = true
   stage.value = 'phone'
 }
 
+/**
+ * 返回按钮处理函数
+ * 根据当前阶段返回到上一个阶段或上一个页面
+ */
 const goBack = () => {
   if (stage.value === 'code') {
+    // 验证码阶段返回到手机号输入阶段
     stage.value = 'phone'
     code.value = ''
   } else if (stage.value === 'register') {
+    // 注册阶段返回到手机号输入阶段
     stage.value = 'phone'
   } else {
+    // 手机号输入阶段返回上一页
     router.back()
   }
 }
 
+/**
+ * 前往注册页面
+ * 切换到注册阶段
+ */
 const goToRegister = () => {
   registerForm.phone = phone.value || registerForm.phone
   stage.value = 'register'
 }
 
+/**
+ * 前往登录页面
+ * 切换到手机号输入阶段
+ */
 const goToLogin = () => {
   stage.value = 'phone'
 }
 
+/**
+ * 监听阶段变化
+ * 离开验证码阶段时，清除倒计时定时器和待验证状态
+ */
 watch(stage, (val, oldVal) => {
   if (oldVal === 'code' && val !== 'code') {
     if (timer) {
@@ -130,21 +210,33 @@ watch(stage, (val, oldVal) => {
   }
 })
 
+/**
+ * 监听认证状态变化
+ * 用户已登录时自动跳转到个人中心
+ */
 watch(isAuthed, (val) => {
   if (val) {
     router.replace('/my')
   }
 })
 
+/**
+ * 组件挂载时的初始化处理
+ * - 已登录用户重定向到个人中心
+ * - 根据URL参数初始化页面状态
+ */
 onMounted(() => {
+  // 已登录用户重定向
   if (isAuthed.value) {
     router.replace('/my')
     return
   }
+  // 根据query参数决定初始阶段
   const queryType = route.query.type
   if (queryType === 'register') {
     stage.value = 'register'
   }
+  // 从query参数获取手机号
   const queryPhone = route.query.phone
   if (typeof queryPhone === 'string') {
     phone.value = queryPhone
@@ -152,6 +244,10 @@ onMounted(() => {
   }
 })
 
+/**
+ * 组件卸载前的清理工作
+ * 清除定时器和待验证状态
+ */
 onBeforeUnmount(() => {
   if (timer) {
     window.clearInterval(timer)
@@ -161,18 +257,25 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <!-- 登录页面容器 -->
   <div class="login-page">
+    <!-- 顶部渐变背景 -->
     <div class="gradient-top"></div>
+    <!-- 登录主容器 -->
     <main class="login-container">
+      <!-- 返回按钮 -->
       <button class="back-btn" type="button" @click="goBack">
         <el-icon><ArrowLeft /></el-icon>
       </button>
       <h1>验证码登录</h1>
+      
+      <!-- 阶段1：输入手机号 -->
       <div class="form-card" v-if="stage === 'phone'">
         <label>请输入手机号</label>
         <div class="input-row">
           <input v-model="phone" type="tel" maxlength="11" placeholder="请输入手机号码" />
         </div>
+        <!-- 用户协议复选框 -->
         <label class="agreement">
           <input v-model="agreement" type="checkbox" />
           同意
@@ -189,10 +292,12 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
+      <!-- 阶段2：输入验证码 -->
       <div class="form-card" v-else-if="stage === 'code'">
         <label>请输入验证码</label>
         <div class="input-row code-input">
           <input v-model="code" maxlength="6" placeholder="请输入验证码" />
+          <!-- 倒计时显示或重发按钮 -->
           <span class="countdown" v-if="countdown > 0">{{ countdown }}s</span>
           <button v-else type="button" @click="handleSendCode">重发</button>
         </div>
@@ -205,6 +310,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
+      <!-- 阶段3：用户注册 -->
       <div class="form-card" v-else>
         <label>注册手机号</label>
         <div class="input-row">
